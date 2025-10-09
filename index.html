@@ -1,0 +1,2188 @@
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>위생·안전 순회점검 보고서 프로그램</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --card: #ffffff;
+        --line: #e6e8ee;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --brand: #2563eb;
+        --brand-weak: #e8efff;
+        --ok: #16a34a;
+        --warn: #f59e0b;
+        --danger: #ef4444;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo",
+          "Noto Sans KR", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+font-family: 'Nanum Gothic', '나눔고딕', sans-serif;
+      }
+
+      .wrap{
+  max-width:1600px;                 /* 1200px → 1600px (원하면 더 키워도 OK) */
+  margin:16px auto;
+  display:grid;
+  grid-template-columns:320px 1fr;
+  gap:16px;
+  padding:0 20px;                   /* 좌우 패딩 살짝 늘림 */
+}
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(31, 41, 55, 0.06);
+      }
+
+      .card h2 {
+        margin: 0;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        font-size: 18px;
+      }
+
+      .card .body {
+        padding: 14px 16px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      label.small {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      input[type="text"],
+      input[type="date"],
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 76px;
+        resize: vertical;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: #fff;
+        cursor: pointer;
+      }
+
+      .btn.brand {
+        background: var(--brand);
+        border-color: var(--brand);
+        color: #fff;
+      }
+
+      .btn.weak {
+        background: var(--brand-weak);
+        border-color: var(--brand);
+      }
+
+      .btn.danger {
+        background: #fee2e2;
+        border-color: #fecaca;
+        color: #b91c1c;
+      }
+
+      .btn.sm {
+        padding: 6px 8px;
+        font-size: 12px;
+      }
+
+.btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* +조리원 추가 버튼만 더 작게 */
+#btnAddCook{
+  padding: 4px 6px;   /* 기존 sm(6px 8px)보다 축소 */
+  font-size: 11px;    /* 기존 12px → 11px */
+  line-height: 1;     /* 높이 슬림하게 */
+  border-radius: 8px; /* 살짝 더 컴팩트한 느낌 */
+}
+
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .sticky {
+        position: sticky;
+        top: 12px;
+      }
+
+      .section {
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        margin-bottom: 14px;
+      }
+
+      .section > summary {
+        list-style: none;
+        padding: 10px 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .items {
+        padding: 12px;
+        border-top: 1px dashed var(--line);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+
+      .item .title {
+        font-weight: 600;
+      }
+
+      .radio {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .kicker {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* 모든 결과보고서 표 기본 디자인 통일 */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;  /* 선 겹침 없이 */
+  border: 1px solid var(--line);
+}
+
+.summary-table th,
+.summary-table td {
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  text-align: center;
+  vertical-align: middle;
+  background: #fff; /* 전체 흰색 배경 */
+  border-radius: 0 !important;
+}
+
+/* 개선 필요사항(세부) 내용 셀만 좌측정렬 */
+.summary-table td.improve-cell {
+  text-align: left !important;
+  white-space: pre-wrap;
+  padding: 8px;
+}
+
+/* 미리보기에서 바로 편집 가능하도록 */
+.improve-editor {
+  white-space: pre-wrap;
+  min-height: 28px;
+  outline: none;
+}
+.improve-editor:focus {
+  box-shadow: 0 0 0 2px var(--brand-weak) inset; /* 포커스 표시 */
+}
+
+/* 헤더만 회색 처리 */
+.summary-table th {
+  background: #f8fafc;
+  font-weight: 600;
+}
+
+/* 모든 표는 직사각형 (둥근 모서리 제거) */
+.summary-table,
+.summary-table th,
+.summary-table td {
+  border-radius: 0 !important;
+}
+
+      .right {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .improve-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .improve-item {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px;
+      }
+
+      .print-area {
+        padding: 18px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+
+/* 체크리스트 | 미리보기 2열 배치 */
+#checkAndReport{display:grid; grid-template-columns:1fr; gap:16px;}
+@media (min-width:980px){
+  #checkAndReport{grid-template-columns:1.6fr 1fr;}   /* 체크리스트 쪽을 더 넓게 */
+}
+@media (min-width:1536px){
+  #checkAndReport{grid-template-columns:1.8fr 1fr;}
+}
+
+/* 우측 미리보기 카드 고정 */
+@media (min-width:980px){
+  #reportCard{ position: sticky; top:12px; align-self:start; }
+}
+
+      @media (max-width: 960px) {
+        .wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+
+/* 이름 입력칸을 라벨 옆에 작게 배치 */
+.inline-field{display:flex; align-items:center; gap:8px;}
+.inline-field .name-compact{width:160px; max-width:40%;}
+
+/* 조리원 그룹 간 간격 */
+.cook-group{ margin-top:8px; }
+
+/* 입력 패널 구분선 */
+.hr-sep{
+  height:0;
+  border-top:2px solid var(--brand);   /* 파란색 굵은 실선 */
+  margin:16px 0;                       /* 위아래 간격 조금 더 넓게 */
+  width:100%;
+  opacity:0.9;                         /* 살짝 진하게 */
+}
+
+.inline-field .btn.sm{ margin-left:6px; }
+
+/* 보고서 표 공통 가운데 정렬 강제 */
+.centered-table th,
+.centered-table td {
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+/* [표1] 방문자/방문회차 헤더칸 폭: 한글 4글자 정도 */
+.th-narrow-4ch { width: 6ch; }  /* 패딩/보더 감안해 6ch 권장 */
+/* [표1] 기관/방문 정보 열 폭 재조정 */
+.summary-table.table-visit .col-head-5   { width: 7ch; }   /* 기관명/방문자/방문회차 헤더 (5글자) */
+.summary-table.table-visit .col-value-lg { width: 20ch; }  /* 기관명/방문일자 값 (넓은 칸) */
+.summary-table.table-visit .col-value-sm { width: 8ch; }   /* 방문자/회차 값 (3글자보다 살짝 여유, 줄바꿈 방지) */
+
+/* [표3] 교육/물품 내용 박스: 3~4줄 높이 */
+.support-cell {
+  line-height: 1.4;
+  max-height: 5.6em;   /* 1.4em × 4줄 ≒ 5.6em */
+  overflow: auto;      /* 넘치면 스크롤 */
+  white-space: pre-wrap;
+  text-align: left;    /* 내용은 가독 위해 왼쪽 정렬 유지 */
+  padding: 6px;
+}
+
+/* 영역별 요약표 컬럼 폭(구분/숫자칸 고정, 개선사항은 남는 폭) */
+.summary-col-name   { width: 12ch; } /* 구분: 한글 6글자 */
+.summary-col-small  { width: 5ch;  } /* 항목수/준수/미흡: 숫자 3개 */
+
+/* 항상 새 페이지에서 시작시키는 강제 분리 마커 */
+.pagebreak,
+.html2pdf__page-break {
+  page-break-before: always;   /* 구형 브라우저 */
+  break-before: page;          /* 최신 명세 */
+}
+
+.pagebreak { display:block; height:0; }  /* 화면에서 여백 안 생기게 */
+
+/* 개선 세부 문단 + 삭제 버튼 */
+.improve-block{
+  position: relative;
+  padding-right: 22px;   /* x 버튼 자리 */
+  margin: 0 0 8px 0;
+}
+.improve-del{
+  position: absolute; right: 0; top: 0;
+  border: 1px solid var(--line);
+  background: #f3f4f6;
+  border-radius: 6px;
+  font-size: 11px; line-height: 1;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+.improve-del:hover{ background:#e5e7eb; }
+
+/* PDF/인쇄에서는 x 버튼 숨김 */
+@media print{
+  .improve-del{ display:none !important; }
+}
+
+/* 요약표 줄 삭제 버튼 */
+.memo-line{ position:relative; display:inline-block; padding-right:20px; }
+.sum-del{
+  position:absolute; right:0; top:0;
+  border:1px solid var(--line);
+  background:#f3f4f6;
+  border-radius:6px;
+  font-size:11px; line-height:1;
+  padding:2px 6px; cursor:pointer;
+}
+.sum-del:hover{ background:#e5e7eb; }
+
+/* 인쇄/PDF에선 삭제 버튼 숨김 */
+@media print{
+  .sum-del, .improve-del{ display:none !important; }
+}
+
+/* A4 크기 고정 (210mm × 297mm) */
+#reportArea {
+  width: 210mm;
+  /* min-height: 297mm;  ← 삭제/교체 */
+  min-height: calc(297mm - 20mm); /* 297 - (10mm top + 10mm bottom) */
+  margin: 0 auto;
+  background: #fff;
+  box-sizing: border-box;
+  padding: 10mm;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* 인쇄할 때도 동일하게 유지 */
+@media print {
+  #reportArea {
+    margin: 0;
+    padding: 10mm;
+    width: 210mm;
+    /* min-height: 297mm;  ← 삭제/교체 */
+    min-height: calc(297mm - 20mm);
+
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* '개선 필요사항 메모' 카드 전체 숨김 */
+.card:has(#improveList){
+  display: none !important;
+}
+
+/* 인쇄/PDF에서도 확실히 숨김 */
+@media print{
+  .card:has(#improveList){
+    display: none !important;
+  }
+}
+
+/* 데스크탑에서 '기본 정보' 카드가 화면에 고정되고,
+   카드 내부만 스크롤되도록 */
+@media (min-width: 980px) {
+  .sticky {
+    position: sticky;
+    top: 12px;
+    align-self: start;
+
+    /* 화면 높이 안에서만 보이게 */
+    max-height: calc(100vh - 24px); /* top 12px + 아래 여유 12px */
+    overflow: auto;
+
+    /* 스크롤 체인/터치 스크롤 품질 개선 */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.wrap{
+  /* 전체 폭을 더 넓게 (좌우 남는 여백 최소화) */
+  max-width: 1920px;             /* 기존 1600px → 1920px (원하면 100%로 바꿔도 됨) */
+  margin:16px auto;
+  padding:0 16px;
+
+  display:grid;
+  grid-template-columns:320px 1fr;  /* 왼쪽 기본정보(고정 320px) + 오른쪽 영역(가변) */
+  gap:16px;
+}
+
+/* ====== 카드 내부 분리 스크롤 (PC에서만, ID 타깃) ====== */
+@media (min-width:980px){
+  /* 컨테이너는 고정 + 내부만 스크롤 */
+  #checkCard,
+  #reportCard{
+    position: sticky;
+    top: 12px;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 24px);
+    /* overflow: hidden;  ← 이 줄이 내용 잘림 원흉이라 제거! */
+  }
+  /* 본문만 세로 스크롤 */
+  #checkCard .body,
+  #reportCard .body{
+    overflow-y: auto;
+    overflow-x: visible;        /* A4 폭 유지 */
+    min-height: 0;              /* flex 컨테이너에서 필수 */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* 인쇄/PDF에서는 스크롤/고정 해제 */
+@media print{
+  #checkCard,
+  #reportCard{
+    position: static !important;
+    max-height: none !important;
+  }
+  #checkCard .body,
+  #reportCard .body{
+    overflow: visible !important;
+  }
+}
+
+#reportTitle {
+  text-align: center;          /* 가운데 정렬 */
+  font-weight: 700;            /* 굵은 글씨 */
+  font-size: 1.6rem;           /* 살짝 큰 글씨 (기존보다 약간 확대) */
+  margin: 12px 0 16px;         /* 위아래 간격 */
+  letter-spacing: -0.3px;      /* 한글 가독성 보정 */
+}
+
+/* 개선 필요사항(세부) 슬림 최종본 */
+.summary-table.detail-compact th{
+  width:100px !important;        /* 좌측 제목칸 고정폭 */
+  white-space:nowrap !important;
+  font-size:13px !important;     /* 제목 글자 축소 */
+  line-height:1.2 !important;
+  padding:6px 8px !important;    /* 제목칸 패딩 축소 */
+}
+
+.summary-table.detail-compact td.improve-cell{
+  text-align:left !important;    /* 내용칸은 좌측 정렬 유지 */
+  font-size:13px !important;     /* 본문 글자 약간 축소 */
+  line-height:1.25 !important;
+  padding:4px 6px !important;    /* 내용칸 패딩 축소 */
+}
+
+.summary-table.detail-compact .improve-editor{
+  min-height:14px !important;    /* 기본 높이 낮춤 */
+  line-height:1.25 !important;
+  font-size:12px !important;     /* 에디터 내부 글자 조금 더 작게 */
+}
+
+.summary-table.detail-compact .improve-block{
+  margin:2px 0 !important;       /* 블록 간격 축소 */
+  padding-right:16px !important;  /* 삭제 버튼 자리 */
+}
+
+@media print{
+  .summary-table.detail-compact td.improve-cell{ padding:3px 5px !important; }
+  .summary-table.detail-compact .improve-editor{ line-height:1.22 !important; }
+}
+
+/* 사용가이드 모달 */
+.guide-backdrop{
+  position: fixed; inset: 0; background: rgba(0,0,0,.35);
+  display:none; align-items:center; justify-content:center; z-index: 9999;
+}
+.guide-modal{
+  width: min(680px, 92vw);
+  background:#fff; border:1px solid var(--line); border-radius:14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.15); overflow:hidden;
+}
+.guide-modal header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 14px; border-bottom:1px solid var(--line);
+}
+.guide-modal header h3{ margin:0; font-size:16px; }
+.guide-modal .content{ padding:14px; line-height:1.6; }
+.guide-modal footer{ padding:10px 14px; border-top:1px solid var(--line); text-align:right; }
+
+.card h2.with-action{
+  display:flex; align-items:center; justify-content:space-between;
+}
+    </style>
+  </head>
+
+  <body>
+  <div class="wrap">
+
+    <!-- 좌: 기본 정보 + 툴바 -->
+    <div class="card sticky">
+  <h2 class="with-action">
+  기본 정보
+  <button type="button" class="btn sm weak" id="btnGuide">사용가이드</button>
+</h2>
+  <div class="body">
+    <div class="row">
+      <div>
+        <label class="small">기관명</label>
+        <input id="orgName" type="text" placeholder="예) 행복어린이집" />
+      </div>
+      <div>
+        <label class="small">방문자</label>
+        <input id="visitor" type="text" >
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:8px">
+      <div>
+        <label class="small">방문일자</label>
+        <input id="visitDate" type="date" />
+      </div>
+      <div>
+        <label class="small">방문회차</label>
+        <input id="visitRound" type="text" placeholder="예) 1차" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:8px">
+      <div>
+        <label class="small">방문 시작시간</label>
+        <select id="visitStart"></select>
+      </div>
+      <div>
+        <label class="small">방문 종료시간</label>
+        <select id="visitEnd"></select>
+      </div>
+    </div>
+<div class="hr-sep" role="separator" aria-hidden="true"></div>
+
+<!-- 원장 -->
+<div class="row" style="margin-top:8px">
+  <!-- 1줄: 라벨 옆에 '성함' 작은 입력칸 -->
+  <div class="inline-field" style="grid-column:1 / -1;">
+    <label class="small" for="dirName">원장 성함</label>
+    <input id="dirName" type="text" placeholder="성함 입력" class="name-compact"/>
+  </div>
+  <!-- 2줄: 날짜 2칸 (접두사 '원장 —' 제거) -->
+  <div>
+    <label class="small">건강진단 실시일</label>
+    <input id="dirHealthDate" type="date" />
+  </div>
+  <div>
+    <label class="small">위생교육 실시일</label>
+    <input id="dirEduDate" type="date" />
+  </div>
+</div>
+<div class="hr-sep" role="separator" aria-hidden="true"></div>
+
+<!-- 조리원 (여러 명 지원) -->
+<div class="row" style="margin-top:8px">
+  <div id="cookGroupWrap" style="grid-column:1 / -1;">
+    <!-- 기본 1명 세트 -->
+    <div class="cook-group">
+      <!-- 이름 + 추가버튼 : 한 줄 -->
+      <div class="inline-field" style="grid-column:1 / -1;">
+        <label class="small">조리원 성함</label>
+        <input type="text" placeholder="성함 입력" class="name-compact cook-name"/>
+        <button type="button" class="btn sm weak" id="btnAddCook">+ 조리원 추가</button>
+      </div>
+
+      <!-- 날짜 2칸을 한 줄(row)로 묶기 -->
+      <div class="row" style="grid-column:1 / -1; margin-top:8px;">
+        <div>
+          <label class="small">건강진단 실시일</label>
+          <input type="date" class="cook-health"/>
+        </div>
+        <div>
+          <label class="small">위생교육 실시일</label>
+          <input type="date" class="cook-edu"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:12px">
+  <label class="small">교육지원</label>
+  <textarea id="eduSupport" placeholder="예) 위생관리 교육 지원, 조리원 안전교육 등"></textarea>
+</div>
+
+<div style="margin-top:12px">
+  <label class="small">물품지원</label>
+  <textarea id="itemSupport" placeholder="예) 칼 세트 지원, 온도계 교체, 위생복 지급 등"></textarea>
+</div>
+
+    <div style="margin-top:12px">
+      <label class="small">이전 방문 시 지도사항/개선여부</label>
+      <textarea id="prevNotes"
+        placeholder="예) ① 냉동고 온도계 교체(개선 완료) ② 조리원 위생교육(진행 중)"></textarea>
+    </div>
+
+    <h2 style="margin-top:14px">도구</h2>
+    <div class="toolbar body">
+      <button class="btn brand" onclick="buildReport()">보고서 미리보기</button>
+      <button class="btn weak" id="btnSavePdf" onclick="saveReportPDF()">PDF로 저장</button>
+      <button class="btn danger" onclick="if(confirm('모든 내용을 초기화할까요?')) resetAll()">초기화</button>
+    </div>
+    <div class="kicker" style="margin-top:6px">
+      ※ “보고서 미리보기” 후 저장하세요.
+    </div>
+  </div>
+</div>
+
+    <!-- 우: 체크리스트 & 결과 -->
+    <div class="right">
+
+      <!-- 체크리스트 + 결과 미리보기 (2열) -->
+      <div id="checkAndReport">
+        
+        <!-- 체크리스트 -->
+        <div class="card">
+          <h2>체크리스트</h2>
+          <div class="body">
+            <div class="toolbar" style="justify-content:flex-end; margin-bottom:8px;">
+              <button class="btn sm weak" onclick="markAllOk()">모두 적합</button>
+            </div>
+            <div id="checklist"></div>
+          </div>
+        </div>
+
+        <!-- 결과 미리보기 -->
+        <div class="card print-paper" id="reportCard">
+          <h2>결과보고서 (미리보기)</h2>
+          <div class="body print-area" id="reportArea">
+            <div class="kicker" id="reportPlaceholder">
+              "보고서 미리보기”를 눌러 생성하세요.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 개선 메모 -->
+      <div class="card">
+        <h2>개선 필요사항 메모</h2>
+        <div class="body">
+          <div class="improve-list" id="improveList"></div>
+        </div>
+      </div>
+    </div> <!-- /.right -->
+
+  </div> <!-- /.wrap -->
+
+    <!-- html2pdf -->
+    <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js">
+</script>
+
+    <script>
+// 각 항목별 '세부' 문구 템플릿 (원하는 대로 수정하세요)
+const ITEM_DETAIL_TEXT = {
+  1: `전처리·조리구역 분리/교차오염 방지
+- 전처리 구역과 조리 구역이 낮은 벽 또는 문으로 분리되어 있는 경우
+- 두 구역이 분리되어 있지 않지만 교차오염을 방지할 수 있는 조치가 되어 있는 경우
+* 교차오염을 방지하기 위해 구역 표시(팻말, 바닥 색깔 등) 등 눈으로 관찰 가능한 구분 조치를 취함
+* 전처리·조리·세척작업을 시간차를 두고 실시하여 해당 작업이 동시에 이루어지지 않음`,
+
+  2: `조리장 바닥 배수구 덮개
+- 조리장 바닥 배수구에 덮개가 설치되어 있으며, 그 기능을 수행할 수 있는 상태(부식 및 파손되지 않은 상태)로 설치되어 있는 경우
+- 조리장 바닥에 배수구가 없는 경우`,
+
+  3: `조리·세척시설 및 손 씻기 시설
+어린이 급식소에 조리시설 및 세척시설은 설치되어 있고,
+- (손 씻는 시설 설치된 경우) 급수 및 작동이 원활한 경우
+- (손 씻는 시설 설치 및 미설치된 경우) ‘손 세정제’와 ‘손 소독제’, ‘손의 물기를 닦을 수 있는 종이타월 또는 핸드드라이기’가 비치되어 있으며 사용과 관리가 양호한 경우
+* 손세정제와 손소독제의 내용물이 담겨있고 사용기한이 경과되지 않음`,
+
+  4: `음식물 및 일반 쓰레기 관리
+- 음식물 및 일반 쓰레기통으로 폐기물용기가 설치 및 구분되어 있음
+* 음식물 폐기물용기 대신 음식물 분쇄처리기를 사용하고 있는 경우
+- 음식물 및 일반 쓰레기통 모두 뚜껑이 있음
+- 음식물 및 일반 쓰레기통 모두 내수성 재질임
+- 음식물 및 일반 쓰레기통 모두 파손 없이 사용되고 있음`,
+
+  5: `살균·소독기 및 소독 방법
+- 자외선 또는 전기살균소독기(건열소독기)가 설치되어 사용하고 있으며, 그 기능을 수행할 수 있는 상태인 경우
+* 자외선소독기의 경우 자외선 전구의 상태가 양호하며 원활하게 작동
+* 건열소독기 경우 81℃ 이상 설정되며 원활하게 작동
+- 열탕 세척 소독을 하는 경우
+* 열탕 세척 소독 전용 냄비를 구비(조리용과 구분, 관찰 확인 가능)
+- 그 밖에 소독이 가능한 기기가 설치되어 있으며, 그 기능을 수행할 수 있는 상태인 경우
+* 살균·건조 기능 등으로 소독이 가능한 식기세척기가 있는 경우`,
+
+  6: `채광 및 환기시설
+[채광]
+- 채광이 잘되어 작업하는데 어려움이 없음
+- 조리실 밝기 정도가 식재료의 상태가 확인 가능하고 작업하는데 어려움이 없음
+
+[환기시설]
+- 후드(조리기기, 식기세척기 위), 환풍기(건조식품창고) 등의 환기시설이 설치되어 있고, 그 기능을 수행할 수 있음
+* 후드 가동 시 스팀 조리기구 위 후드 내부 및 주변 천장에서 응축수가 식품에 떨어지지 않는 구조임
+* 원활한 환기를 위하여 환기시설 설비의 구성(위치 등)을 고려하여 설치됨
+* 고장 없이 작동되고 있음`,
+
+  7: `냉장·냉동시설 구비
+- 냉장·냉동 시설이 구비되어 있는 경우`,
+
+  8: `냉장·냉동시설 및 가열처리시설 온도계
+- 냉장·냉동시설에 온도를 확인할 수 있는 온도계가 적절한 방법으로 설치되어 있고 정상 작동하고 있는 경우
+- 튀김기 등의 가열처리시설을 보유 시 온도를 측정할 수 있는 계기를 구비 및 설치한 경우 (가열처리시설 종류 확인)`,
+
+  9: `주방용구 위생 상태
+- 식품과 직접 접촉하는 주방용구가 모두 내수성으로 소독·살균이 가능하고 부식 등으로 인한 오염이 없는 경우`,
+
+  10: `방서·방충 시설
+- 외부로 직접 통하는 문과 창문 모두 방서·방충 시설이 구비되어 있으며, 그 기능을 수행할 수 있는 경우`,
+
+    11: `수질기준 적합 급수시설
+- 수돗물을 사용하는 경우
+- 지하수 사용 시 용수저장장치에 살균소독장치(염소자동주입기)를 설치하고 정상 작동하고 있는 경우
+* 살균소독장치의 설치 관련 문서 보관 확인`,
+
+  12: `종사자 건강진단 실시·보관
+- 급식인력 모두 건강진단을 연 1회 실시하고 건강진단결과서를 사무실 내 비치하고 있는 경우
+* 건강진단 유효기간 만료일 전후 각각 30일 이내에 실시함`,
+
+  13: `감염의심자 조리배치 금지/사전확인
+- 매일 작업 전 조리원의 건강 상태 확인
+* 면담 또는 위생관리 점검표(개인위생관리) 점검결과 확인(문서확인)
+- 설사·발열·복통·구토 증상자의 조리작업 금지
+- 손에 상처있는 조리원은 바로 먹을 수 있는 식품의 취급 제한
+* 적절한 치료 후 작업에 참여하도록 하거나, 작업에서 배제시키는 등의 조치를 취함`,
+
+  14: `위생복장·장비(모, 마스크, 복, 장갑 등)
+[조리 중 점검]
+- 위생모, 마스크, 위생복, 위생화, 앞치마, 위생장갑(조리용 장갑) 모두 착용하고 조리하고 있는 경우
+- 조리원이 귀걸이, 반지, 팔찌, 목걸이, 시계, 매니큐어 등 액세서리를 착용하지 않은 경우
+
+[조리 외 점검]
+- 위생모, 마스크, 위생복, 위생화, 앞치마는 착용하고 위생장갑(조리용 장갑)을 보유하고 있는 경우
+* 조리실 외 공간에서 조리원 면담 시 보유 여부만 확인
+- 조리원이 귀걸이, 반지, 팔찌, 목걸이, 시계, 매니큐어 등 액세서리를 착용하지 않은 경우`,
+
+  15: `검수일지 기록·보관
+- 검수일지 모든 항목을 확인 및 기록하여 3개월간 보관하고 있는 경우
+- 식재료를 직접 구매하는 경우`,
+
+    16: `무허가(무신고) 원료·식품 사용 금지
+- 무허가(무신고) 원료 및 식품을 보관 또는 사용하지 않는 경우`,
+
+  17: `부패·변질 원료·식품 사용/보관 금지
+- 부패·변질된 원료 및 식품을 사용 또는 보관하지 않는 경우
+- 사용한 기름을 보관하고 있지 않은 경우
+- 사용한 기름을 폐기의 목적으로 보관하고 ‘폐기용’ 표시가 있는 경우`,
+
+  18: `무표시 원료·식품 사용 금지
+[표시대상 원료 및 식품]
+- 제품명, 소비기한(유통기한)과 같은 법적 표시사항을 확인 가능한 경우
+* 즉석판매제조·가공업자로부터 당일 제조·가공한 빵류·과자류 및 떡류를 구입하여 구입 당일 급식자에게 제공하는 경우,
+  이를 확인할 수 있는 증명서(제품명, 제조일자 및 판매량 등이 포함된 거래명세서나 영수증 등)를 6개월간 보관
+
+[표시가 없는 직접 제조 및 제과점 식품]
+- 소분된 식재료마다 제품명 및 소비기한(유통기한)을 확인 가능하고, 식품 표시사항이 보관되어 있는 경우
+* 식품 표시사항을 원본 또는 복사 및 사진 등으로 보관
+
+- 제품명, 제조일, 보관기간 등을 작성하여 부착한 경우
+* 제과점영업자로부터 당일 제조·가공한 빵류·과자류 및 떡류를 구입하여 구입 당일 급식자에게 제공하는 경우,
+  이를 확인할 수 있는 증명서(제품명, 제조일자 및 판매량 등이 포함된 거래명세서나 영수증 등)를 6개월간 보관`,
+
+  19: `검사 미실시 축산물 사용 금지
+- 원산지 등이 기재된 영수증이나 거래명세서 등을 매입일로부터 6개월간 비치·보관함`,
+
+  20: `소비기한 경과 원료·완제품 사용/보관 금지
+- 소비기한(유통기한)이 경과된 원료 또는 완제품을 보관 및 사용하고 있지 않는 경우`,
+
+21: `조리·세척에 먹는물 수질기준 적합수 사용
+[수돗물을 사용하는 경우]
+- 끓인 물 사용: 깨끗한 주전자에 매일 물을 끓여 제공하는 경우
+* 물 끓이는 주기를 면담을 통해 확인 및 주전자의 청결상태 확인 
+
+[지하수를 사용하는 경우]
+- 정수기 사용: 정기적으로 정수기의 필터를 교환하고 정수기를 청결하게 관리하는 경우
+* 필터 교환기록 문서의 시행일자, 정수기 꼭지 및 물 받침대의 청결상태 확인
+* 사용 정수기의 권장 필터 교체 주기에 따라 정기적으로 교체
+- 수질검사를 받고 적합 판정된 지하수를 사용하고 있는 경우
+* 1년마다 일부 항목 검사, 2년마다 모든 항목 검사 확인`,
+
+  22: `일시적 금지 식품 사용 금지
+- 위해평가가 완료된 식품을 사용하는 경우`,
+
+  23: `원료보관실·조리실 청결관리
+- 바닥: 음식물, 이물질 등이 떨어져 있지 않고 깨끗한 상태, 물기관리가 잘되어 있고 곰팡이가 없는 상태
+- 바닥에 배수구와 덮개가 설치되어 있는 경우 음식물, 이물질 등이 없는 상태
+- 벽, 천장: 곰팡이, 기름때, 음식물, 거미줄, 먼지 등이 없는 상태
+- 폐기물용기: 뚜껑이 있는 음식물 및 일반 쓰레기통으로 폐기물용기가 설치 및 구분되어 있고 용기의 용량이 넘치지 않거나, 비워져 있는 상태
+- 환기시설(후드, 환풍기, 창문), 방충시설: 기름때, 음식물, 먼지, 이물질, 죽은 벌레 등이 없는 상태
+- 조리시설: 싱크대, 조리대 등 음식물찌꺼기가 없고 세척과 소독이 잘 되어 있는 경우
+- 냉장고, 냉동고: 냉장·냉동고 안에 성에가 껴있지 않으며, 음식물이 묻어있지 않고 식재료가 정리되어 있는 상태
+* 외부포장 등의 오염 우려가 있는 것은 제거 또는 밀봉 후 보관
+* 달걀은 밀폐용기에 담아 보관함`,
+
+  24: `식기·도구 소독 후 사용
+[주방용구 모두 소독하여 사용 - 면담확인]
+- 컵, 숟가락, 젓가락
+- 식판, 찬기
+- 도마, 칼
+- 가위, 뒤집개 등의 조리도구
+- 물수건, 행주
+
+[주방용구의 살균·소독방법 - 면담 및 관찰확인]
+- 열탕소독 살균 실시 또는 시간 및 방법에 대해 알고 있는 경우
+- 자외선 소독 기계 작동 실시 또는 시간 및 식재료가 닿는 면에 자외선이 조사될 수 있도록 실시하는 경우
+- 건열살균 기계 작동 실시 또는 시간 및 방법에 대해 알고 있는 경우 
+- 화학소독 실시 또는 시간 및 방법에 대해 알고 있는 경우
+
+[살균·소독 후 보관방법 - 관찰확인]
+- 식기, 찬기, 조리도구를 살균·소독 후 소독고에 올바른 방법으로 보관하는 경우
+- 식기, 찬기, 조리도구를 살균·소독 후 찬장·서랍 및 밀폐용기에 올바른 방법으로 보관하는 경우
+* 살균·소독 후 찬장·서랍 및 밀폐용기 외 보관시 덮개로 덮어 보관함`,
+
+  25: `칼·도마 용도별 구분
+- 칼을 어류, 육류, 채소류로 각각 구분하여 갖추고 사용하는 경우 
+- 칼에 색, 표시 등으로 용도를 구분하는 기준을 명시하고 그 기준대로 작업하는 경우
+- 도마를 어류, 육류, 채소류로 각각 구분하여 갖추고 사용하는 경우 
+- 도마에 색, 표시 등으로 용도를 구분하는 기준을 명시하고 그 기준대로 작업하는 경우`,
+
+  26: `행주·장갑·앞치마 용도별 구분 사용
+- 행주(조리용, 배식용, 청소용), 사용장갑, 앞치마를 용도별(전처리용, 조리용, 청소용)로 구분하여 구비하고 사용하는 경우`,
+
+  27: `식품 취급·보관 위생 기준
+- 식품 취급 시 바닥으로부터 60cm 이상의 높이에서 작업하고, 식품을 벽과 바닥으로부터 15cm 이상의 높이에서 보관하는 경우
+- 전처리된 식재료를 뚜껑(덮개)이 있는 용기에 담아 위생적인 장소(작업대, 선반, 냉장고)에 보관하는 경우
+* 전처리된 식재료 중 온도관리를 요하는 것은 조리 시까지 냉장고에 보관
+* 세척한 과일·채소와 세척하지 않은 과일·채소가 섞이지 않도록 구분하여 보관함`,
+
+  28: `채소·과일 세척·소독 관리
+[제공하는 모든 채소·과일]
+- 흐르는 물에 3회 이상 헹굼 또는 「위생용품 관리법」에 따른 세척제로 세척 후 물로 3회 이상 충분히 헹구는 경우
+
+[가열하지 않고 생으로 제공하는 채소·과일]
+- 세척된 채소·과일을 식품첨가물로 허용된 살균제로 소독 후 물로 3회 이상 충분히 헹구는 경우
+* 소독제를 소독 기준에 맞게 사용함`,
+
+  29: `식재료 해동 위생관리
+- 식재료를 위생적인 방법으로 해동하고, 해동 후 즉시 사용하는 경우
+* 식재료의 위생적인 해동방법에 대해 알고 있음 (면담확인)
+- 해동 후 재냉동하지 않는 경우
+* 점검 시 냉동고에 재냉동한 흔적이 있는 식품이 보관되지 않음(관찰확인)`,
+
+  30: `육류·어패류 가열조리 시 중심온도 준수
+[온도 측정 또는 위생관리 점검표(또는 온도일지) 확인시]
+- 가열하여 제공하는 육류 및 어패류의 중심온도가 권장 수준인 경우
+* 가열하여 제공하는 육류의 중심온도가 75℃, 어패류의 중심온도가 85℃ 이상으로 측정 (관찰확인)
+* 위생관리 점검표(조리관리) 점검결과 확인(문서확인)
+* 온도일지를 기록하는 급식소의 경우, 일지 확인 결과 육류의 중심온도가 75℃, 어패류의 중심온도가 85℃ 이상으로 기록(문서확인)
+
+[온도 측정 및 위생관리 점검표(또는 온도일지) 확인이 불가능할 시]
+- 가열하여 제공하는 육류와 어패류의 중심온도를 알고 있는 경우(면담확인)
+* 육류의 중심온도가 75℃, 어패류의 중심온도가 85℃ 이상으로 대답`,
+
+  31: `조리식품 위생적 보관
+- 조리한 식품은 위생적인 용기에 덮개를 사용하여 보관하는 경우 
+* 용기가 청결함`,
+
+  32: `조리 후 배식 전 보온·보냉·시간관리
+- 조리 완료 후 배식 직전까지 보온·보냉하는 경우(보온·보냉배식)
+* 냉장식품을 0-5℃ 냉장고에 보관하고 온장식품을 60℃ 이상에서 보관
+- 조리 완료 후 2시간 이내에 배식 완료하는 경우(실온배식)
+* 가열조리 완료 시점에서 배식 완료까지의 소요시간을 2시간 이내로 관리 
+* 2시간 이내 배식이 불가능한 경우 냉장식품은 냉장고에 보관, 조리식품은 최대한 신속하게 냉각하여 냉장고에 보관하였다가 배식 직전에 75℃ 이상으로 재가열하여 제공(당일 급식에 한함)`,
+
+  33: `배식자 위생복장·도구
+- 위생앞치마 
+* 조리사가 배식할 경우 배식용 앞치마를 구비하고 사용
+- 위생마스크
+- 위생모 
+* 비조리사가 배식할 경우 위생모는 착용하고 있지 않았으나 머리가 단정하게 흘러내지 않게 묶고 있음
+* 「학교급식법」이 적용되는 유치원의 경우 모든 배식자가 위생모 착용
+- 위생장갑 또는 배식 전 손 씻고 배식도구 사용`,
+
+  34: `배식 시 위생관리
+- 음식을 배식용 보관용기에 뚜껑을 덮어 이동 및 보관하고 배식 할 음식을 바닥에 방치하지 않는 경우
+- 급·간식 전후로 청결한 행주를 사용하여 식탁(책상)을 닦는 경우
+- 음식별 배식 도구(집게, 국자 등)로 배식하는 경우`,
+
+  35: `식재료 보관방법 준수
+[식품 표시사항이 없는 경우] 
+- 곡류 
+* 건조하고 서늘한 곳에 위생적으로(밀봉 등) 보관함
+- 축·수산물 
+* 각각 위생적으로 포장하여 다른 식품과 용기, 포장 등으로 구분하여 냉장 또는 냉동 보관함
+- 과일 및 채소류
+* 상온에서 7일 이상 보존성이 없는 식품은 가능한 냉장 보관함
+
+[식품 표시사항이 있는 경우]
+- 식품 표시사항의 보관방법에 따라 보관하는 경우
+* 조미식품은 마개나 덮개를 닫아 보관함`,
+
+  36: `냉장·냉동고 온도관리
+- 냉장고의 온도가 0-5℃(냉해 피해가 우려되는 야채는 10℃ 이하), 냉동고 온도가 -18℃ 이하로 적절하게 관리되고 있는 경우`,
+
+  37: `식품·비식품 구분 보관
+- 식품과 비식품을 구분하여 보관하는 경우 
+* 칸막이, 구분된 선반, 다른 공간에 보관함`,
+
+  38: `급식 조리·제공 형태
+- 어린이집에서 조리실을 갖추고 직접 조리하여 급식을 제공하는 경우
+* 어린이집에서 직접 제공하기 어려운 경우 학부모에게 급식(외부 음식) 제공에 대해 미리 고지·안내하여 학부모 동의를 거침
+- 어린이집에서 조리하지는 않지만 같은 건물 내의 조리실에서 조리하여 급식을 제공하는 경우
+* 공공기관이나 사회복지관 안에 설치된 어린이집의 경우에만 해당
+- 어린이집을 제외한 어린이 급식소에서 급식을 제공하는 경우`,
+
+  39: `급식 잔반 처리
+- 급식에 제공된 음식물이 보관되어 있지 않고 전량 폐기한 경우
+* 당일 급식으로 배식대에 제공된 음식을 남겨 두는 경우, 보관 시 폐기용임을 명시하고, 제조일을 급식이 제공된 날로 하여 관리함`,
+
+  40: `보존식 관리
+- 급식으로 제공한 모든 음식을 개별 보관 
+- 1인분 분량(150g 이상 채취 권장) 보관(또는 기존 사용하는 보존식 용기에 가득 채워서 보관) 
+- -18℃에서 보관 
+- 144시간 이상 보관 
+- 보존식 기록표(보존식 채취 및 폐기 일시, 메뉴, 채취자 성명)를 작성하여 보존식 용기와 보관 
+- 식단 또는 급식운영일지와 동일한 메뉴를 보존식으로 보관 
+- 뚜껑이 있는 스테인리스 재질 전용 용기 또는 1회용 멸균팩(위생팩)에 보관`,
+
+  41: `식품위생교육 이수·증빙
+- 집단급식소의 설치·운영자와 조리사 모두 식품위생교육을 받은 경우
+* 집단급식소의 설치·운영자와 조리사 모두 식품위생교육 이수증을 사무실 내 보관하고 있음
+- 전년도 식품위생교육을 이수하고 당해연도 이수 예정인 경우`,
+
+  42: `소독 실시·증빙 관리
+- 소독 전문업체를 통해 정기적으로 소독을 실시하고 관련 증빙 서류를 보관하고 있는 경우
+* 소독 실시에 대한 소독필증을 보관하고 있음`,
+
+  43: `위생관리 점검·기록 보관
+- 위생관리 사항 점검을 실시하고 위생관리 점검표를 기록하여 보관하는 경우
+* 위생관리 점검표를 수기 또는 전산입력 기록하고 3개월간 보관하는 경우
+* 위생관리 점검표의 점검 사항을 포함하여 자체적으로 기록하고 3개월간 보관하는 경우`
+};
+
+      // ===== 유틸: 디바운스 & 미리보기 자동 갱신 트리거 =====
+      function debounce(fn, delay = 150) {
+        let t;
+        return (...args) => {
+          clearTimeout(t);
+          t = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      const triggerPreview = debounce(() => {
+        // 미리보기가 만들어진 뒤(플레이스홀더가 없을 때)만 갱신
+        if (!document.getElementById("reportPlaceholder")) {
+          buildReport();
+        }
+      }, 150);
+
+      // ===== 1) 데이터 정의 =====
+      const SECTIONS = [
+        { key: "fac", name: "시설·환경(11문항/22점)", max: 22 },
+        { key: "per", name: "개인위생(3문항/8점)", max: 8 },
+        { key: "raw", name: "원료사용(9문항/23점)", max: 23 },
+        { key: "proc", name: "공정관리(12문항/19점)", max: 19 },
+        { key: "keep", name: "보관관리(3문항/8점)", max: 8 },
+        { key: "etc", name: "기타사항(6문항/13점)", max: 13 }
+      ];
+
+      const ITEMS = [
+        // 시설·환경 (1~11)
+        { id: 1, sec: "fac", label: "전처리·조리구역 분리/교차오염 방지", weightNote: "권고" },
+        { id: 2, sec: "fac", label: "조리장 바닥 배수구 덮개" },
+        { id: 3, sec: "fac", label: "조리·세척·손씻기 시설/용품 구비·작동" },
+        { id: 4, sec: "fac", label: "뚜껑있는 내수성 폐기물용기(음식물·일반)" },
+        { id: 5, sec: "fac", label: "자외선/전기살균소독기 또는 열탕소독시설" },
+        { id: 6, sec: "fac", label: "채광 양호 & 기계 환기시설 정상작동" },
+        { id: 7, sec: "fac", label: "냉장·냉동시설 구비(기능 정상)" },
+        { id: 8, sec: "fac", label: "냉장·냉동·가열처리시설 온도계/계기" },
+        { id: 9, sec: "fac", label: "식품 접촉부 내수성/소독가능 재질" },
+        { id: 10, sec: "fac", label: "외부 직통 문·창 방충망" },
+        { id: 11, sec: "fac", label: "수질기준 적합 급수시설" },
+
+        // 개인위생 (12~14)
+        { id: 12, sec: "per", label: "종사자 건강진단 실시·보관" },
+        { id: 13, sec: "per", label: "감염의심자 조리배치 금지/사전확인" },
+        { id: 14, sec: "per", label: "위생복장·장비(모,마스크,복,장갑 등)" },
+
+        // 원료사용 (15~22)
+        { id: 15, sec: "raw", label: "검수일지 기록·보관" },
+        { id: 16, sec: "raw", label: "무허가(무신고) 원료·식품 사용 금지" },
+        { id: 17, sec: "raw", label: "부패·변질 원료·식품 사용/보관 금지" },
+        { id: 18, sec: "raw", label: "무표시 원료·식품 사용 금지" },
+        { id: 19, sec: "raw", label: "검사 미실시 축산물 사용 금지" },
+        { id: 20, sec: "raw", label: "소비기한 경과 원료·완제품 사용/보관 금지" },
+        { id: 21, sec: "raw", label: "조리·세척에 먹는물 수질기준 적합수 사용" },
+        { id: 22, sec: "raw", label: "일시적 금지 식품 사용 금지" },
+
+        // 공정관리 (23~34)
+        { id: 23, sec: "proc", label: "원료보관실·조리실 청결관리" },
+        { id: 24, sec: "proc", label: "식기·도구 소독 후 사용" },
+        { id: 25, sec: "proc", label: "칼·도마 용도별 구분" },
+        { id: 26, sec: "proc", label: "행주·장갑·앞치마 용도별 구분(권고)" },
+        { id: 27, sec: "proc", label: "전처리 식품은 용기 담아 위생 보관" },
+        { id: 28, sec: "proc", label: "세척제/살균제 적정 사용" },
+        { id: 29, sec: "proc", label: "해동은 위생적 방법·즉시 사용" },
+        { id: 30, sec: "proc", label: "동물성원료 중심부까지 충분히 가열" },
+        { id: 31, sec: "proc", label: "조리·비조리 식품 교차오염 방지" },
+        { id: 32, sec: "proc", label: "조리 후 2시간 내 배식(권고)" },
+        { id: 33, sec: "proc", label: "배식 시 위생복장 착용(권고)" },
+        { id: 34, sec: "proc", label: "배식 과정 위생·안전 관리" },
+
+        // 보관관리 (35~37)
+        { id: 35, sec: "keep", label: "부패우려 식품 냉장·냉동 보관" },
+        { id: 36, sec: "keep", label: "냉장 0~5℃(채소≤10℃), 냉동 -18℃ 이하" },
+        { id: 37, sec: "keep", label: "식품/비식품 구분 보관" },
+
+        // 기타사항 (38~43)
+        { id: 38, sec: "etc", label: "직접 조리하여 제공" },
+        { id: 39, sec: "etc", label: "제공음식 재사용 금지" },
+        { id: 40, sec: "etc", label: "보존식 -18℃ 이하 144시간 이상 보관" },
+        { id: 41, sec: "etc", label: "식품위생교육 이수·증빙 보관" },
+        { id: 42, sec: "etc", label: "정기 소독·소독필증 보관" },
+        { id: 43, sec: "etc", label: "위생관리 매일 점검·기록·보관" }
+      ];
+
+      // ===== 2) UI 생성 =====
+      const checklistEl = document.getElementById("checklist");
+      const improveListEl = document.getElementById("improveList");
+
+      function buildUI() {
+        const bySec = ITEMS.reduce((acc, it) => {
+          (acc[it.sec] ??= []).push(it);
+          return acc;
+        }, {});
+        checklistEl.innerHTML = "";
+        improveListEl.innerHTML = "";
+
+        for (const sec of SECTIONS) {
+          const secItems = bySec[sec.key] || [];
+
+          const det = document.createElement("details");
+          det.className = "section";
+          det.open = true;
+
+          const sum = document.createElement("summary");
+          sum.textContent = sec.name;
+          det.appendChild(sum);
+
+          const box = document.createElement("div");
+          box.className = "items";
+
+          secItems.forEach((it) => {
+            const row = document.createElement("div");
+            row.className = "item";
+            row.dataset.id = it.id;
+
+            const left = document.createElement("div");
+            left.innerHTML = `<div class="title">${it.id}. ${it.label} ${
+              it.weightNote ? `<span class="kicker">(${it.weightNote})</span>` : ""
+            }</div>`;
+
+            const right = document.createElement("div");
+right.className = "radio";
+
+const ok = document.createElement("label");
+ok.innerHTML = `<input type="radio" name="q_${it.id}" value="ok"> 적합`;
+
+const no = document.createElement("label");
+no.innerHTML = `<input type="radio" name="q_${it.id}" value="no"> 미준수`;
+
+right.appendChild(ok);
+right.appendChild(no);
+
+const quick = document.createElement("button");
+// 식별용 클래스 추가: btn-quick
+quick.className = "btn weak btn-quick";
+quick.textContent = "미흡 메모";
+quick.title = "해당 항목을 개선 메모에 추가";
+
+/* ✅ 새로 추가: 기본은 비활성화 */
+quick.disabled = true;
+
+/* ✅ 새로 추가: 라디오 상태에 따라 버튼 on/off */
+/* ✅ 교체: 라디오 변경 시 '적합'이면 관련 메모(요약/세부) 자동 삭제 */
+const okInput = ok.querySelector('input');
+const noInput = no.querySelector('input');
+
+function onOkChange(){
+  // 버튼 상태 동기화
+  quick.disabled = true;
+
+  if (!okInput.checked) return;
+
+  // 해당 항목의 요약/세부를 모두 제거
+  removeSummaryById(sec.key, it.id);  // 영역별 점검결과 요약(요약 textarea)에서 제거
+  removeDetailById(sec.key, it.id);   // 개선 필요사항(세부 textarea)에서 제거
+
+  // 카운트/미리보기 갱신
+  updateImproveCount(sec.key);
+  triggerPreview();
+}
+
+function onNoChange(){
+  // '미준수'일 때만 미흡 메모 버튼 활성화
+  quick.disabled = !noInput.checked;
+}
+
+okInput.addEventListener('change', onOkChange);
+noInput.addEventListener('change', onNoChange);
+
+// 초기 상태 동기화
+quick.disabled = !noInput.checked;
+
+/* ✅ “추가만” 동작하는 클릭 핸들러(토글 취소 없음) */
+quick.onclick = () => {
+  // 1) 요약 추가(중복 방지)
+  const sumTa = document.getElementById(`im_${sec.key}`);
+  const summaryText = `${it.id}. ${it.label} : 개선 필요`;
+  if (sumTa) {
+    const lines = (sumTa.value || "")
+      .replace(/\r\n?/g, "\n")
+      .split("\n")
+      .map(s => s.trim())
+      .filter(Boolean);
+    if (!lines.includes(summaryText)) {
+      lines.push(summaryText);
+      sumTa.value = lines.join("\n");
+    }
+  }
+
+  // 2) 세부(자동블록) 추가(마커로 중복 방지)
+  const detTa = document.getElementById(`det_${sec.key}`);
+  if (detTa) {
+    const blocks = smartParseDetail(detTa.value);
+    const marker = makeDetailMarker(it.id);
+    const exists = blocks.some(b => normalizeBlock(b).startsWith(marker));
+    if (!exists) {
+      const detailText = ITEM_DETAIL_TEXT[it.id] || `${it.id}. ${it.label} : 세부 개선 필요`;
+      const autoBlock = makeDetailBlock(it.id, detailText);
+      blocks.push(autoBlock);
+      detTa.value = joinBlocks(blocks);
+    }
+  }
+
+  updateImproveCount(sec.key);
+  triggerPreview();
+};
+
+right.appendChild(quick);
+
+            row.appendChild(left);
+            row.appendChild(right);
+            box.appendChild(row);
+          });
+
+          det.appendChild(box);
+          checklistEl.appendChild(det);
+
+          // 개선 메모 박스 (요약/세부 분리)
+const imp = document.createElement('div');
+imp.className = 'improve-item';
+imp.innerHTML = `
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+    <strong>${sec.name.replace(/\(.+\)/,'')}</strong>
+    <span class="kicker">
+      요약 <span id="ic_${sec.key}">–</span> · 세부 <span id="dc_${sec.key}">–</span>
+    </span>
+  </div>
+  <label class="small">주요 개선사항(요약) — 표에 1~2줄 반영</label>
+  <textarea id="im_${sec.key}" placeholder="예) 1. 전처리·조리구역 분리/교차오염 방지 : 개선 필요"></textarea>
+  <label class="small" style="margin-top:8px;">개선 필요사항(세부) — 현장 조치 지시/방법 등</label>
+  <textarea id="det_${sec.key}" placeholder="세부 조치 내용을 입력하세요. '미흡 메모' 버튼을 누르면 항목별 템플릿이 자동 추가됩니다."></textarea>
+`;
+improveListEl.appendChild(imp);
+        }
+
+        // 라디오 변경 시 자동 미리보기
+        checklistEl.addEventListener("change", triggerPreview);
+
+        // 메모 입력 시 카운트 & 미리보기 (요약 + 세부 모두)
+SECTIONS.forEach(s=>{
+  const sumTa = document.getElementById(`im_${s.key}`);   // 요약 textarea
+  const detTa = document.getElementById(`det_${s.key}`);  // 세부 textarea (새로 추가됨)
+
+  if (sumTa) sumTa.addEventListener('input', ()=>{
+    updateImproveCount(s.key);
+    triggerPreview();
+  });
+
+  if (detTa) detTa.addEventListener('input', ()=>{
+    updateImproveCount(s.key);
+    triggerPreview();
+  });
+});
+
+// 기본정보 변경 시 자동 미리보기
+[
+  "orgName","visitor","visitDate",
+  "visitStart","visitEnd","visitRound",
+  "dirName","dirHealthDate","dirEduDate",
+  "prevNotes",
+  "eduSupport","itemSupport"   // ⬅️ 이 두 줄 추가
+].forEach((id)=>{
+  const el = document.getElementById(id);
+  if(!el) return;
+  const evt = (el.tagName === "SELECT") ? "change" : "input";
+  el.addEventListener(evt, triggerPreview);
+});
+
+// 조리원 동적 필드(현재 존재하는 모든 그룹에 리스너 연결)
+function attachCookListeners(scope=document){
+  scope.querySelectorAll('#cookGroupWrap .cook-group input').forEach(inp=>{
+    const evt = (inp.tagName === "SELECT") ? "change" : "input";
+    inp.addEventListener(evt, triggerPreview);
+  });
+
+  // ⬇⬇ 여기부터 추가
+  scope.querySelectorAll('#cookGroupWrap .cook-remove').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const g = btn.closest('.cook-group');
+      if (g) g.remove();
+      triggerPreview();
+    });
+  });
+}
+attachCookListeners();
+
+function addCookGroup(){
+  const wrap = document.getElementById('cookGroupWrap');
+  if(!wrap) return;
+
+  const div = document.createElement('div');
+  div.className = 'cook-group';
+  div.innerHTML = `
+  <div class="inline-field" style="grid-column:1 / -1;">
+    <label class="small">조리원 성함</label>
+    <input type="text" placeholder="성함 입력" class="name-compact cook-name"/>
+    <button type="button" class="btn sm danger cook-remove" title="이 조리원 삭제">×</button>
+  </div>
+  <div class="row" style="grid-column:1 / -1; margin-top:8px;">
+    <div>
+      <label class="small">건강진단 실시일</label>
+      <input type="date" class="cook-health"/>
+    </div>
+    <div>
+      <label class="small">위생교육 실시일</label>
+      <input type="date" class="cook-edu"/>
+    </div>
+  </div>
+`;
+  wrap.appendChild(div);
+attachCookListeners(div); // 입력 리스너
+// 삭제 버튼 리스너
+const removeBtn = div.querySelector('.cook-remove');
+if (removeBtn){
+  removeBtn.addEventListener('click', ()=>{
+    div.remove();
+    triggerPreview();
+  });
+}
+}
+
+// 조리원 추가 버튼
+const btnAddCook = document.getElementById('btnAddCook');
+if(btnAddCook){
+  btnAddCook.addEventListener('click', ()=>{
+    addCookGroup();
+    triggerPreview();
+  });
+}
+
+// 09:00 ~ 18:00, 30분 간격으로 시간 옵션 채우기
+buildTimeOptions(document.getElementById("visitStart"), "09:00", "18:00", 30);
+buildTimeOptions(document.getElementById("visitEnd"),   "09:00", "18:00", 30);
+
+// 미리보기 즉시 반영
+triggerPreview();
+}
+
+      // 전체 항목을 ‘적합’으로 체크
+      function markAllOk() {
+        const oks = document.querySelectorAll('input[type="radio"][value="ok"]');
+        oks.forEach((inp) => {
+          inp.checked = true;
+          inp.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+        triggerPreview();
+      }
+
+      // (A) 기존 호환용 - 요약만 추가할 때 사용 가능
+function addImproveMemo(secKey, text){
+  addBothMemos(secKey, text, null);
+}
+
+// (B) 요약 + 세부를 각각 추가
+function addBothMemos(secKey, summaryText, detailText){
+  const sumTa = document.getElementById(`im_${secKey}`);
+  const detTa = document.getElementById(`det_${secKey}`);
+
+  // 요약: 줄 단위
+  if (summaryText) {
+    const lines = (sumTa.value || "").split(/\n/).map(s=>s.trim()).filter(Boolean);
+    if (!lines.includes(summaryText.trim())) {
+      sumTa.value = lines.length ? [...lines, summaryText.trim()].join("\n") : summaryText.trim();
+    }
+  }
+
+  // 세부: 문단(빈 줄) 단위
+  if (detailText !== null && detailText !== undefined) {
+    const block = String(detailText).trim();
+    const blocks = (detTa.value || "").split(/\n{2,}/).map(s=>s.trim()).filter(Boolean);
+    if (!blocks.includes(block)) {
+      detTa.value = blocks.length ? [...blocks, block].join("\n\n") : block;
+    }
+  }
+
+  updateImproveCount(secKey);
+}
+
+      function updateImproveCount(secKey){
+  const sumTa = document.getElementById(`im_${secKey}`);
+  const detTa = document.getElementById(`det_${secKey}`);
+
+  const sumLines = (sumTa.value||'').split(/\n/).map(s=>s.trim()).filter(Boolean);
+  const detBlocks = smartParseDetail(detTa.value || '');
+
+  document.getElementById(`ic_${secKey}`).textContent = sumLines.length ? `${sumLines.length}건` : '–';
+  document.getElementById(`dc_${secKey}`).textContent = detBlocks.length ? `${detBlocks.length}건` : '–';
+}
+
+      // ===== 3) 보고서 생성 =====
+      function buildReport() {
+const info = {
+  orgName: (document.getElementById("orgName").value || "").trim(),
+  visitor: (document.getElementById("visitor").value || "").trim(),
+  visitDate: document.getElementById("visitDate").value || "",
+  visitStart: document.getElementById("visitStart").value || "",
+  visitEnd: document.getElementById("visitEnd").value || "",
+  visitRound: document.getElementById("visitRound").value || "",
+  dirName: (document.getElementById("dirName").value || "").trim(),
+  dirHealthDate: document.getElementById("dirHealthDate").value || "",
+  dirEduDate: document.getElementById("dirEduDate").value || "",
+  prevNotes: (document.getElementById("prevNotes").value || "").trim()
+};
+
+// ✅ info 선언 후에 cooks 선언
+const cooks = Array.from(document.querySelectorAll('#cookGroupWrap .cook-group')).map(g=>({
+  name:  (g.querySelector('.cook-name')?.value || '').trim(),
+  health:(g.querySelector('.cook-health')?.value || ''),
+  edu:   (g.querySelector('.cook-edu')?.value || '')
+}));
+
+ // 간단 검증: 종료시간이 시작시간보다 빠르면 경고
+  if (info.visitStart && info.visitEnd) {
+    const toMin = (t) => {
+      const [h, m] = String(t).split(':').map(Number);
+      return (isNaN(h) || isNaN(m)) ? NaN : h * 60 + m;
+    };
+    const stMin = toMin(info.visitStart);
+    const enMin = toMin(info.visitEnd);
+    if (!isNaN(stMin) && !isNaN(enMin) && enMin < stMin) {
+      alert("방문 종료시간이 시작시간보다 빠릅니다. 시간을 확인해주세요.");
+      // 참고: 경고만 띄우고 보고서는 계속 생성합니다.
+    }
+  }
+
+        // 각 섹션별 ‘적합/미준수’ 집계
+        const rows = SECTIONS.map((s) => {
+  const items = ITEMS.filter((x) => x.sec === s.key);
+  const count = items.length;
+  let comply = 0;
+  let not = 0;
+
+  for (const it of items) {
+    const sel = document.querySelector(`input[name="q_${it.id}"]:checked`);
+    if (!sel) { not++; continue; }
+    sel.value === "ok" ? comply++ : not++;
+  }
+
+  // 요약 라인 가공: 라인별로 작은 x 버튼/데이터 속성 부여
+  const rawSummary = (document.getElementById(`im_${s.key}`).value || "");
+  const sumLines = rawSummary
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map(v=>v.trim())
+    .filter(Boolean);
+
+  const sumHtml = sumLines.length ? sumLines.map(line=>{
+    // 줄에서 id 추출 가능하면 data-id로 보관
+    let id = null;
+    const m = line.match(/^(\d+)[\.\)]\s/);
+    if(m){ id = parseInt(m[1],10); }
+
+    // x 버튼 포함한 한 줄
+    return `<span class="memo-line" data-sec="${s.key}" ${id?`data-id="${id}"`:""} data-text="${escapeHtml(line)}">
+              ${escapeHtml(line)}
+              <button type="button" class="sum-del" title="이 항목 삭제" aria-label="이 항목 삭제">×</button>
+            </span>`;
+  }).join('<br>') : "-";
+
+  return `<tr>
+    <td>${s.name.replace(/\(.+\)/, "")}</td>
+    <td>${count}</td>
+    <td>${comply}</td>
+    <td>${not}</td>
+    <td>${sumHtml}</td>
+  </tr>`;
+}).join("");
+
+       const dateK = formatKDate(info.visitDate);
+const visitDateTimeHtml =
+  (dateK || (info.visitStart || info.visitEnd))
+    ? `${escapeHtml(dateK) || "-"}${(info.visitStart || info.visitEnd) ? `<br>${(info.visitStart || "—")}~${(info.visitEnd || "—")}` : ""}`
+    : "-";
+
+const dirNameK   = escapeHtml(info.dirName) || "-";
+const dirHealthK = formatKDate(info.dirHealthDate) || "-";
+const dirEduK    = formatKDate(info.dirEduDate) || "-";
+
+// 지원내용 텍스트(문자열) 먼저 준비
+const eduSupport = (document.getElementById("eduSupport")?.value || "").trim();
+const itemSupport = (document.getElementById("itemSupport")?.value || "").trim();
+
+// ✅ 세부 내용 유무 판단 (자동 마커 제거 후 공백만 남으면 '없음'으로 간주)
+const hasAnyDetail = SECTIONS.some(s => {
+  const raw = (document.getElementById(`det_${s.key}`)?.value || "").trim();
+  const cleaned = raw
+    .replace(/\r\n?/g, "\n")
+    .replace(/\[\[AUTO_\d+\]\]\s*\n?/g, "") // [[AUTO_x]] 마커 제거
+    .replace(/[ \t\u00A0\u3000]+/g, " ")     // 공백 정규화
+    .trim();
+  return cleaned.length > 0;
+});
+
+const reportHTML = `
+  <h1 id="reportTitle">위생·안전 순회방문 결과보고서</h1>
+
+  <!-- [표1] 기관/방문 정보 -->
+<div style="margin-top:10px;border:1px solid var(--line);overflow:hidden">
+  <table class="summary-table centered-table table-visit" style="width:100%">
+    <colgroup>
+      <col class="col-head-5">     <!-- 기관명 헤더 -->
+      <col class="col-value-lg">  <!-- 기관명 값 -->
+      <col class="col-head-5">     <!-- 방문자 헤더 -->
+      <col class="col-value-sm">  <!-- 방문자 값 -->
+    </colgroup>
+    <tr>
+      <th>기관명</th>
+      <td>${escapeHtml(info.orgName) || "-"}</td>
+      <th>방문자</th>
+      <td>${escapeHtml(info.visitor) || "-"}</td>
+    </tr>
+    <tr>
+      <th>방문일자</th>
+      <td>${visitDateTimeHtml}</td>
+      <th>방문회차</th>
+      <td>${escapeHtml(info.visitRound) || "-"}</td>
+    </tr>
+  </table>
+</div>
+
+  <!-- [표2] 인력 정보 (원장 + 조리원 N행) -->
+  <div style="margin-top:10px;border:1px solid var(--line);overflow:hidden">
+    <table class="summary-table centered-table" style="width:100%">
+      <tr>
+        <th style="width:18%">원장<br>${dirNameK}</th>
+        <td>건강진단 실시일<br>${dirHealthK}</td>
+        <td>위생교육 실시일<br>${dirEduK}</td>
+      </tr>
+      ${cooks.map(c => `
+        <tr>
+          <th>조리원<br>${escapeHtml(c.name) || '-'}</th>
+          <td>건강진단 실시일<br>${formatKDate(c.health) || '-'}</td>
+          <td>위생교육 실시일<br>${formatKDate(c.edu) || '-'}</td>
+        </tr>
+      `).join('')}
+    </table>
+  </div>
+
+  <!-- [표3] 지원내용 (교육/물품) -->
+  <div style="margin-top:10px;border:1px solid var(--line);overflow:hidden">
+    <table class="summary-table centered-table" style="width:100%">
+      <tr>
+        <th style="width:6ch;"></th>
+        <th style="background:#f9fafb">지원내용</th>
+      </tr>
+      <tr>
+        <th>교육</th>
+        <td><div class="support-cell">${escapeHtml(eduSupport) || "-"}</div></td>
+      </tr>
+      <tr>
+        <th>물품</th>
+        <td><div class="support-cell">${escapeHtml(itemSupport) || "-"}</div></td>
+      </tr>
+    </table>
+  </div>
+
+  <h3 style="margin-top:14px">영역별 점검결과 요약</h3>
+  <table class="summary-table centered-table" style="width:100%">
+    <colgroup>
+      <col class="summary-col-name">  <!-- 구분 -->
+      <col class="summary-col-small"> <!-- 항목수 -->
+      <col class="summary-col-small"> <!-- 준수 -->
+      <col class="summary-col-small"> <!-- 미흡 -->
+      <col>                            <!-- 주요 개선사항(남는 폭) -->
+    </colgroup>
+    <thead>
+      <tr>
+        <th>구분</th>
+        <th>항목수</th>
+        <th>준수</th>
+        <th>미흡</th>
+        <th>주요 개선사항(요약)</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+
+${info.prevNotes
+  ? `<div style="margin-top:10px">
+       <table class="summary-table centered-table" style="width:100%">
+         <tr>
+           <th style="width:25%">이전 방문 지적사항 개선여부</th>
+           <td style="text-align:left;white-space:pre-wrap;padding-left:8px">
+             ${
+               escapeHtml(info.prevNotes)
+                 .split('\n')
+                 .map(line => line.trimStart())
+                 .join('\n')
+             }
+           </td>
+         </tr>
+       </table>
+     </div>`
+  : ""}
+
+${hasAnyDetail ? `
+<div class="pagebreak"></div>
+<h3 style="margin-top:14px">개선 필요사항(세부)</h3>
+${
+  SECTIONS.map(s=>{
+    const text = (document.getElementById("det_" + s.key).value || '').trim();
+    const cleanText = text.replace(/\[\[AUTO_\d+\]\]\n?/g, "");
+    const normalizedText = cleanText
+      .replace(/\r\n?/g, "\n")
+      .split("\n")
+      .map(line => line.replace(/^[\u00A0\u3000\t ]+/, ""))
+      .join("\n");
+
+    return `
+      <div style="margin-top:16px">
+        <table class="summary-table detail-compact" style="width:100%">
+          <tr>
+            <th>${s.name.replace(/\(.+\)/,'')}</th>
+            <td class="improve-cell">
+              <div class="improve-editor" contenteditable="true" data-key="${s.key}"></div>
+            </td>
+          </tr>
+        </table>
+      </div>`;
+  }).join('')
+}
+` : '' }
+
+          <div style="margin-top:16px;font-size:12px;color:var(--muted)">
+            ※ 본 점검은 식품의약품안전처·식생활안전관리원 ‘어린이 급식소(집단·소규모) 위생·안전·영양관리 체크리스트 해설서(2025)’를 준거로 실시했습니다.
+          </div>
+        `;
+
+        const area = document.getElementById("reportArea");
+        area.innerHTML = reportHTML;
+if (hasAnyDetail) {
+  hydrateImproveEditors();
+}
+
+        const ph = document.getElementById("reportPlaceholder");
+        if (ph) ph.remove();
+
+wireSummaryDeleteButtons();
+      }
+
+// ✅ 체크리스트 라디오를 '적합'으로 강제 설정 + 체인지 이벤트 발생
+function setChecklistOk(id){
+  const ok = document.querySelector(`input[name="q_${id}"][value="ok"]`);
+  if (ok) {
+    ok.checked = true;
+    ok.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+}
+
+function hydrateImproveEditors(){
+  // 각 섹션의 세부 textarea 내용을 블록 단위 UI로 렌더하고 동기화
+  document.querySelectorAll('#reportArea .improve-editor').forEach(container=>{
+    const key = container.dataset.key;          // fac / per / raw / proc / keep / etc
+    const ta  = document.getElementById(`det_${key}`);
+
+    // 초기화
+    container.innerHTML = "";
+    container.classList.add('improve-editor');
+    container.contentEditable = false;          // 컨테이너 자체는 편집 금지
+
+    // 원본 textarea에서 블록 파싱 (마커 유지)
+    const raw = ta?.value || "";
+const blocks = smartParseDetail(raw);
+
+    if(!blocks.length){
+      // 빈 경우 플레이스홀더
+      const ph = document.createElement('div');
+      ph.textContent = '-';
+      container.appendChild(ph);
+      return;
+    }
+
+    // 블록 → 개별 편집행 + x 버튼
+    blocks.forEach(block=>{
+      const { marker, text } = extractMarker(block);
+      if(!text) return;
+
+      const row = document.createElement('div');
+      row.className = 'improve-block';
+      row.dataset.marker = marker;               // 삭제/재구성 시 마커 유지
+
+      const del = document.createElement('button');
+      del.className = 'improve-del';
+      del.type = 'button';
+      del.title = '이 문단 삭제';
+      del.setAttribute('aria-label','이 문단 삭제');
+      del.textContent = '×';
+      del.addEventListener('click', ()=>{
+  // 요약에서 연결된 줄도 같이 제거 시도
+  const secKey = container.dataset.key;
+  tryRemoveSummaryLinked(secKey, row);
+
+  // 세부 DOM 삭제 → textarea 동기화
+  row.remove();
+  if(!container.querySelector('.improve-block')){
+    container.innerHTML = '';
+    const ph = document.createElement('div');
+    ph.textContent = '-';
+    container.appendChild(ph);
+  }
+  rebuildDetailFromDOM(container);
+  triggerPreview();
+});
+
+      const edit = document.createElement('div');
+      edit.className = 'improve-edit';
+      edit.contentEditable = 'true';
+      edit.textContent = stripMarkerForDisplay(block);
+
+      // 편집 시 textarea로 역동기화(디바운스)
+      edit.addEventListener('input', debounce(()=>{
+        rebuildDetailFromDOM(container);
+      }, 200));
+
+      row.appendChild(del);
+      row.appendChild(edit);
+      container.appendChild(row);
+    });
+  });
+}
+
+      function escapeHtml(s) {
+        return (s || "").replace(/[&<>\"']/g, (m) => {
+          return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+          }[m];
+        });
+      }
+
+function formatKDate(yyyy_mm_dd){
+  // "2025-09-16" → "2025. 9. 16."
+  if (!yyyy_mm_dd) return "";
+  const [y,m,d] = yyyy_mm_dd.split("-").map(v=>parseInt(v,10));
+  if (!y || !m || !d) return "";
+  return `${y}. ${m}. ${d}.`;
+}
+
+// 09:00 ~ 18:00, 30분 간격 옵션 생성
+function buildTimeOptions(selectEl, start="09:00", end="18:00", stepMin=30){
+  if (!selectEl) return;
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  const startMin = sh*60 + sm;
+  const endMin = eh*60 + em;
+
+  const frag = document.createDocumentFragment();
+  const optEmpty = document.createElement("option");
+  optEmpty.value = "";
+  optEmpty.textContent = "— 선택 —";
+  frag.appendChild(optEmpty);
+
+  for(let m = startMin; m <= endMin; m += stepMin){
+    const h = String(Math.floor(m/60)).padStart(2,"0");
+    const mm = String(m%60).padStart(2,"0");
+    const opt = document.createElement("option");
+    opt.value = `${h}:${mm}`;
+    opt.textContent = `${h}:${mm}`;
+    frag.appendChild(opt);
+  }
+  selectEl.innerHTML = "";
+  selectEl.appendChild(frag);
+}
+
+      function normalizeBlock(s){
+        return String(s || "")
+          .replace(/\r\n?/g, "\n")     // CRLF → LF
+          .split("\n").map(v => v.trimEnd()).join("\n") // 줄끝 공백 제거
+          .trim();
+      }
+      function parseBlocks(text){
+        const t = (text || "").replace(/\r\n?/g, "\n");
+        return t.split(/\n{2,}/).map(b => normalizeBlock(b)).filter(Boolean);
+      }
+      function joinBlocks(blocks){
+        return (blocks || []).map(normalizeBlock).filter(Boolean).join("\n\n");
+      }
+
+// === 자동블록/수정블록 판별을 위한 보조 ===
+
+// 항목의 '서명' 문자열(블록의 첫 줄에 남아있을 확률이 높은 키워드)
+function getItemSignature(id, label){
+  // 1순위: 해설 템플릿의 첫 줄, 2순위: "id. label"
+  const src = (ITEM_DETAIL_TEXT[id] || "").split(/\r?\n/)[0] || `${id}. ${label}`;
+  return normalizeLine(src);
+}
+
+// 블록에서 '표시줄(마커 제외) 첫 줄'을 뽑아 표준화
+function blockFirstLine(block){
+  const b = normalizeBlock(block);
+  // 첫 줄이 [[AUTO_xx]]면 그 줄은 건너뛰고, 그 다음 줄을 헤더로 본다
+  const lines = b.split("\n").filter(Boolean);
+  const start = (lines[0] && /^\[\[AUTO_\d+\]\]$/.test(lines[0])) ? lines.slice(1) : lines;
+  return normalizeLine(start[0] || "");
+}
+
+// 공백/기호 차이를 줄인 비교용 정규화
+function normalizeLine(s){
+  return String(s || "")
+    .replace(/\r\n?/g, "\n")
+    .trim()
+    .replace(/\s+/g, " ")    // 다중 공백 → 1칸
+    .replace(/[·•\-–—:：]+$/, "")  // 끝의 구분기호 제거
+    .toLowerCase();
+}
+
+function makeDetailMarker(id){ return `[[AUTO_${id}]]`; }
+function makeDetailBlock(id, text){ return `${makeDetailMarker(id)}\n${normalizeBlock(text)}`; }
+
+// 블록 맨 앞에 [[AUTO_숫자]] 마커가 있으면 추출
+function extractMarker(block){
+  const b = normalizeBlock(block);
+  const m = b.match(/^\[\[AUTO_(\d+)\]\]\s*\n?/);
+  if(!m) return { marker:"", text:b };
+  const markerLine = `[[AUTO_${m[1]}]]`;
+  const text = b.replace(new RegExp('^\\[\\[AUTO_' + m[1] + '\\]\\]\\s*\\n?'), '');
+  return { marker: markerLine, text: normalizeBlock(text) };
+}
+
+// 미리보기 표시용(마커 제거된 텍스트)
+function stripMarkerForDisplay(block){
+  return extractMarker(block).text || "";
+}
+
+// 에디터 DOM으로부터 textarea 내용을 재구성(마커 보존)
+function rebuildDetailFromDOM(containerEl){
+  const key = containerEl.dataset.key;
+  const ta  = document.getElementById(`det_${key}`);
+  if(!ta) return;
+
+  const blocks = [];
+  containerEl.querySelectorAll('.improve-block').forEach(b=>{
+    const marker = b.dataset.marker || "";
+    const editEl = b.querySelector('.improve-edit');
+    const txt = normalizeBlock((editEl?.textContent || "").replace(/\r\n?/g, "\n"));
+    if(!txt) return;
+    blocks.push( (marker ? marker + "\n" : "") + txt );
+  });
+
+  ta.value = joinBlocks(blocks);
+  updateImproveCount(key);
+}
+
+// 마커를 경계로 블록을 나누되, 마커가 있는 덩어리는 내부 빈 줄로 다시 안 쪼갬
+function smartParseDetail(raw){
+  const text = (raw || "").replace(/\r\n?/g, "\n").trim();
+
+  if (!text) return [];
+
+  // 마커 시작 지점 기준으로 1차 분할 (마커 라인은 각 덩어리의 맨 앞에 남김)
+  const chunks = text
+    .split(/(?=^\[\[AUTO_\d+\]\]\s*$)/m)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const blocks = [];
+  for (const chunk of chunks){
+    if (/^\[\[AUTO_\d+\]\]\s*$\n?/m.test(chunk.split("\n")[0] || "")) {
+      // 마커가 맨 앞에 있으면 → 전체를 '한 블록'으로 그대로 보존
+      blocks.push(normalizeBlock(chunk));
+    } else {
+      // 마커가 없다 = 사용자가 직접 쓴 일반 문단 → 빈 줄(2개 이상) 기준으로 쪼갬
+      const subs = chunk.split(/\n{2,}/).map(s => normalizeBlock(s)).filter(Boolean);
+      blocks.push(...subs);
+    }
+  }
+  return blocks;
+}
+
+// === [연결 삭제 헬퍼] 요약 ↔ 세부를 함께 지우기 ===
+
+// id로 세부 블록 제거 (마커/편집본 모두 커버)
+function removeDetailById(secKey, id){
+  const ta = document.getElementById(`det_${secKey}`);
+  if(!ta) return;
+  const blocks = smartParseDetail(ta.value);
+  const marker = makeDetailMarker(id);
+
+  let next = blocks.filter(b => !normalizeBlock(b).startsWith(marker));
+
+  if (next.length === blocks.length){
+    const sig = normalizeLine(getItemSignature(id, (ITEMS.find(x=>x.id==id)||{}).label || ""));
+    next = blocks.filter(b => normalizeLine(blockFirstLine(b)) !== sig);
+  }
+
+  ta.value = joinBlocks(next);
+  updateImproveCount(secKey);
+}
+
+// id로 요약 라인 제거 (자동 생성 포맷 기반)
+function removeSummaryById(secKey, id){
+  const ta = document.getElementById(`im_${secKey}`);
+  if(!ta) return;
+  const targetStart = `${id}.`;
+  const lines = (ta.value||"")
+    .replace(/\r\n?/g,"\n")
+    .split("\n")
+    .map(s=>s.trim())
+    .filter(Boolean)
+    .filter(line => !line.startsWith(targetStart));
+  ta.value = lines.join("\n");
+  updateImproveCount(secKey);
+}
+
+// 세부 블록 x 클릭 시 요약도 같이 제거 + 체크리스트 '적합' 설정
+function tryRemoveSummaryLinked(secKey, blockEl){
+  // 1) [[AUTO_ID]] 마커로 ID를 알아낸 경우
+  const marker = blockEl.dataset.marker || "";
+  const m = marker.match(/^\[\[AUTO_(\d+)\]\]$/);
+  if (m){
+    const id = parseInt(m[1],10);
+    removeSummaryById(secKey, id);  // 요약에서 해당 라인 제거
+    setChecklistOk(id);             // ✅ 체크리스트 '적합'으로 전환
+    return id;
+  }
+
+  // 2) 수동 작성 블록: 첫 줄에서 "번호." 패턴 추정
+  const first = normalizeLine(
+    blockEl.querySelector('.improve-edit')?.textContent || ""
+  );
+  const m2 = first.match(/^(\d+)[\.\)]\s/);
+  if (m2){
+    const id = parseInt(m2[1],10);
+    removeSummaryById(secKey, id);
+    setChecklistOk(id);             // ✅ 체크리스트 '적합'으로 전환
+    return id;
+  }
+
+  // 번호를 못 찾은 경우엔 요약만(문자열 매칭 없이) 제거 시도 — 체크리스트는 바꾸지 않음
+  return null;
+}
+
+// 요약표 x 클릭 시 세부까지 동기 삭제 + 체크리스트 '적합' 전환
+function handleSummaryDelete(secKey, id, lineText){
+  // 1) 요약에서 제거
+  if (id){
+    removeSummaryById(secKey, id);
+  } else {
+    const ta = document.getElementById(`im_${secKey}`);
+    if (ta){
+      const lines = (ta.value||"")
+        .replace(/\r\n?/g,"\n")
+        .split("\n")
+        .map(s=>s.trim())
+        .filter(Boolean);
+      const next = lines.filter(l => l !== lineText.trim());
+      ta.value = next.join("\n");
+      updateImproveCount(secKey);
+    }
+  }
+
+  // 2) 세부에서도 제거
+  if (id){
+    removeDetailById(secKey, id);
+  }
+
+  // 3) ✅ 체크리스트를 '적합'으로 전환
+  if (id){
+    setChecklistOk(id);
+  }
+
+  // 4) 미리보기 갱신
+  triggerPreview();
+}
+
+// 요약표(주요 개선사항) x 버튼 이벤트 연결
+function wireSummaryDeleteButtons(){
+  // 보고서 미리보기 내부의 요약표 x 버튼들에 클릭 핸들러 부착
+  document.querySelectorAll('#reportArea .sum-del').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const line = btn.closest('.memo-line');
+      if(!line) return;
+
+      const secKey = line.dataset.sec;                         // fac / per / raw / proc / keep / etc
+      const id     = line.dataset.id ? parseInt(line.dataset.id, 10) : null;
+      const text   = line.dataset.text || "";
+
+      // 원본 textarea에서 요약 제거 + (id 있으면) 세부도 함께 제거
+      handleSummaryDelete(secKey, id, text);
+    });
+  });
+}
+
+function beforePdfHideControls(){
+  document.querySelectorAll('#reportArea .sum-del, #reportArea .improve-del')
+    .forEach(el => el.setAttribute('data-html2canvas-ignore', 'true'));
+}
+
+function afterPdfRestoreControls(){
+  document.querySelectorAll('#reportArea .sum-del[data-html2canvas-ignore], #reportArea .improve-del[data-html2canvas-ignore]')
+    .forEach(el => el.removeAttribute('data-html2canvas-ignore'));
+}
+
+function resetAll(){
+  // 기본 입력 초기화
+  document.querySelectorAll('input[type="text"], input[type="date"]').forEach(i => i.value = '');
+  document.getElementById('prevNotes').value = '';
+  document.getElementById('visitRound').value = '';
+  document.getElementById('visitStart').value = '';
+  document.getElementById('visitEnd').value = '';
+
+  // ⬇⬇ 추가: 교육지원/물품지원 초기화
+  document.getElementById('eduSupport').value = '';
+  document.getElementById('itemSupport').value = '';
+
+  // 라디오 전부 해제
+  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+
+// (1) 라디오 상태 변경을 UI 리스너에 반영 (미흡 메모 on/off 동기화를 위해)
+document.querySelectorAll('input[type="radio"]').forEach(r => {
+  r.dispatchEvent(new Event('change', { bubbles: true }));
+});
+
+// (2) 모든 '미흡 메모' 퀵버튼 강제 비활성화
+document.querySelectorAll('.btn-quick').forEach(b => {
+  b.disabled = true;
+});
+
+  // 메모(요약/세부) 모두 초기화 + 카운터 갱신
+  for (const s of SECTIONS){
+    const sumTa = document.getElementById(`im_${s.key}`);   // 요약
+    const detTa = document.getElementById(`det_${s.key}`);  // 세부
+    if (sumTa) sumTa.value = '';
+    if (detTa) detTa.value = '';
+    updateImproveCount(s.key);
+  }
+
+  // 미리보기 영역 초기화
+  document.getElementById('reportArea').innerHTML =
+    '<div class="kicker" id="reportPlaceholder">“보고서 미리보기”를 눌러 생성하세요.</div>';
+}
+
+      // ===== 4) PDF 저장 (미리보기 영역만) =====
+      function saveReportPDF() {
+  const area = document.getElementById("reportArea");
+  if (!area || area.querySelector("#reportPlaceholder")) {
+    alert("먼저 “보고서 미리보기”를 눌러 보고서를 생성하세요.");
+    return;
+  }
+
+  const org = (document.getElementById("orgName").value || "결과보고서")
+    .trim()
+    .replace(/\s+/g, "_");
+  const date = (document.getElementById("visitDate").value || "").replaceAll("-", "");
+  const st = (document.getElementById("visitStart").value || "").replace(":", "");
+  const en = (document.getElementById("visitEnd").value || "").replace(":", "");
+  const round = (document.getElementById("visitRound").value || "").trim().replace(/\s+/g, "_");
+
+  const timePart = (st && en) ? `_${st}-${en}` : "";
+  const roundPart = round ? `_${round}` : "";
+
+  const filename = `${org}${date ? "_" + date : ""}${timePart}${roundPart}.pdf`;
+
+  const opt = {
+  margin: 0,                        // 👈 A4 크기/여백은 CSS에서 관리
+  filename,
+  image: { type: "jpeg", quality: 0.95 },
+  html2canvas: {
+    scale: Math.min(2, window.devicePixelRatio || 1.5),
+    useCORS: true,
+    background: "#ffffff",
+    scrollY: 0,
+    // PDF에선 x버튼 숨김
+    ignoreElements: (el) =>
+      el.classList?.contains('sum-del') || el.classList?.contains('improve-del')
+  },
+  jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+  pagebreak: { mode: ["css", "legacy"] }
+};
+
+  const btn = document.getElementById("btnSavePdf");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "PDF 생성 중…";
+  }
+
+  // ✅ 캡처 직전: 버튼 요소들 html2canvas 무시 플래그 부여
+  beforePdfHideControls();
+
+  html2pdf()
+    .set(opt)
+    .from(area)
+    .save()
+    .finally(() => {
+      // ✅ 캡처 후: 무시 플래그 제거
+      afterPdfRestoreControls();
+
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "PDF로 저장";
+      }
+    });
+}
+
+function linesToHtml(text){
+  // 줄 단위로 안전하게 이스케이프 → <br>로 연결
+  const lines = (text || '')
+    .split(/\n/)
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(escapeHtml);
+  return lines.join('<br>');
+}
+
+// === 사용가이드 모달 ===
+function openGuide(){
+  const bd = document.getElementById('guideBackdrop');
+  if(!bd) return;
+  bd.hidden = false;
+  bd.style.display = 'flex';             // 보이기
+  // 표시 후 확인 버튼으로 포커스 이동(접근성 + aria-hidden 경고 회피)
+  setTimeout(()=> document.getElementById('guideOk')?.focus(), 0);
+}
+function closeGuide(){
+  // 먼저 포커스 해제 후 닫기
+  document.activeElement?.blur?.();
+  const bd = document.getElementById('guideBackdrop');
+  if(!bd) return;
+  bd.style.display = 'none';
+  bd.hidden = true;
+  // 가이드 버튼으로 포커스 되돌리기(선택)
+  document.getElementById('btnGuide')?.focus();
+}
+
+(function wireGuide(){
+  // 클릭 이벤트 위임: 요소가 언제 생겨도 동작
+  document.addEventListener('click', (e)=>{
+    const t = e.target;
+
+    // 가이드 열기
+    if (t && t.id === 'btnGuide') {
+      e.preventDefault();
+      openGuide();
+      return;
+    }
+
+    // 확인 버튼으로 닫기
+    if (t && t.id === 'guideOk') {
+      e.stopPropagation();
+      closeGuide();
+      return;
+    }
+
+    // 배경을 클릭했을 때만 닫기 (모달 내용 클릭은 무시)
+    if (t && t.id === 'guideBackdrop' && t === e.target) {
+      closeGuide();
+      return;
+    }
+  });
+
+  // ESC로 닫기
+  document.addEventListener('keydown', (e)=>{
+    if (e.key !== 'Escape') return;
+    const bd = document.getElementById('guideBackdrop');
+    if (bd && !bd.hidden) {
+      closeGuide();
+    }
+  });
+})();
+
+
+      // 초기 렌더
+      buildUI();
+    </script>
+<div class="guide-backdrop" id="guideBackdrop" hidden>
+  <div class="guide-modal" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+    <header>
+      <h3 id="guideTitle">사용가이드</h3>
+    </header>
+    <div class="content">
+      <ol style="padding-left:18px; margin:0;">
+        <li>상단 입력란에 기관명, 방문일자, 방문자 등 기본 정보를 기입합니다.</li>
+        <li>“보고서 미리보기”로 결과를 확인하며 실시간으로 수정할 수 있습니다.</li>
+        <li>각 점검 항목에서 ‘적합’ 또는 ‘미준수’를 선택해 결과를 입력합니다.</li>
+        <li>‘미준수’ 항목에서 <b>미흡 메모</b>를 누르면 ‘개선 필요사항(세부)’ 표에 자동 추가됩니다.</li>
+        <li>‘개선 필요사항(세부)’ 칸에서 개선 내용을 직접 입력/수정할 수 있습니다.</li>
+        <li>“초기화”를 누르면 모든 항목이 원상태로 초기화됩니다.</li>
+        <li>검토 후 “PDF로 저장”을 눌러 제출용 보고서를 생성합니다.</li>
+        <li>프로그램 사용 문의는 담당자 “이예군” 선생님께 해주십시오.</li>
+      </ol>
+    </div>
+    <footer>
+      <button type="button" class="btn brand" id="guideOk">확인</button>
+    </footer>
+  </div>
+</div>
+  </body>
+</html>
