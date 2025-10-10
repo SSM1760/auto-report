@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -36,15 +35,6 @@
         color: var(--text);
 font-family: 'Nanum Gothic', '나눔고딕', sans-serif;
       }
-
-      .wrap{
-  max-width:1600px;                 /* 1200px → 1600px (원하면 더 키워도 OK) */
-  margin:16px auto;
-  display:grid;
-  grid-template-columns:320px 1fr;
-  gap:16px;
-  padding:0 20px;                   /* 좌우 패딩 살짝 늘림 */
-}
 
       .card {
         background: var(--card);
@@ -327,8 +317,8 @@ font-family: 'Nanum Gothic', '나눔고딕', sans-serif;
 }
 
 /* 영역별 요약표 컬럼 폭(구분/숫자칸 고정, 개선사항은 남는 폭) */
-.summary-col-name   { width: 12ch; } /* 구분: 한글 6글자 */
-.summary-col-small  { width: 5ch;  } /* 항목수/준수/미흡: 숫자 3개 */
+.summary-col-name   { width: 18ch; } /* 구분: 한글 6글자 */
+.summary-col-small  { width: 6ch;  } /* 항목수/준수/미흡: 숫자 3개 */
 
 /* 항상 새 페이지에서 시작시키는 강제 분리 마커 */
 .pagebreak,
@@ -679,7 +669,7 @@ font-family: 'Nanum Gothic', '나눔고딕', sans-serif;
       <div id="checkAndReport">
         
         <!-- 체크리스트 -->
-        <div class="card">
+        <div class="card" id="checkCard">
           <h2>체크리스트</h2>
           <div class="body">
             <div class="toolbar" style="justify-content:flex-end; margin-bottom:8px;">
@@ -1421,7 +1411,7 @@ const cooks = Array.from(document.querySelectorAll('#cookGroupWrap .cook-group')
     }
   }
 
-// 각 섹션별 ‘적합/미준수’ 집계
+// 각 섹션별 ‘적합/미준수’ 집계 (구분+항목수 합치고 메모 컬럼 유지)
 const rows = SECTIONS.map((s) => {
   const items = ITEMS.filter((x) => x.sec === s.key);
   const count = items.length;
@@ -1430,30 +1420,31 @@ const rows = SECTIONS.map((s) => {
 
   for (const it of items) {
     const sel = document.querySelector(`input[name="q_${it.id}"]:checked`);
-    if (!sel) { not++; continue; }
+    if (!sel) { continue; }
     sel.value === "ok" ? comply++ : not++;
   }
 
+  // 요약 라인 → HTML (x 버튼 포함)
   const rawSummary = (document.getElementById(`im_${s.key}`).value || "");
   const sumLines = rawSummary
     .replace(/\r\n?/g, "\n")
     .split("\n")
-    .map(v=>v.trim())
+    .map(v => v.trim())
     .filter(Boolean);
 
-  const sumHtml = sumLines.length ? sumLines.map(line=>{
+  const sumHtml = sumLines.length ? sumLines.map(line => {
     let id = null;
     const m = line.match(/^(\d+)[\.\)]\s/);
-    if(m){ id = parseInt(m[1],10); }
+    if (m) { id = parseInt(m[1], 10); }
     return `<span class="memo-line" data-sec="${s.key}" ${id?`data-id="${id}"`:""} data-text="${escapeHtml(line)}">
               ${escapeHtml(line)}
               <button type="button" class="sum-del" title="이 항목 삭제" aria-label="이 항목 삭제">×</button>
             </span>`;
   }).join('<br>') : "-";
 
+  // ⬇⬇ “구분(수)” 형태로 합쳐서 출력
   return `<tr>
-    <td>${s.name.replace(/\(.+\)/, "")}</td>
-    <td>${count}</td>
+    <td>${s.name.replace(/\(.+\)/, "")} (${count})</td>
     <td>${comply}</td>
     <td>${not}</td>
     <td>${sumHtml}</td>
@@ -1548,26 +1539,24 @@ const reportHTML = `
     </table>
   </div>
 
-  <h3 style="margin-top:14px">영역별 점검결과 요약</h3>
-  <table class="summary-table centered-table" style="width:100%">
-    <colgroup>
-      <col class="summary-col-name">  <!-- 구분 -->
-      <col class="summary-col-small"> <!-- 항목수 -->
-      <col class="summary-col-small"> <!-- 준수 -->
-      <col class="summary-col-small"> <!-- 미흡 -->
-      <col>                            <!-- 주요 개선사항(남는 폭) -->
-    </colgroup>
-    <thead>
-      <tr>
-        <th>구분</th>
-        <th>항목수</th>
-        <th>준수</th>
-        <th>미흡</th>
-        <th>주요 개선사항(요약)</th>
-      </tr>
-    </thead>
-    <tbody>${rows}</tbody>
-  </table>
+<h3 style="margin-top:14px">영역별 점검결과 요약</h3>
+<table class="summary-table centered-table" style="width:100%">
+  <colgroup>
+    <col class="summary-col-name">   <!-- 구분(수) -->
+    <col class="summary-col-small">  <!-- 준수 -->
+    <col class="summary-col-small">  <!-- 미흡 -->
+    <col>                            <!-- 주요 개선사항 -->
+  </colgroup>
+  <thead>
+    <tr>
+      <th>구분(수)</th>
+      <th>준수</th>
+      <th>미흡</th>
+      <th>주요 개선사항(요약)</th>
+    </tr>
+  </thead>
+  <tbody>${rows}</tbody>
+</table>
 
 ${info.prevNotes
   ? `<div style="margin-top:10px">
@@ -2022,6 +2011,28 @@ document.querySelectorAll('.btn-quick').forEach(b => {
     if (detTa) detTa.value = '';
     updateImproveCount(s.key);
   }
+
+// 조리원 그룹: 첫 그룹만 남기고 다 제거 + 값 초기화
+{
+  const wrap = document.getElementById('cookGroupWrap');
+  if (wrap) {
+    const groups = wrap.querySelectorAll('.cook-group');
+
+    // 1) 첫 그룹만 남기고 2번째부터 전부 제거
+    groups.forEach((g, i) => {
+      if (i > 0) g.remove();
+    });
+
+    // 2) 남은 첫 그룹의 입력값 초기화
+    const first = wrap.querySelector('.cook-group');
+    if (first) {
+      first.querySelector('.cook-name')?.setAttribute('value', '');
+      first.querySelector('.cook-name') && (first.querySelector('.cook-name').value = '');
+      first.querySelector('.cook-health') && (first.querySelector('.cook-health').value = '');
+      first.querySelector('.cook-edu') && (first.querySelector('.cook-edu').value = '');
+    }
+  }
+}
 
   // 미리보기 영역 초기화
   document.getElementById('reportArea').innerHTML =
