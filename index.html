@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -491,6 +492,11 @@ font-family: 'Nanum Gothic', '나눔고딕', sans-serif;
   margin: 12px 0 16px;         /* 위아래 간격 */
   letter-spacing: -0.3px;      /* 한글 가독성 보정 */
 }
+
+/* ▶ 보고서 미리보기(= #reportArea) 전체 글자 10pt, 큰 제목은 유지 */
+#reportArea { font-size: 10pt; }
+#reportArea * { font-size: inherit !important; }
+#reportArea #reportTitle { font-size: 1.6rem !important; }
 
 /* 개선 필요사항(세부) 슬림 최종본 */
 .summary-table.detail-compact th{
@@ -1415,8 +1421,8 @@ const cooks = Array.from(document.querySelectorAll('#cookGroupWrap .cook-group')
     }
   }
 
-        // 각 섹션별 ‘적합/미준수’ 집계
-        const rows = SECTIONS.map((s) => {
+// 각 섹션별 ‘적합/미준수’ 집계
+const rows = SECTIONS.map((s) => {
   const items = ITEMS.filter((x) => x.sec === s.key);
   const count = items.length;
   let comply = 0;
@@ -1428,7 +1434,6 @@ const cooks = Array.from(document.querySelectorAll('#cookGroupWrap .cook-group')
     sel.value === "ok" ? comply++ : not++;
   }
 
-  // 요약 라인 가공: 라인별로 작은 x 버튼/데이터 속성 부여
   const rawSummary = (document.getElementById(`im_${s.key}`).value || "");
   const sumLines = rawSummary
     .replace(/\r\n?/g, "\n")
@@ -1437,12 +1442,9 @@ const cooks = Array.from(document.querySelectorAll('#cookGroupWrap .cook-group')
     .filter(Boolean);
 
   const sumHtml = sumLines.length ? sumLines.map(line=>{
-    // 줄에서 id 추출 가능하면 data-id로 보관
     let id = null;
     const m = line.match(/^(\d+)[\.\)]\s/);
     if(m){ id = parseInt(m[1],10); }
-
-    // x 버튼 포함한 한 줄
     return `<span class="memo-line" data-sec="${s.key}" ${id?`data-id="${id}"`:""} data-text="${escapeHtml(line)}">
               ${escapeHtml(line)}
               <button type="button" class="sum-del" title="이 항목 삭제" aria-label="이 항목 삭제">×</button>
@@ -1571,7 +1573,7 @@ ${info.prevNotes
   ? `<div style="margin-top:10px">
        <table class="summary-table centered-table" style="width:100%">
          <tr>
-           <th style="width:25%">이전 방문 지적사항 개선여부</th>
+           <th style="width:25%;line-height:1.35">이전 방문 시<br>지도사항 및 개선여부</th>
            <td style="text-align:left;white-space:pre-wrap;padding-left:8px">
              ${
                escapeHtml(info.prevNotes)
@@ -1613,10 +1615,11 @@ ${
 }
 ` : '' }
 
-          <div style="margin-top:16px;font-size:12px;color:var(--muted)">
-            ※ 본 점검은 식품의약품안전처·식생활안전관리원 ‘어린이 급식소(집단·소규모) 위생·안전·영양관리 체크리스트 해설서(2025)’를 준거로 실시했습니다.
-          </div>
-        `;
+                    <div style="margin-top:16px;font-size:12px;color:var(--muted)">
+  ※ 본 점검은 식품의약품안전처·식생활안전관리원 ‘어린이 급식소(집단·소규모) 위생·안전·영양관리 체크리스트 해설서(2025)’를 준거로 실시했습니다.
+</div>
+<div style="margin-top:18px;text-align:center;font-weight:700">바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^</div>
+`;
 
         const area = document.getElementById("reportArea");
         area.innerHTML = reportHTML;
