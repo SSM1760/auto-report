@@ -550,7 +550,7 @@ font-family: 'Nanum Gothic', '나눔고딕', sans-serif;
     <!-- 좌: 기본 정보 + 툴바 -->
     <div class="card sticky">
   <h2 class="with-action">
-  기본 정보
+  <span id="usageTap">기본 정보</span>
   <button type="button" class="btn sm weak" id="btnGuide">사용가이드</button>
 </h2>
   <div class="body">
@@ -2131,45 +2131,147 @@ function closeGuide(){
   document.getElementById('btnGuide')?.focus();
 }
 
-(function wireGuide(){
-  // 클릭 이벤트 위임: 요소가 언제 생겨도 동작
+function closeUsage(){
+  // 포커스 해제 후 닫기
+  document.activeElement?.blur?.();
+  const bd = document.getElementById('usageBackdrop');
+  if (!bd) return;
+  bd.style.display = 'none';
+  bd.hidden = true;
+  // 확인 후 포커스 되돌릴 곳(선택)
+  document.getElementById('usageTap')?.focus();
+}
+
+(function wireModals(){
   document.addEventListener('click', (e)=>{
     const t = e.target;
 
-    // 가이드 열기
-    if (t && t.id === 'btnGuide') {
-      e.preventDefault();
-      openGuide();
-      return;
-    }
+    // ── 사용가이드 열기/닫기
+    if (t && t.id === 'btnGuide') { e.preventDefault(); openGuide(); return; }
+    if (t && t.id === 'guideOk')  { e.stopPropagation(); closeGuide(); return; }
+    if (t && t.id === 'guideBackdrop' && t === e.target) { closeGuide(); return; }
 
-    // 확인 버튼으로 닫기
-    if (t && t.id === 'guideOk') {
-      e.stopPropagation();
-      closeGuide();
-      return;
-    }
-
-    // 배경을 클릭했을 때만 닫기 (모달 내용 클릭은 무시)
-    if (t && t.id === 'guideBackdrop' && t === e.target) {
-      closeGuide();
-      return;
-    }
+    // ── 사용기록(5번 탭) 닫기
+    if (t && t.id === 'usageOk')  { e.stopPropagation(); closeUsage(); return; }
+    if (t && t.id === 'usageBackdrop' && t === e.target) { closeUsage(); return; }
   });
 
-  // ESC로 닫기
+  // Esc 로 두 모달 모두 닫기
   document.addEventListener('keydown', (e)=>{
     if (e.key !== 'Escape') return;
-    const bd = document.getElementById('guideBackdrop');
-    if (bd && !bd.hidden) {
-      closeGuide();
-    }
+    const gb = document.getElementById('guideBackdrop');
+    const ub = document.getElementById('usageBackdrop');
+    if (gb && !gb.hidden) closeGuide();
+    if (ub && !ub.hidden) closeUsage();
   });
 })();
 
 
       // 초기 렌더
       buildUI();
+
+ // 초기 렌더
+  buildUI();
+
+// (선택) 서버 기록을 원하면 Google Apps Script 웹앱 URL 입력(…/exec)
+const USAGE_LOG_URL = "https://script.google.com/macros/s/AKfycbxKkcmTS00jUAdxqWbBrcYzFYB4RPoZf6rjZkFIIjhPDxf4Sil6kDRDyfJ-j-JhmVPZ/exec";
+
+(function wireUsageLog(){
+  // 세션 시작 시각(페이지 연 시점)
+  window.__sessionStart = Date.now();
+
+  // 내부 상태
+  let usageRow = null;     // 서버가 돌려준 행번호
+  let lastSentMin = 0;     // 서버에 반영된 누적 분
+
+  // KST 텍스트
+  function formatKST(tsMs){
+    const dt = new Date(tsMs);
+    const parts = new Intl.DateTimeFormat('ko-KR', {
+      timeZone: 'Asia/Seoul',
+      year:'numeric', month:'2-digit', day:'2-digit',
+      hour:'2-digit', minute:'2-digit', hour12:false
+    }).formatToParts(dt);
+    const g = (t)=>parts.find(p=>p.type===t)?.value || "";
+    return `${g('year')}년 ${Number(g('month'))}월 ${Number(g('day'))}일 ${g('hour')}시 ${g('minute')}분`;
+  }
+  const minutesSinceStart = ()=> Math.max(0, Math.floor((Date.now() - (window.__sessionStart||Date.now()))/60000));
+
+  // 0) 시작: 서버에 새 행 만들기(op=start)
+  async function openRow(){
+    if (!USAGE_LOG_URL) return;
+    try{
+      const body = new URLSearchParams({ op:'start', t:new Date().toISOString() });
+      const res  = await fetch(USAGE_LOG_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
+        body
+      });
+      const data = await res.json().catch(()=> ({}));
+      if (data && data.ok && data.row) {
+        usageRow = data.row;
+        // 시작 직후 현재 분(대부분 0분)을 반영해 동기화
+        const inc = minutesSinceStart() - lastSentMin;
+        if (inc > 0) { await sendInc(inc); }
+      }
+    } catch(e){ console.error('[USAGE] start failed', e); }
+  }
+
+  // 1) 증가 호출(op=inc)
+  async function sendInc(by){
+    if (!USAGE_LOG_URL || !usageRow || by <= 0) return;
+    try{
+      const body = new URLSearchParams({ op:'inc', row:String(usageRow), by:String(by) });
+      await fetch(USAGE_LOG_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
+        body,
+        keepalive: true  // 탭 닫힘 직전에도 전송 시도
+      });
+      lastSentMin += by;
+    } catch(e){ console.error('[USAGE] inc failed', e); }
+  }
+
+  // 2) 매분 틱 → 지나간 분만큼 묶어서 증가(브라우저 지연 보정)
+  async function tick(){
+    const should = minutesSinceStart();
+    const inc = should - lastSentMin;
+    if (inc > 0) await sendInc(inc);
+  }
+
+  // 3) “기본 정보” 5회 탭 → 화면 알림(시트 기록과 별개)
+  const target = document.getElementById('usageTap');
+  if (target){
+    let taps = 0, timer = null;
+    function reset(){ taps = 0; if (timer){ clearTimeout(timer); timer = null; } }
+    target.addEventListener('click', ()=>{
+      taps++;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(reset, 1200);
+      if (taps >= 5){
+        reset();
+        const now = Date.now();
+        const txt = `${formatKST(now)} — 이 프로그램을 ${minutesSinceStart()}분 사용했습니다.`;
+        const content = document.getElementById('usageContent');
+        if (content){
+          content.textContent = txt;
+          const bd = document.getElementById('usageBackdrop');
+          bd.hidden = false; bd.style.display = 'flex';
+          setTimeout(()=> document.getElementById('usageOk')?.focus(), 0);
+        } else {
+          alert(txt);
+        }
+      }
+    });
+  }
+
+  // 4) 시작/주기/종료 훅
+  openRow();                        // 시작 시 한 번
+  const iv = setInterval(tick, 60000);  // 매 1분
+  document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState === 'hidden') tick(); });
+  window.addEventListener('beforeunload', ()=>{ tick(); }); // 마지막 보정
+})();
+
     </script>
 <div class="guide-backdrop" id="guideBackdrop" hidden>
   <div class="guide-modal" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
@@ -2193,6 +2295,20 @@ function closeGuide(){
     </footer>
   </div>
 </div>
+
+<!-- 사용기록 모달 -->
+<div class="guide-backdrop" id="usageBackdrop" hidden>
+  <div class="guide-modal" role="dialog" aria-modal="true" aria-labelledby="usageTitle">
+    <header>
+      <h3 id="usageTitle">사용기록</h3>
+    </header>
+    <div class="content">
+      <p id="usageContent" style="margin:0"></p>
+    </div>
+    <footer>
+      <button type="button" class="btn brand" id="usageOk">확인</button>
+    </footer>
+  </div>
+</div>
   </body>
 </html>
-
