@@ -1,5 +1,8 @@
 
 
+
+
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -1254,6 +1257,16 @@ SECTIONS.forEach(s=>{
   el.addEventListener(evt, triggerPreview);
 });
 
+// ✅ 방문자 값이 확정(change)되면 시트에 기록
+const visitorEl = document.getElementById('visitor');
+if (visitorEl){
+  // 중복 바인딩 방지용으로 onchange 한 번만
+  visitorEl.onchange = (e)=>{
+    const v = (e.target.value || '').trim();
+    if (window.__usageSetMeta && v) window.__usageSetMeta({ visitor: v });
+  };
+}
+
 // 조리원 동적 필드(현재 존재하는 모든 그룹에 리스너 연결)
 function attachCookListeners(scope=document){
   scope.querySelectorAll('#cookGroupWrap .cook-group input').forEach(inp=>{
@@ -1618,6 +1631,11 @@ if (hasAnyDetail) {
 
         const ph = document.getElementById("reportPlaceholder");
         if (ph) ph.remove();
+
+// ✅ 미리보기 시점에도 보강 저장
+if (window.__usageSetMeta && info.visitor){
+  window.__usageSetMeta({ visitor: info.visitor });
+}
 
 wireSummaryDeleteButtons();
       }
@@ -2166,15 +2184,11 @@ function closeUsage(){
   });
 })();
 
-
-      // 초기 렌더
-      buildUI();
-
  // 초기 렌더
   buildUI();
 
 // (선택) 서버 기록을 원하면 Google Apps Script 웹앱 URL 입력(…/exec)
-const USAGE_LOG_URL = "https://script.google.com/macros/s/AKfycbwvmaXD-v7Dg3jTMo33ZszI0eR64BkTDVlaNYPa7aZBR3SZ0xt28-zWMa9ygx763fBN/exec";
+const USAGE_LOG_URL = "https://script.google.com/macros/s/AKfycbxV6oasMJv_YYgOOycVZ84K3KeaVnFaHaRlmL7k95slVE0nRsI-V11Q8xXdWAQ8qvON/exec";
 
 (function wireUsageLog(){
   // 세션 시작 시각(페이지 연 시점)
@@ -2183,6 +2197,22 @@ const USAGE_LOG_URL = "https://script.google.com/macros/s/AKfycbwvmaXD-v7Dg3jTMo
   // 내부 상태
   let usageRow = null;     // 서버가 돌려준 행번호
   let lastSentMin = 0;     // 서버에 반영된 누적 분
+
+  // ✅ 여기에서 usageRow에 접근 가능한 setMeta를 정의하고 전역으로 노출
+  async function setMeta(meta){
+    if (!USAGE_LOG_URL || !usageRow) return;   // 아직 row가 없으면 무시
+    try{
+      const body = new URLSearchParams({ op:'meta', row:String(usageRow) });
+      Object.entries(meta || {}).forEach(([k,v]) => body.append(k, String(v ?? '')));
+      await fetch(USAGE_LOG_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
+        body,
+        keepalive: true
+      });
+    } catch(e){ console.error('[USAGE] meta failed', e); }
+  }
+  window.__usageSetMeta = setMeta;
 
   // KST 텍스트
   function formatKST(tsMs){
@@ -2210,9 +2240,9 @@ const USAGE_LOG_URL = "https://script.google.com/macros/s/AKfycbwvmaXD-v7Dg3jTMo
       const data = await res.json().catch(()=> ({}));
       if (data && data.ok && data.row) {
         usageRow = data.row;
-        // 시작 직후 현재 분(대부분 0분)을 반영해 동기화
-        const inc = minutesSinceStart() - lastSentMin;
-        if (inc > 0) { await sendInc(inc); }
+        // ✅ row가 생긴 시점에 현재 입력된 방문자 값을 즉시 저장(타이밍 문제 방지)
+const vNow = (document.getElementById('visitor')?.value || '').trim();
+if (vNow) { await setMeta({ visitor: vNow }); }
       }
     } catch(e){ console.error('[USAGE] start failed', e); }
   }
