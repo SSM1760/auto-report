@@ -1,8 +1,4 @@
 
-
-
-
-
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -486,6 +482,24 @@ font-family: 'Nanum Gothic', '나눔고딕', sans-serif;
   letter-spacing: -0.3px;      /* 한글 가독성 보정 */
 }
 
+/* ===== 로고 헤더 ===== */
+#reportHeader{
+  position: relative;
+  min-height: 22mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;     /* 제목은 가운데 */
+  margin-bottom: 6mm;
+}
+#reportLogo{
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-height: 18mm;            /* 인쇄용 권장 높이 */
+  max-width: 60mm;
+  object-fit: contain;
+}
+
 /* ▶ 보고서 미리보기(= #reportArea) 전체 글자 10pt, 큰 제목은 유지 */
 #reportArea { font-size: 10pt; }
 #reportArea * { font-size: inherit !important; }
@@ -543,6 +557,14 @@ font-family: 'Nanum Gothic', '나눔고딕', sans-serif;
 
 .card h2.with-action{
   display:flex; align-items:center; justify-content:space-between;
+}
+
+/* 로고 ↔ 제목 간격 약 2줄 */
+#reportHeader { 
+  align-items: flex-start;      /* 제목을 헤더 상단 기준으로 정렬 */
+}
+#reportHeader #reportTitle {
+  margin-top: 17mm !important;  /* 상단에서 약 7mm(두 줄) 내려 배치 */
 }
     </style>
   </head>
@@ -654,11 +676,11 @@ font-family: 'Nanum Gothic', '나눔고딕', sans-serif;
     </div>
 
     <h2 style="margin-top:14px">도구</h2>
-    <div class="toolbar body">
-      <button class="btn brand" onclick="buildReport()">보고서 미리보기</button>
-      <button class="btn weak" id="btnSavePdf" onclick="saveReportPDF()">PDF로 저장</button>
-      <button class="btn danger" onclick="if(confirm('모든 내용을 초기화할까요?')) resetAll()">초기화</button>
-    </div>
+<div class="toolbar body">
+  <button class="btn brand" onclick="buildReport()">보고서 미리보기</button>
+  <button class="btn weak" id="btnSavePdf" onclick="saveReportPDF()">PDF로 저장</button>
+  <button class="btn danger" onclick="if(confirm('모든 내용을 초기화할까요?')) resetAll()">초기화</button>
+</div>
     <div class="kicker" style="margin-top:6px">
       ※ “보고서 미리보기” 후 저장하세요.
     </div>
@@ -684,8 +706,15 @@ font-family: 'Nanum Gothic', '나눔고딕', sans-serif;
 
         <!-- 결과 미리보기 -->
         <div class="card print-paper" id="reportCard">
-          <h2>결과보고서 (미리보기)</h2>
-          <div class="body print-area" id="reportArea">
+  <h2 class="with-action">
+    <span>결과보고서 (미리보기)</span>
+    <button type="button" class="btn sm weak" id="btnUploadLogo"
+            title="한 번만 등록하면 모든 PC에서 사용">로고 수정(사용x)</button>
+  </h2>
+  <!-- 숨김 파일 입력은 헤더 바로 아래(카드 안, reportArea 밖) -->
+  <input id="logoOnce" type="file" accept="image/*" style="display:none">
+
+  <div class="body print-area" id="reportArea">
             <div class="kicker" id="reportPlaceholder">
               "보고서 미리보기”를 눌러 생성하세요.
             </div>
@@ -1257,7 +1286,6 @@ SECTIONS.forEach(s=>{
   el.addEventListener(evt, triggerPreview);
 });
 
-// ✅ 방문자 값이 확정(change)되면 시트에 기록
 const visitorEl = document.getElementById('visitor');
 if (visitorEl){
   // 중복 바인딩 방지용으로 onchange 한 번만
@@ -1404,11 +1432,16 @@ const info = {
 };
 
 // ✅ info 선언 후에 cooks 선언
-const cooks = Array.from(document.querySelectorAll('#cookGroupWrap .cook-group')).map(g=>({
+// ① 조리원 표 데이터
+const cooks = Array.from(document.querySelectorAll('#cookGroupWrap .cook-group')).map(g => ({
   name:  (g.querySelector('.cook-name')?.value || '').trim(),
   health:(g.querySelector('.cook-health')?.value || ''),
   edu:   (g.querySelector('.cook-edu')?.value || '')
 }));
+
+// ② 보고서 헤더 로고 (프리로드된 dataURL 우선)
+const logoSrc = window.__logoDataURL || '';
+const logoImg = logoSrc ? `<img id="reportLogo" src="${logoSrc}" alt="기관 로고">` : "";
 
  // 간단 검증: 종료시간이 시작시간보다 빠르면 경고
   if (info.visitStart && info.visitEnd) {
@@ -1490,7 +1523,10 @@ const hasAnyDetail = SECTIONS.some(s => {
 });
 
 const reportHTML = `
+  <div id="reportHeader">
+  ${logoImg}
   <h1 id="reportTitle">위생·안전 순회방문 결과보고서</h1>
+</div>
 
   <!-- [표1] 기관/방문 정보 -->
 <div style="margin-top:10px;border:1px solid var(--line);overflow:hidden">
@@ -2187,8 +2223,8 @@ function closeUsage(){
  // 초기 렌더
   buildUI();
 
-// (선택) 서버 기록을 원하면 Google Apps Script 웹앱 URL 입력(…/exec)
-const USAGE_LOG_URL = "https://script.google.com/macros/s/AKfycbxV6oasMJv_YYgOOycVZ84K3KeaVnFaHaRlmL7k95slVE0nRsI-V11Q8xXdWAQ8qvON/exec";
+const USAGE_LOG_URL = "https://script.google.com/macros/s/AKfycbxgcGicW-xvrR6-xufjJmOiKJs7GlQ-q4YR3QODMbqNEe_a5fapINCD_Uor5uo6cXpw/exec";
+const LOGO_IMG_URL = USAGE_LOG_URL + '?op=logo';
 
 (function wireUsageLog(){
   // 세션 시작 시각(페이지 연 시점)
@@ -2302,6 +2338,64 @@ if (vNow) { await setMeta({ visitor: vNow }); }
   window.addEventListener('beforeunload', ()=>{ tick(); }); // 마지막 보정
 })();
 
+(function wireAdminLogoUpload(){
+  const btn = document.getElementById('btnUploadLogo');
+  const inp = document.getElementById('logoOnce');
+  if (!btn || !inp) return;
+
+  btn.addEventListener('click', ()=> inp.click());
+
+  inp.addEventListener('change', async (e)=>{
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = reader.result; // "data:image/*;base64,...."
+      try {
+        const body = new URLSearchParams({ op:'logo_set_dataurl', dataUrl:String(dataUrl) });
+        const res = await fetch(USAGE_LOG_URL, {
+          method:'POST',
+          headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
+          body
+        }).then(r=>r.json()).catch(()=>null);
+
+        if (!res || !res.ok) {
+          alert('로고 업로드 실패: 서버 응답 오류');
+          return;
+        }
+
+        // 즉시 미리보기/PDF 반영
+        window.__logoDataURL = String(dataUrl);
+        const logoEl = document.getElementById('reportLogo');
+        if (logoEl) logoEl.src = window.__logoDataURL;
+
+        triggerPreview();
+        alert('로고 업로드 완료!');
+      } catch (err) {
+        alert('로고 업로드 중 오류가 발생했습니다.');
+      } finally {
+        inp.value = '';
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+})();
+
+// ── 페이지 로드시 서버에 저장된 로고를 dataURL로 프리로드(있으면 즉시 반영)
+(async function preloadLogo(){
+  try {
+    const res = await fetch(USAGE_LOG_URL, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
+      body: new URLSearchParams({ op:'logo_get' })
+    }).then(r=>r.json());
+    if (res && res.ok && res.dataUrl) {
+      window.__logoDataURL = res.dataUrl;
+      triggerPreview(); // 미리보기 즉시 갱신
+    }
+  } catch(_) { /* 무시 */ }
+})();
     </script>
 <div class="guide-backdrop" id="guideBackdrop" hidden>
   <div class="guide-modal" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
@@ -2317,6 +2411,7 @@ if (vNow) { await setMeta({ visitor: vNow }); }
         <li>‘개선 필요사항(세부)’ 칸에서 개선 내용을 직접 입력/수정할 수 있습니다.</li>
         <li>“초기화”를 누르면 모든 항목이 원상태로 초기화됩니다.</li>
         <li>검토 후 “PDF로 저장”을 눌러 제출용 보고서를 생성합니다.</li>
+        <li>로고 수정버튼은 사용하지마시고, 혹시 로고가 나타나지 않으면 그때 사용해주십시오.</li>
         <li>프로그램 사용 문의는 담당자 “이예군” 선생님께 해주십시오.</li>
       </ol>
     </div>
@@ -2326,7 +2421,6 @@ if (vNow) { await setMeta({ visitor: vNow }); }
   </div>
 </div>
 
-<!-- 사용기록 모달 -->
 <div class="guide-backdrop" id="usageBackdrop" hidden>
   <div class="guide-modal" role="dialog" aria-modal="true" aria-labelledby="usageTitle">
     <header>
