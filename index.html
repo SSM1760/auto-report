@@ -914,6 +914,9 @@
         <select id="visitEnd"></select>
       </div>
     </div>
+
+<!-- ✅ [추가] 기타시설이면 숨길 블록 시작 -->
+<div id="dirCookBlock">
 <div class="hr-sep" role="separator" aria-hidden="true"></div>
 
 <!-- 원장 -->
@@ -961,6 +964,8 @@
     </div>
   </div>
 </div>
+</div>
+<!-- ✅ [추가] 기타시설이면 숨길 블록 끝 -->
 
 <div style="margin-top:12px">
   <label class="small">교육지원</label>
@@ -4174,6 +4179,14 @@ function closeReportTypeChooser(){
   bd.hidden = true;
 }
 
+function toggleDirCookBlock(){
+  const el = document.getElementById('dirCookBlock');
+  if (!el) return;
+
+  const isOther = String(currentFacility || '').trim() === '기타시설';
+  el.style.display = isOther ? 'none' : '';
+}
+
 // === 사용가이드 모달 ===
 function openGuide(){
   const bd = document.getElementById('guideBackdrop');
@@ -4256,6 +4269,7 @@ if (savedReportModeInput) savedReportModeInput.value = kind;
 
 // 선택한 유형에 맞게 데이터셋(SECTIONS/ITEMS) 교체
 applyDatasetForCurrentType();
+toggleDirCookBlock();
 
 // 체크리스트/개선 메모 UI를 현재 세트 기준으로 다시 생성
 buildUI(true);   // ← forceRebuild = true
@@ -4300,6 +4314,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 현재 선택값(기본값 or 저장값)에 맞춰 데이터셋 적용
   applyDatasetForCurrentType();
+toggleDirCookBlock();
 
   // 체크리스트/메모 UI 생성
   //  - 새로 연 원본 파일: 아직 .item이 없어서 buildUI()가 처음 한 번 만들어줌
