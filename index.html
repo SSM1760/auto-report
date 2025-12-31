@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -3075,6 +3076,26 @@ const hasAnyDetail = detailSections.length > 0;
     ? makeNutritionRadarSectionHTML(nutrStats, true)
     : "";
 
+// ✅ 기타시설이면 [표2] 인력정보 표 숨김
+const manpowerTableHTML = (String(currentFacility).trim() === '기타시설') ? '' : `
+  <!-- [표2] 인력 정보 (원장 + 조리원) -->
+  <div style="margin-top:10px;overflow:hidden">
+    <table class="summary-table centered-table" style="width:100%">
+      <tr>
+        <th style="width:18%">원장<br>${dirNameK}</th>
+        <td>건강진단 실시일<br>${dirHealthK}</td>
+        <td>위생교육 실시일<br>${dirEduK}</td>
+      </tr>
+      ${cooks.map(c => `
+        <tr>
+          <th>조리원<br>${escapeHtml(c.name) || '-'}</th>
+          <td>건강진단 실시일<br>${formatKDate(c.health) || '-'}</td>
+          <td>위생교육 실시일<br>${formatKDate(c.edu) || '-'}</td>
+        </tr>
+      `).join('')}
+    </table>
+  </div>
+`;
   // ④ 1페이지(기본 정보 + 요약표)
   const firstPageHTML = `
 <div class="page-section first-page">
@@ -3110,23 +3131,7 @@ const hasAnyDetail = detailSections.length > 0;
       </table>
     </div>
 
-    <!-- [표2] 인력 정보 (원장 + 조리원) -->
-    <div style="margin-top:10px;overflow:hidden">
-      <table class="summary-table centered-table" style="width:100%">
-        <tr>
-          <th style="width:18%">원장<br>${dirNameK}</th>
-          <td>건강진단 실시일<br>${dirHealthK}</td>
-          <td>위생교육 실시일<br>${dirEduK}</td>
-        </tr>
-        ${cooks.map(c => `
-          <tr>
-            <th>조리원<br>${escapeHtml(c.name) || '-'}</th>
-            <td>건강진단 실시일<br>${formatKDate(c.health) || '-'}</td>
-            <td>위생교육 실시일<br>${formatKDate(c.edu) || '-'}</td>
-          </tr>
-        `).join('')}
-      </table>
-    </div>
+${manpowerTableHTML}
 
     <!-- [표3] 교육/물품 지원 -->
     <div style="margin-top:10px;overflow:hidden">
