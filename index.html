@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -2722,6 +2721,81 @@ const footerHtml = showCaptionAndThanks
   `;
 }
 
+// ✅ 기타시설 전용: 위생·안전 + 영양 통합 레이더 페이지 HTML
+function makeOtherCombinedRadarSectionHTML(sectionStats, nutrStats, showCaptionAndThanks = true) {
+  const nutrArr = Array.isArray(nutrStats) ? nutrStats : [];
+
+  // SECTIONS 순서를 그대로 따라가되,
+  // - nutr 포함 섹션은 nutrStats에서 찾아 붙이고
+  // - 그 외 섹션은 sectionStats에서 붙임
+  const nodes = [];
+  SECTIONS.forEach((sec) => {
+    if (sec.key.includes("nutr")) {
+      const st = nutrArr.find((x) => x && x.key === sec.key);
+      if (st) nodes.push(st);
+    } else {
+      const st = sectionStats && sectionStats[sec.key];
+      if (st) nodes.push(st);
+    }
+  });
+
+  // 데이터 없으면 페이지 생성 안 함
+  let totalQ = 0;
+  let answered = 0;
+  nodes.forEach((st) => {
+    if (!st) return;
+    totalQ += st.count || 0;
+    answered += (st.comply || 0) + (st.not || 0);
+  });
+  if (!totalQ || !answered) return "";
+
+  const labelsJoined = nodes.map(n => n.label).join(", ");
+
+  const captionHtml = showCaptionAndThanks
+    ? `
+      <div class="radar-caption">
+        각 꼭짓점은 순서대로 ${escapeHtml(labelsJoined)} 의 준수율을 의미합니다.<br>
+        모든 문항이 적합이면 도형이 바깥까지 꽉 차고, 미흡이 늘어날수록 각 꼭짓점이 안쪽으로 줄어듭니다.
+      </div>
+    `
+    : "";
+
+  const footerHtml = showCaptionAndThanks
+    ? `
+      <div class="page-section-footer">
+        <div class="signature-block">
+          <div class="signature-header">
+            <span class="signature-label">확인자 서명</span>
+            <div class="signature-right">
+              <span class="signature-time" id="signatureTime"></span>
+              <button type="button" class="sign-clear-btn">초기화</button>
+            </div>
+          </div>
+          <canvas id="signCanvas" width="700" height="200"></canvas>
+        </div>
+        <div class="thanks">
+          바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^
+        </div>
+      </div>
+    `
+    : "";
+
+  return `
+<div class="pagebreak"></div>
+<div class="page-section page-graph">
+  <div class="page-section-main center-graph">
+    <h3 class="page-graph-title">영역별 지도 결과(통합)</h3>
+    <div class="radar-wrap">
+      <canvas id="radarCanvas" width="640" height="640"></canvas>
+      ${captionHtml}
+    </div>
+  </div>
+  ${footerHtml}
+</div>
+  `;
+}
+
+
 // ③-1. 공통 레이더 그래프 그리기 (캔버스 id + 노드 배열)
 function drawRadarChartGeneric(canvasId, nodes){
   const canvas = document.getElementById(canvasId);
@@ -2883,6 +2957,25 @@ function drawNutritionRadarChart(nutrStats){
   const nodes = (nutrStats || []).slice();
   if (!nodes.length) return;
   drawRadarChartGeneric("nutrRadarCanvas", nodes);
+}
+
+// ✅ 기타시설 통합 레이더(위생·안전+영양) 그리기
+function drawOtherCombinedRadarChart(sectionStats, nutrStats){
+  const nutrArr = Array.isArray(nutrStats) ? nutrStats : [];
+
+  const nodes = [];
+  SECTIONS.forEach((sec) => {
+    if (sec.key.includes("nutr")) {
+      const st = nutrArr.find((x) => x && x.key === sec.key);
+      if (st) nodes.push(st);
+    } else {
+      const st = sectionStats && sectionStats[sec.key];
+      if (st) nodes.push(st);
+    }
+  });
+
+  if (!nodes.length) return;
+  drawRadarChartGeneric("radarCanvas", nodes);
 }
 
       // ===== 3) 보고서 생성 =====
@@ -3068,13 +3161,23 @@ const hasAnyDetail = detailSections.length > 0;
   // ⚙️ 실제 HTML 생성
   // - 위생·안전 보고서만 있을 때 → radarSection 에만 문구
   // - 위생·안전·영양 보고서일 때 → nutrRadarSection(마지막 장)에만 문구
-  const radarSection = hasBaseRadar
-    ? makeRadarSectionHTML(sectionStats, !hasNutrRadar)
-    : "";
+// ✅ 기타시설 + 위생·안전·영양이면 그래프를 1장(통합)만 생성
+const isOtherCombinedRadar =
+  (String(currentFacility).trim() === "기타시설" &&
+   currentReportMode === "위생·안전·영양");
 
-  const nutrRadarSection = hasNutrRadar
-    ? makeNutritionRadarSectionHTML(nutrStats, true)
-    : "";
+const otherRadarSection = isOtherCombinedRadar
+  ? makeOtherCombinedRadarSectionHTML(sectionStats, nutrStats, true)
+  : "";
+
+// 기존 2장 그래프는 기타시설 통합모드에서는 만들지 않음
+const radarSection = (!isOtherCombinedRadar && hasBaseRadar)
+  ? makeRadarSectionHTML(sectionStats, !hasNutrRadar)
+  : "";
+
+const nutrRadarSection = (!isOtherCombinedRadar && hasNutrRadar)
+  ? makeNutritionRadarSectionHTML(nutrStats, true)
+  : "";
 
 // ✅ 기타시설이면 [표2] 인력정보 표 숨김
 const manpowerTableHTML = (String(currentFacility).trim() === '기타시설') ? '' : `
@@ -3226,7 +3329,10 @@ ${
 ` : '';
 
   // ⑥ 전체 보고서 HTML 합치기 (1장 + 2장 + 그래프 페이지)
-  const reportHTML = firstPageHTML + detailSectionHTML + radarSection + nutrRadarSection;
+const reportHTML =
+  firstPageHTML +
+  detailSectionHTML +
+  (isOtherCombinedRadar ? otherRadarSection : (radarSection + nutrRadarSection));
 
   // ⑦ DOM에 반영
   const area = document.getElementById("reportArea");
@@ -3245,6 +3351,12 @@ ${
   const ph = document.getElementById("reportPlaceholder");
   if (ph) ph.remove();
 
+// ✅ 기타시설 통합모드면 통합 그래프만 그림
+if (isOtherCombinedRadar) {
+  if (otherRadarSection) {
+    drawOtherCombinedRadarChart(sectionStats, nutrStats);
+  }
+} else {
   // 육각형 그래프 실제 그리기 (위생·안전)
   drawRadarChart(sectionStats);
 
@@ -3252,6 +3364,7 @@ ${
   if (nutrRadarSection) {
     drawNutritionRadarChart(nutrStats);
   }
+}
 }
 // ✅ 체크리스트 라디오를 '적합'으로 강제 설정 + 체인지 이벤트 발생
 function setChecklistOk(id){
