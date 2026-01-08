@@ -1003,6 +1003,12 @@
   엑셀로 저장
 </button>
 
+<label class="kicker" style="display:flex; align-items:center; gap:6px;">
+  <input type="checkbox" id="chkUploadCenter" checked>
+  센터에 자동 업로드
+</label>
+<span class="kicker" id="uploadStatus"></span>
+
   <button class="btn danger" onclick="if(confirm('모든 내용을 초기화할까요?')) resetAll()">초기화</button>
 </div>
     <div class="kicker" style="margin-top:6px">
@@ -3959,6 +3965,73 @@ function resetAll(){
     '<div class="kicker" id="reportPlaceholder">“보고서 미리보기”를 눌러 생성하세요.</div>';
 }
 
+// ===============================
+// ✅ 센터 공용 업로드 설정/유틸
+// ===============================
+const CENTER_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxoUNMXfFwnpanZC_tCld0mT5AaF6gBmLvDDur-oilwYdDWlUpQU8NiyMsSr1ssMJJg/exec";
+
+function shouldUploadCenter(){
+  const cb = document.getElementById('chkUploadCenter');
+  return cb ? !!cb.checked : true;
+}
+
+function setUploadStatus(msg){
+  const el = document.getElementById('uploadStatus');
+  if (el) el.textContent = msg || '';
+}
+
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 0);
+}
+
+function blobToBase64(blob){
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => {
+      const s = String(r.result || "");
+      // data:...;base64,AAAA  → AAAA만 추출
+      const base64 = s.includes(",") ? s.split(",")[1] : s;
+      resolve(base64);
+    };
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
+
+async function uploadToCenter(blob, filename, mimeType){
+  if (!CENTER_UPLOAD_URL || CENTER_UPLOAD_URL.includes("여기에_")) {
+    setUploadStatus("업로드 URL 미설정");
+    return;
+  }
+  if (!shouldUploadCenter()) return;
+
+  setUploadStatus("센터 업로드 중…");
+  const base64 = await blobToBase64(blob);
+
+  // ✅ preflight(OPTIONS) 피하려고 text/plain 로 보냄
+  const res = await fetch(CENTER_UPLOAD_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ filename, mimeType, base64 })
+  });
+
+  const txt = await res.text();
+  let out = {};
+  try { out = JSON.parse(txt); } catch(e) {}
+
+  if (out && out.ok) setUploadStatus("센터 업로드 완료");
+  else setUploadStatus("센터 업로드 실패");
+}
+
       // ===== 4) PDF 저장 (미리보기 영역만) =====
       function saveReportPDF() {
   const area = document.getElementById("reportArea");
@@ -4014,19 +4087,27 @@ const filename = `PDF(${facilityLabel})${org}(${modeLabel}).pdf`
   // ✅ 캡처 직전: 버튼 요소들 html2canvas 무시 플래그 부여
   beforePdfHideControls();
 
-  html2pdf()
-    .set(opt)
-    .from(area)
-    .save()
-    .finally(() => {
-      // ✅ 캡처 후: 무시 플래그 제거
-      afterPdfRestoreControls();
+html2pdf()
+  .set(opt)
+  .from(area)
+  .toPdf()
+  .get('pdf')
+  .then(pdf => pdf.output('blob'))
+  .then((pdfBlob) => {
+    // 1) 로컬 다운로드
+    downloadBlob(pdfBlob, filename);
+    // 2) 센터 업로드
+    return uploadToCenter(pdfBlob, filename, "application/pdf");
+  })
+  .finally(() => {
+    // ✅ 캡처 후: 무시 플래그 제거
+    afterPdfRestoreControls();
 
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = "PDF로 저장";
-      }
-    });
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "PDF로 저장";
+    }
+  });
 }
 
 // ✅ 현재 화면 상태(입력값 포함)를 가진 새 HTML 파일로 저장
@@ -4158,6 +4239,9 @@ const filename = `백업(${facilityLabel})${orgName}(${modeLabel}).html`
   document.body.appendChild(a);
   a.click();
 
+// ✅ 센터 업로드(백업 HTML)
+uploadToCenter(blob, filename, "text/html;charset=utf-8").catch(() => {});
+
   // 6) 깨끗하게 정리
   setTimeout(() => {
     document.body.removeChild(a);
@@ -4276,7 +4360,16 @@ const modeLabel = (() => {
 const filename = `Excel(${facilityLabel})${orgClean}(${modeLabel}).xlsx`
   .replace(/[\\/:*?"<>|]/g, "_");
 
-XLSX.writeFile(wb, filename);
+const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+const xlsxBlob = new Blob([wbout], {
+  type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+});
+
+// 1) 로컬 다운로드
+downloadBlob(xlsxBlob, filename);
+
+// 2) 센터 업로드
+uploadToCenter(xlsxBlob, filename, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet").catch(() => {});
 }
 
 
