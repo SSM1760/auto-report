@@ -843,6 +843,20 @@
   color: var(--text);
 }
 
+/* ✅ 감사문구/안내문 줄간격 & 문단간격 */
+.page-section-footer .thanks{
+  line-height: 1.45;           /* 전체 줄간격 살짝 늘림 */
+}
+
+.page-section-footer .thanks .thanks-note{
+  display: block;
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;           /* 안내문(2줄) 줄간격 더 여유 */
+  margin-bottom: 2.5mm;        /* 안내문 ↔ 감사문구 사이 간격 */
+}
+
 /* 레이더 그래프 제목 스타일 */
 .page-graph-title{
   margin-bottom: 12px;
@@ -2636,8 +2650,7 @@ function makeRadarSectionHTML(sectionStats, showCaptionAndThanks = true) {
   const captionHtml = showCaptionAndThanks
     ? `
       <div class="radar-caption">
-        각 꼭짓점은 순서대로 시설·환경, 개인위생, 원료사용, 공정관리, 보관관리, 기타사항의 준수율을 의미합니다.<br>
-        모든 문항이 적합이면 육각형이 바깥까지 꽉 차고, 미흡이 늘어날수록 각 꼭짓점이 안쪽으로 줄어듭니다.
+        각 꼭짓점은 항목별 준수율을 나타내며, 미흡 사항이 있는 경우 해당 항목 꼭짓점이 정육각형 중앙 방향으로 축소됩니다.
       </div>
     `
     : "";
@@ -2655,9 +2668,13 @@ const footerHtml = showCaptionAndThanks
         </div>
         <canvas id="signCanvas" width="700" height="200"></canvas>
       </div>
-      <div class="thanks">
-        바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^
-      </div>
+<div class="thanks">
+  <div class="thanks-note">
+    현장 서명은 1차 지도 결과에 대한 확인 절차이며 사무실 복귀 후 기준 검토에 따라<br>
+    일부 보완·수정 사항이 최종 결과에 반영될 수 있습니다.
+  </div>
+  바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^
+</div>
     </div>
   `
   : "";
@@ -2666,7 +2683,7 @@ const footerHtml = showCaptionAndThanks
 <div class="pagebreak"></div>
 <div class="page-section page-graph">
   <div class="page-section-main center-graph">
-    <h3 class="page-graph-title">영역별 지도 결과(위생·안전)</h3>
+    <h3 class="page-graph-title">영역별 지도 결과(${escapeHtml(currentReportMode)}관리)</h3>
     <div class="radar-wrap">
       <canvas id="radarCanvas" width="640" height="640"></canvas>
       ${captionHtml}
@@ -2694,8 +2711,7 @@ function makeNutritionRadarSectionHTML(nutrStats, showCaptionAndThanks = true) {
   const captionHtml = showCaptionAndThanks
     ? `
       <div class="radar-caption">
-        각 꼭짓점은 순서대로 시설·환경, 개인위생, 원료사용, 공정관리, 보관관리, 기타사항의 준수율을 의미합니다.<br>
-        모든 문항이 적합이면 육각형이 바깥까지 꽉 차고, 미흡이 늘어날수록 각 꼭짓점이 안쪽으로 줄어듭니다.
+        각 꼭짓점은 항목별 준수율을 나타내며, 미흡 사항이 있는 경우 해당 항목 꼭짓점이 정육각형 중앙 방향으로 축소됩니다.
       </div>
     `
     : "";
@@ -2713,9 +2729,13 @@ const footerHtml = showCaptionAndThanks
         </div>
         <canvas id="signCanvas" width="700" height="200"></canvas>
       </div>
-      <div class="thanks">
-        바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^
-      </div>
+<div class="thanks">
+  <div class="thanks-note">
+    현장 서명은 1차 지도 결과에 대한 확인 절차이며 사무실 복귀 후 기준 검토에 따라<br>
+    일부 보완·수정 사항이 최종 결과에 반영될 수 있습니다.
+  </div>
+  바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^
+</div>
     </div>
   `
   : "";
@@ -2768,8 +2788,7 @@ function makeOtherCombinedRadarSectionHTML(sectionStats, nutrStats, showCaptionA
   const captionHtml = showCaptionAndThanks
     ? `
       <div class="radar-caption">
-        각 꼭짓점은 순서대로 ${escapeHtml(labelsJoined)} 의 준수율을 의미합니다.<br>
-        모든 문항이 적합이면 도형이 바깥까지 꽉 차고, 미흡이 늘어날수록 각 꼭짓점이 안쪽으로 줄어듭니다.
+        각 꼭짓점은 항목별 준수율을 나타내며, 미흡 사항이 있는 경우 해당 항목 꼭짓점이 정육각형 중앙 방향으로 축소됩니다.
       </div>
     `
     : "";
@@ -2787,9 +2806,13 @@ function makeOtherCombinedRadarSectionHTML(sectionStats, nutrStats, showCaptionA
           </div>
           <canvas id="signCanvas" width="700" height="200"></canvas>
         </div>
-        <div class="thanks">
-          바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^
-        </div>
+<div class="thanks">
+  <div class="thanks-note">
+    현장 서명은 1차 지도 결과에 대한 확인 절차이며 사무실 복귀 후 기준 검토에 따라<br>
+    일부 보완·수정 사항이 최종 결과에 반영될 수 있습니다.
+  </div>
+  바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^
+</div>
       </div>
     `
     : "";
@@ -2798,7 +2821,7 @@ function makeOtherCombinedRadarSectionHTML(sectionStats, nutrStats, showCaptionA
 <div class="pagebreak"></div>
 <div class="page-section page-graph">
   <div class="page-section-main center-graph">
-    <h3 class="page-graph-title">영역별 지도 결과(통합)</h3>
+    <h3 class="page-graph-title">영역별 지도 결과(위생·안전·영양관리)</h3>
     <div class="radar-wrap">
       <canvas id="radarCanvas" width="640" height="640"></canvas>
       ${captionHtml}
@@ -3221,7 +3244,7 @@ const manpowerTableHTML = (String(currentFacility).trim() === '기타시설') ? 
     <div id="reportHeader">
       ${logoImg}
       <span id="reportBadge">${escapeHtml(currentFacility)}</span>
-      <h1 id="reportTitle">${escapeHtml(currentReportMode)} 순회방문 결과보고서</h1>
+      <h1 id="reportTitle">${escapeHtml(currentReportMode)}관리 순회방문 결과보고서</h1>
     </div>
 
     <!-- [표1] 기관/방문 정보 -->
@@ -3311,7 +3334,7 @@ ${manpowerTableHTML}
  <!-- ✅ 1페이지 하단 안내 문구 -->
   <div class="page-section-footer">
     <div class="first-page-note">
-      ※ 본 점검은 식품의약품안전처·식생활안전관리원
+      ※ 본 순회방문 지도는 식품의약품안전처·식생활안전관리원
       ‘어린이 급식소(집단·소규모) 위생·안전·영양관리 체크리스트 해설서(2026)’를 근거로 실시했습니다.
     </div>
   </div>
@@ -3963,6 +3986,18 @@ function resetAll(){
   // 미리보기 영역 초기화
   document.getElementById('reportArea').innerHTML =
     '<div class="kicker" id="reportPlaceholder">“보고서 미리보기”를 눌러 생성하세요.</div>';
+  // ✅ 보고서 유형 선택을 '처음 상태'로 되돌리기(숨은값 제거 + 모달 다시 열기)
+  const savedFacilityInput   = document.getElementById('savedFacility');
+  const savedReportModeInput = document.getElementById('savedReportMode');
+  if (savedFacilityInput)   savedFacilityInput.value = '';
+  if (savedReportModeInput) savedReportModeInput.value = '';
+
+  // (선택) 서명 저장값도 같이 초기화하고 싶으면 아래도 추가
+  const savedSignatureInput = document.getElementById('savedSignature');
+  if (savedSignatureInput) savedSignatureInput.value = '';
+
+  // ✅ 처음 화면(보고서 유형 선택 모달)로
+  openReportTypeChooser();
 }
 
 // ===============================
