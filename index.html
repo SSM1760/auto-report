@@ -1,8 +1,4 @@
 
-
-
-
-
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -440,9 +436,9 @@
 /* [표1] 방문자/방문회차 헤더칸 폭: 한글 4글자 정도 */
 .th-narrow-4ch { width: 6ch; }  /* 패딩/보더 감안해 6ch 권장 */
 /* [표1] 기관/방문 정보 열 폭 재조정 */
-.summary-table.table-visit .col-head-5   { width: 7ch; }   /* 기관명/방문자/방문회차 헤더 (5글자) */
+.summary-table.table-visit .col-head-5   { width: 8ch; }   /* 기관명/방문자/방문회차 헤더 (5글자) */
 .summary-table.table-visit .col-value-lg { width: 20ch; }  /* 기관명/방문일자 값 (넓은 칸) */
-.summary-table.table-visit .col-value-sm { width: 8ch; }   /* 방문자/회차 값 (3글자보다 살짝 여유, 줄바꿈 방지) */
+.summary-table.table-visit .col-value-sm { width: 12ch; }   /* 방문자/회차 값 (3글자보다 살짝 여유, 줄바꿈 방지) */
 
 /* [표3] 교육/물품 내용 박스: 3~4줄 높이 */
 .support-cell {
@@ -455,7 +451,7 @@
 }
 
 /* 영역별 요약표 컬럼 폭(구분/숫자칸 고정, 개선사항은 남는 폭) */
-.summary-col-name   { width: 18ch; } /* 구분: 한글 6글자 */
+.summary-col-name   { width: 21.8ch; } /* 구분: 한글 6글자 */
 .summary-col-small  { width: 6ch;  } /* 항목수/준수/미흡: 숫자 3개 */
 
 /* 항상 새 페이지에서 시작시키는 강제 분리 마커 */
@@ -3330,15 +3326,22 @@ const nutrRadarSection = (!isOtherCombinedRadar && hasNutrRadar)
 const manpowerTableHTML = (String(currentFacility).trim() === '기타시설') ? '' : `
   <!-- [표2] 인력 정보 (원장 + 조리원) -->
   <div style="margin-top:10px;overflow:hidden">
-    <table class="summary-table centered-table" style="width:100%">
+    <table class="summary-table centered-table" style="width:100%; table-layout:fixed;">
+      <colgroup>
+        <col style="width:14.5ch;">  <!-- ✅ 원장/조리원(이름) 칸: 기관명/방문일자(th)와 동일 -->
+        <col>
+        <col>
+      </colgroup>
+
       <tr>
-        <th style="width:18%">원장<br>${dirNameK}</th>
+        <th>원장<br>${(dirNameK && dirNameK !== '-') ? `(${dirNameK})` : '-'}</th>
         <td>건강진단 실시일<br>${dirHealthK}</td>
         <td>위생교육 실시일<br>${dirEduK}</td>
       </tr>
+
       ${cooks.map(c => `
         <tr>
-          <th>조리원<br>${escapeHtml(c.name) || '-'}</th>
+          <th>조리원<br>${(escapeHtml(c.name) ? `(${escapeHtml(c.name)})` : '-')}</th>
           <td>건강진단 실시일<br>${formatKDate(c.health) || '-'}</td>
           <td>위생교육 실시일<br>${formatKDate(c.edu) || '-'}</td>
         </tr>
@@ -4188,6 +4191,12 @@ async function uploadToCenter(blob, filename, mimeType){
 const org = (document.getElementById("orgName").value || "기관명")
   .trim()
   .replace(/\s+/g, ""); // 파일명에서 공백 제거(원하면 "_"로 바꿔도 됨)
+const roundRaw = (document.getElementById("visitRound")?.value || "").trim();
+const roundN   = roundRaw.replace(/\s+/g, "").replace(/차$/, "");
+const roundSuffix = `_${(roundN || roundRaw || "0")}차`;
+const now = new Date();
+const mmdd = String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
+const dateSuffix = `(${mmdd})`;
 
 // (기관유형)=집단/소규모/유치원/기타시설
 const facilityLabel = (() => {
@@ -4204,7 +4213,7 @@ const modeLabel = (() => {
   return (m.includes("영양")) ? "위생안전,영양" : "위생안전";
 })();
 
-const filename = `PDF(${facilityLabel})${org}(${modeLabel}).pdf`
+const filename = `PDF(${facilityLabel})${org}(${modeLabel})${roundSuffix}${dateSuffix}.pdf`
   .replace(/[\\/:*?"<>|]/g, "_");
 
   const opt = {
@@ -4399,6 +4408,12 @@ const orgInput  = document.getElementById('orgName');
 const orgName = (orgInput?.value || '기관명')
   .trim()
   .replace(/\s+/g, ""); // 공백 제거(원하면 "_"로)
+const roundRaw = (document.getElementById("visitRound")?.value || "").trim();
+const roundN   = roundRaw.replace(/\s+/g, "").replace(/차$/, "");
+const roundSuffix = `_${(roundN || roundRaw || "0")}차`;
+const now = new Date();
+const mmdd = String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
+const dateSuffix = `(${mmdd})`;
 
 const facilityLabel = (() => {
   const f = (typeof currentFacility !== "undefined") ? String(currentFacility) : "";
@@ -4413,7 +4428,7 @@ const modeLabel = (() => {
   return (m.includes("영양")) ? "위생안전,영양" : "위생안전";
 })();
 
-const filename = `백업(${facilityLabel})${orgName}(${modeLabel}).html`
+const filename = `백업(${facilityLabel})${orgName}(${modeLabel})${roundSuffix}${dateSuffix}.html`
   .replace(/[\\/:*?"<>|]/g, "_");
 
   // 5) Blob으로 만들어 다운로드 트리거
@@ -4476,6 +4491,11 @@ function saveReportXLSX() {
 
   const org   = safe(document.getElementById("orgName")?.value);
   const round = safe(document.getElementById("visitRound")?.value);
+const roundN = round.replace(/\s+/g, "").replace(/차$/, "");
+const roundSuffix = `_${(roundN || round || "0")}차`;
+const now = new Date();
+const mmdd = String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
+const dateSuffix = `(${mmdd})`;
 
   const headers = ["기관명", "방문회차"];
   const row     = [org, round];
@@ -4546,8 +4566,8 @@ const modeLabel = (() => {
   return (m.includes("영양")) ? "위생안전,영양" : "위생안전";
 })();
 
-const filename = `Excel(${facilityLabel})${orgClean}(${modeLabel}).xlsx`
-  .replace(/[\\/:*?"<>|]/g, "_");
+const filename = `Excel(${facilityLabel})${orgClean}(${modeLabel})${roundSuffix}${dateSuffix}.xlsx`
+  .replace(/[\\/:*?"<>|]/g, "_")
 
 const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
 const xlsxBlob = new Blob([wbout], {
@@ -4692,7 +4712,7 @@ function closeUsage(){
 
 // === 업데이트 새소식 표시(업데이트내역 버튼 반짝) ===
 // ✅ 업데이트 내역(모달 내용)을 수정할 때마다 이 버전만 바꿔주면 됨
-const UPDATES_VERSION = "2026-01-11-v2";
+const UPDATES_VERSION = "2026-01-11-v4";
 const UPDATES_SEEN_KEY = "report_updates_seen_version";
 
 function applyUpdatesNewBadge(){
@@ -4877,6 +4897,8 @@ toggleDirCookBlock();
     <div class="content">
       <ul style="padding-left:18px; margin:0;">
         <li>2026-01-11<br>업데이트내역 버튼 추가<br>3개의 저장하기버튼 하나로 통합<br>각종 텍스트 수정</li>
+        <br>
+        <li>2026-01-14<br>미리보기쪽 표 크기 조절<br>원장, 조리원 성함에 괄호() 추가<br>저장시 방문회차 + 현재날짜 자동입력 추가</li>
       </ul>
     </div>
     <footer>
