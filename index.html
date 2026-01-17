@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -4180,6 +4181,16 @@ async function uploadToCenter(blob, filename, mimeType){
   else setUploadStatus("센터 업로드 실패");
 }
 
+// 방문일자 미입력/형식불일치면 오늘 날짜로 fallback
+function getVisitMMDD_(){
+  const v = document.getElementById("visitDate")?.value || ""; // "YYYY-MM-DD"
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+  if (m) return m[2] + m[3];
+
+  const now = new Date();
+  return String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
+}
+
       // ===== 4) PDF 저장 (미리보기 영역만) =====
       function saveReportPDF() {
   const area = document.getElementById("reportArea");
@@ -4194,8 +4205,7 @@ const org = (document.getElementById("orgName").value || "기관명")
 const roundRaw = (document.getElementById("visitRound")?.value || "").trim();
 const roundN   = roundRaw.replace(/\s+/g, "").replace(/차$/, "");
 const roundSuffix = `_${(roundN || roundRaw || "0")}차`;
-const now = new Date();
-const mmdd = String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
+const mmdd = getVisitMMDD_();
 const dateSuffix = `(${mmdd})`;
 
 // (기관유형)=집단/소규모/유치원/기타시설
@@ -4411,8 +4421,7 @@ const orgName = (orgInput?.value || '기관명')
 const roundRaw = (document.getElementById("visitRound")?.value || "").trim();
 const roundN   = roundRaw.replace(/\s+/g, "").replace(/차$/, "");
 const roundSuffix = `_${(roundN || roundRaw || "0")}차`;
-const now = new Date();
-const mmdd = String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
+const mmdd = getVisitMMDD_();
 const dateSuffix = `(${mmdd})`;
 
 const facilityLabel = (() => {
@@ -4493,8 +4502,7 @@ function saveReportXLSX() {
   const round = safe(document.getElementById("visitRound")?.value);
 const roundN = round.replace(/\s+/g, "").replace(/차$/, "");
 const roundSuffix = `_${(roundN || round || "0")}차`;
-const now = new Date();
-const mmdd = String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
+const mmdd = getVisitMMDD_();
 const dateSuffix = `(${mmdd})`;
 
   const headers = ["기관명", "방문회차"];
