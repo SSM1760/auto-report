@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -1129,6 +1128,11 @@
   <!-- ✅ 3종(PDF/백업HTML/Excel) 한번에 저장 -->
   <button class="btn brand" id="btnSaveAll" type="button" onclick="saveAllThree()">
     저장하기
+  </button>
+
+  <!-- ✅ 임시저장(백업HTML과 동일한 1개 파일 저장) -->
+  <button class="btn brand" id="btnTempSave" type="button" onclick="saveTempOne()">
+    임시저장
   </button>
 
   <label class="kicker" style="display:flex; align-items:center; gap:6px;">
@@ -4117,7 +4121,7 @@ function resetAll(){
 // ===============================
 // ✅ 센터 공용 업로드 설정/유틸
 // ===============================
-const CENTER_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxoUNMXfFwnpanZC_tCld0mT5AaF6gBmLvDDur-oilwYdDWlUpQU8NiyMsSr1ssMJJg/exec";
+const CENTER_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxL9XrFm0Iq0HRybr1zhfoC4FT-LsQMQp4CUS96FXq-of3UNeaQvadUa3kH__15lumvaA/exec";
 
 function shouldUploadCenter(){
   const cb = document.getElementById('chkUploadCenter');
@@ -4156,7 +4160,7 @@ function blobToBase64(blob){
   });
 }
 
-async function uploadToCenter(blob, filename, mimeType){
+async function uploadToCenter(blob, filename, mimeType, folderName = ""){
   if (!CENTER_UPLOAD_URL || CENTER_UPLOAD_URL.includes("여기에_")) {
     setUploadStatus("업로드 URL 미설정");
     return;
@@ -4170,7 +4174,7 @@ async function uploadToCenter(blob, filename, mimeType){
   const res = await fetch(CENTER_UPLOAD_URL, {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({ filename, mimeType, base64 })
+    body: JSON.stringify({ filename, mimeType, base64, folderName })
   });
 
   const txt = await res.text();
@@ -4283,7 +4287,7 @@ return html2pdf()
 }
 
 // ✅ 현재 화면 상태(입력값 포함)를 가진 새 HTML 파일로 저장
-function saveProgramWithData() {
+function saveProgramWithData(prefixLabel = "백업") {
   // 1) 전체 <html> 요소를 통째로 복제
   const originalHtmlEl = document.documentElement;
   const clonedHtmlEl   = originalHtmlEl.cloneNode(true);
@@ -4304,6 +4308,13 @@ function saveProgramWithData() {
     if (btnAll) {
       btnAll.disabled = false;
       btnAll.textContent = '저장하기';
+    }
+
+    // 임시저장 버튼 상태 복구
+    const btnTemp = clonedHtmlEl.querySelector('#btnTempSave');
+    if (btnTemp) {
+      btnTemp.disabled = false;
+      btnTemp.textContent = '임시저장';
     }
 
     // 3) 상태 문구도 초기화(원하면)
@@ -4437,7 +4448,7 @@ const modeLabel = (() => {
   return (m.includes("영양")) ? "위생안전,영양" : "위생안전";
 })();
 
-const filename = `백업(${facilityLabel})${orgName}(${modeLabel})${roundSuffix}${dateSuffix}.html`
+const filename = `${prefixLabel}(${facilityLabel})${orgName}(${modeLabel})${roundSuffix}${dateSuffix}.html`
   .replace(/[\\/:*?"<>|]/g, "_");
 
   // 5) Blob으로 만들어 다운로드 트리거
@@ -4450,8 +4461,18 @@ const filename = `백업(${facilityLabel})${orgName}(${modeLabel})${roundSuffix}
   document.body.appendChild(a);
   a.click();
 
-// ✅ 센터 업로드(백업 HTML)
-const uploadP = uploadToCenter(blob, filename, "text/html;charset=utf-8").catch(() => {});
+// ✅ 센터 업로드(백업/임시 HTML)
+// prefixLabel이 "임시저장"이면 드라이브의 "임시저장파일" 폴더로 업로드
+const folderName = (typeof prefixLabel !== "undefined" && String(prefixLabel) === "임시저장")
+  ? "임시저장파일"
+  : "";
+
+const uploadP = uploadToCenter(
+  blob,
+  filename,
+  "text/html;charset=utf-8",
+  folderName
+).catch(() => {});
 
 // 6) 깨끗하게 정리
 setTimeout(() => {
@@ -4654,6 +4675,42 @@ async function saveAllThree(){
   }
 }
 
+// ✅ 임시저장: 백업HTML과 동일한 방식으로 "1개 파일"만 저장(접두어만 임시저장)
+async function saveTempOne(){
+  const area = document.getElementById("reportArea");
+  if (!area || area.querySelector("#reportPlaceholder")) {
+    alert("먼저 “보고서 미리보기”를 눌러 보고서를 생성하세요.");
+    return;
+  }
+
+  const btn = document.getElementById("btnTempSave");
+  const prevText = btn ? btn.textContent : "";
+
+  try{
+    showLoading("임시저장 중…");
+    if (btn){
+      btn.disabled = true;
+      btn.textContent = "임시저장 중…";
+    }
+    setUploadStatus("임시저장: 임시파일 저장 중…");
+
+    // ✅ 핵심: 백업 저장 로직 그대로 쓰되, 파일명 접두어만 바꿈
+    await saveProgramWithData("임시저장");
+
+    setUploadStatus("임시저장 완료");
+  } catch(err){
+    console.error(err);
+    setUploadStatus("임시저장 중 오류");
+    alert("임시저장 중 오류가 발생했습니다. 콘솔(F12)을 확인해주세요.");
+  } finally {
+    hideLoading();
+    if (btn){
+      btn.disabled = false;
+      btn.textContent = prevText || "임시저장";
+    }
+  }
+}
+
 function linesToHtml(text){
   // 줄 단위로 안전하게 이스케이프 → <br>로 연결
   const lines = (text || '')
@@ -4720,7 +4777,7 @@ function closeUsage(){
 
 // === 업데이트 새소식 표시(업데이트내역 버튼 반짝) ===
 // ✅ 업데이트 내역(모달 내용)을 수정할 때마다 이 버전만 바꿔주면 됨
-const UPDATES_VERSION = "2026-01-11-v4";
+const UPDATES_VERSION = "2026-01-11-v5";
 const UPDATES_SEEN_KEY = "report_updates_seen_version";
 
 function applyUpdatesNewBadge(){
@@ -4904,9 +4961,11 @@ toggleDirCookBlock();
     </header>
     <div class="content">
       <ul style="padding-left:18px; margin:0;">
-        <li>2026-01-11<br>업데이트내역 버튼 추가<br>3개의 저장하기버튼 하나로 통합<br>각종 텍스트 수정</li>
+        <li>2026-01-11<br>- 업데이트내역 버튼 추가<br>- 3개의 저장하기버튼 하나로 통합<br>- 각종 텍스트 수정</li>
         <br>
-        <li>2026-01-14<br>미리보기쪽 표 크기 조절<br>원장, 조리원 성함에 괄호() 추가<br>저장시 방문회차 + 현재날짜 자동입력 추가</li>
+        <li>2026-01-14<br>- 미리보기쪽 표 크기 조절<br>- 원장, 조리원 성함에 괄호() 추가<br>- 저장시 방문회차 + 현재날짜 자동입력 추가</li>
+        <br>
+        <li>2026-01-21<br>- 임시저장버튼 추가<br>순회방문 전 내용을 미리 작성해 두고, 임시저장 버튼을 사용해보세요.<br>임시저장 버튼 누르면 구글드라이브 공유폴더 안에 새로 생성된 "임시저장파일"에 저장됩니다.<br>"임시저장파일" 폴더안에 있는 파일은 24시간이 지나면 자동으로 삭제됩니다.</li>
       </ul>
     </div>
     <footer>
