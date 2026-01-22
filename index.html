@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -1123,8 +1124,6 @@
 
     <h2 style="margin-top:14px">도구</h2>
 <div class="toolbar body">
-  <button class="btn brand" onclick="buildReport()">보고서 미리보기</button>
-
   <!-- ✅ 3종(PDF/백업HTML/Excel) 한번에 저장 -->
   <button class="btn brand" id="btnSaveAll" type="button" onclick="saveAllThree()">
     저장하기
@@ -1143,9 +1142,6 @@
 
   <button class="btn danger" onclick="if(confirm('모든 내용을 초기화할까요?')) resetAll()">초기화</button>
 </div>
-    <div class="kicker" style="margin-top:6px">
-      ※ “보고서 미리보기” 후 저장하세요.
-    </div>
   </div>
 </div>
 
@@ -4639,6 +4635,8 @@ async function saveAllThree(){
     return;
   }
 
+ buildReport();
+
   const btn = document.getElementById("btnSaveAll");
   const prevText = btn ? btn.textContent : "";
 
@@ -4682,6 +4680,8 @@ async function saveTempOne(){
     alert("먼저 “보고서 미리보기”를 눌러 보고서를 생성하세요.");
     return;
   }
+
+  buildReport();
 
   const btn = document.getElementById("btnTempSave");
   const prevText = btn ? btn.textContent : "";
@@ -4777,7 +4777,7 @@ function closeUsage(){
 
 // === 업데이트 새소식 표시(업데이트내역 버튼 반짝) ===
 // ✅ 업데이트 내역(모달 내용)을 수정할 때마다 이 버전만 바꿔주면 됨
-const UPDATES_VERSION = "2026-01-11-v5";
+const UPDATES_VERSION = "2026-01-11-v6";
 const UPDATES_SEEN_KEY = "report_updates_seen_version";
 
 function applyUpdatesNewBadge(){
@@ -4966,6 +4966,8 @@ toggleDirCookBlock();
         <li>2026-01-14<br>- 미리보기쪽 표 크기 조절<br>- 원장, 조리원 성함에 괄호() 추가<br>- 저장시 방문회차 + 현재날짜 자동입력 추가</li>
         <br>
         <li>2026-01-21<br>- 임시저장버튼 추가<br>순회방문 전 내용을 미리 작성해 두고, 임시저장 버튼을 사용해보세요.<br>임시저장 버튼 누르면 구글드라이브 공유폴더 안에 새로 생성된 "임시저장파일"에 저장됩니다.<br>"임시저장파일" 폴더안에 있는 파일은 24시간이 지나면 자동으로 삭제됩니다.</li>
+        <br>
+        <li>2026-01-22<br>- 중복 저장시(기관명, 회차가 동일한) 구글드라이브에 앞서 저장된 파일들은 모두 덮어쓰기가 적용됩니다.</li>
       </ul>
     </div>
     <footer>
