@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -4635,8 +4636,6 @@ async function saveAllThree(){
     return;
   }
 
- buildReport();
-
   const btn = document.getElementById("btnSaveAll");
   const prevText = btn ? btn.textContent : "";
 
@@ -4680,8 +4679,6 @@ async function saveTempOne(){
     alert("먼저 “보고서 미리보기”를 눌러 보고서를 생성하세요.");
     return;
   }
-
-  buildReport();
 
   const btn = document.getElementById("btnTempSave");
   const prevText = btn ? btn.textContent : "";
