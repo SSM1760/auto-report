@@ -4987,6 +4987,13 @@ toggleDirCookBlock();
     openReportTypeChooser();
   }
   applyUpdatesNewBadge();
+
+// ✅ 기관등급 변경 시 미리보기 즉시 갱신
+const orgGradeEl = document.getElementById('orgGrade');
+if (orgGradeEl) {
+  orgGradeEl.addEventListener('change', triggerPreview);
+  orgGradeEl.addEventListener('input', triggerPreview); // 일부 환경 보강
+}
 });
 
     </script>
