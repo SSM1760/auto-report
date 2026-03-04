@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -650,10 +651,20 @@
   position: absolute;
   right: 0;
   top: 0;
-  font-size: 15px;        /* 작게 */
+  font-size: 15px;
   font-weight: 600;
-  color: #374151;         /* 진한 회색 */
+  color: #374151;
   letter-spacing: -0.2px;
+
+  /* ✅ 추가(글자 + 이미지 나란히) */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#reportBadge .grade-icon{
+  height: 14px;
+  width: auto;
 }
 
 /* ▶ 보고서 미리보기(= #reportArea) 전체 글자 10pt, 큰 제목은 유지 */
@@ -1022,11 +1033,22 @@
   <button type="button" class="btn sm weak" id="btnGuide">사용가이드</button>
 </h2>
   <div class="body">
+<div class="row">
+  <div>
+    <label class="small">기관등급</label>
+    <select id="orgGrade">
+      <option value="" selected>선택</option>
+      <option value="열매등급">열매등급</option>
+      <option value="새싹등급">새싹등급</option>
+    </select>
+  </div>
+  <div></div>
+</div>
     <div class="row">
-      <div>
-        <label class="small">기관명</label>
-        <input id="orgName" type="text" placeholder="예) 행복어린이집" />
-      </div>
+<div>
+  <label class="small">기관명</label>
+  <input id="orgName" type="text" placeholder="예) 행복어린이집" />
+</div>
       <div>
         <label class="small">방문자</label>
         <input id="visitor" type="text" >
@@ -3151,6 +3173,7 @@ function buildReport() {
 
   const info = {
     orgName: (document.getElementById("orgName").value || "").trim(),
+    orgGrade: (document.getElementById("orgGrade")?.value || "").trim(),
     visitor: (document.getElementById("visitor").value || "").trim(),
     visitDate: document.getElementById("visitDate").value || "",
     visitStart: document.getElementById("visitStart").value || "",
@@ -3351,6 +3374,23 @@ const manpowerTableHTML = (String(currentFacility).trim() === '기타시설') ? 
     </table>
   </div>
 `;
+
+// ✅ 기관등급(열매/새싹) → 우측상단 아이콘 결정
+const orgGrade = (document.getElementById("orgGrade")?.value || "").trim();
+
+// ✅ GitHub에 올린 이미지 경로(HTML 기준 상대경로로 맞춰야 함)
+const GRADE_ICON_SEED  = "./assets/grade_seed.png";
+const GRADE_ICON_FRUIT = "./assets/grade_fruit.png";
+
+const gradeIconSrc =
+  orgGrade.includes("새싹") ? GRADE_ICON_SEED :
+  orgGrade.includes("열매") ? GRADE_ICON_FRUIT :
+  "";
+
+const gradeIconHtml = gradeIconSrc
+  ? `<img class="grade-icon" src="${gradeIconSrc}" alt="${escapeHtml(orgGrade)}" />`
+  : "";
+
   // ④ 1페이지(기본 정보 + 요약표)
   const firstPageHTML = `
 <div class="page-section first-page">
@@ -3358,7 +3398,7 @@ const manpowerTableHTML = (String(currentFacility).trim() === '기타시설') ? 
 
     <div id="reportHeader">
       ${logoImg}
-      <span id="reportBadge">${escapeHtml(currentFacility)}</span>
+      <span id="reportBadge">${escapeHtml(currentFacility)}${gradeIconHtml}</span>
       <h1 id="reportTitle">${escapeHtml(currentReportMode)}관리 순회방문 결과보고서</h1>
     </div>
 
