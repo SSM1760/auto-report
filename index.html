@@ -4563,10 +4563,10 @@ const roundSuffix = `_${(roundN || round || "0")}차`;
 const mmdd = getVisitMMDD_();
 const dateSuffix = `(${mmdd})`;
 
-const grade = safe(document.getElementById("orgGrade")?.value);
+const grade = safe(document.getElementById("orgGrade")?.value);  // ✅ 기관등급 추가
 
-  const headers = ["기관명", "방문회차"];
-  const row     = [org, round];
+const headers = ["기관명", "기관등급", "방문회차"];
+const row     = [org, grade, round];
 
   const root = document.getElementById("checklist");
   if (root) {
