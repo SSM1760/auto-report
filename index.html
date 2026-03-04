@@ -4563,6 +4563,8 @@ const roundSuffix = `_${(roundN || round || "0")}차`;
 const mmdd = getVisitMMDD_();
 const dateSuffix = `(${mmdd})`;
 
+const grade = safe(document.getElementById("orgGrade")?.value);
+
   const headers = ["기관명", "방문회차"];
   const row     = [org, round];
 
@@ -5143,4 +5145,3 @@ if (orgGradeEl) {
 
 </body>
 </html>
-
