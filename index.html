@@ -1,7 +1,5 @@
 
 
-
-
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -77,14 +75,15 @@
       }
 
       input[type="text"],
-      input[type="date"],
-      textarea {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        background: #fff;
-      }
+input[type="date"],
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
 
       textarea {
         min-height: 76px;
@@ -677,7 +676,8 @@
 }
 
 #reportArea .page-graph-title{
-  font-size: 2rem !important;   /* 원하시는 크기로 조절 (1.6rem, 2rem 등) */
+  font-size: 1.2rem !important;   /* 원하시는 크기로 조절 (1.6rem, 2rem 등) */
+  color: #111827 !important;
 }
 
 /* 개선 필요사항(세부) 슬림 최종본 */
@@ -822,6 +822,12 @@
   max-width:100%;
   height:auto;
 }
+
+#roundBarCanvas{
+  max-width:100%;
+  height:auto;
+}
+
 .radar-caption{
   font-size:12px;
   color:var(--muted);
@@ -852,8 +858,9 @@
 
 /* 그래프 영역 정가운데 배치 */
 .page-section-main.center-graph{
-  justify-content: center;   /* 세로 가운데 */
-  align-items: center;       /* 가로 가운데 */
+  justify-content: flex-start;   /* ✅ 위쪽 정렬 */
+  align-items: center;           /* 가로 가운데 유지 */
+  padding-top: 2mm;              /* ✅ 아주 약간만 위 여백 */
 }
 
 .page-section-footer{
@@ -952,17 +959,10 @@
 /* 레이더 그래프 제목 스타일 */
 .page-graph-title{
   margin-bottom: 12px;
-  font-size: 16px;
+  font-size: 1.2rem;
+  font-weight: 700;
   text-align: center;
-  font-weight: 700;
-}
-
-/* 레이더 그래프 제목 스타일 */
-.page-graph-title{
-  margin-bottom: 12px;
-  font-size: 1.4rem;   /* ← 여기 숫자 키우면 더 큼 (예: 1.6rem) */
-  font-weight: 700;
-  text-align: center;  /* 가운데 정렬(이미 중앙이지만 더 안정감) */
+color: #111827;
 }
 
 /* 보고서 섹션 제목 (영역별 점검결과 요약 / 개선 필요사항(세부)) */
@@ -1042,7 +1042,14 @@
       <option value="새싹">새싹</option>
     </select>
   </div>
-  <div></div>
+
+  <div>
+    <label class="small">&nbsp;</label>
+    <label class="kicker" style="display:flex; align-items:center; gap:6px; height:42px;">
+      <input type="checkbox" id="chkApplyPrevRounds" checked>
+      이전차수 적용
+    </label>
+  </div>
 </div>
     <div class="row">
 <div>
@@ -2712,13 +2719,17 @@ function getSectionStats() {
     });
 
     stats[sec.key] = {
-      key: sec.key,
-      // "시설·환경(11문항)" → "시설·환경" 처럼 괄호 뒤는 잘라냄
-      label: sec.name.replace(/\(.+\)/, ""),
-      count: total,
-      comply: ok, // 적합 개수
-      not: no     // 미준수 개수
-    };
+  key: sec.key,
+  // "기타사항"이면서 위생·안전 쪽 마지막 섹션이면 라벨 변경
+  label: (() => {
+    const base = sec.name.replace(/\(.+\)/, "");
+    if (base === "기타사항") return "기타(위생)";
+    return base;
+  })(),
+  count: total,
+  comply: ok, // 적합 개수
+  not: no     // 미준수 개수
+};
   });
 
   return stats;
@@ -2749,20 +2760,51 @@ function getNutritionStats() {
     });
 
     stats.push({
-      key: sec.key,
-      // "집단급식소 영양 부제목 테스트1(3문항)" → "집단급식소 영양 부제목 테스트1"
-      label: sec.name.replace(/\(.+\)/, ""),
-      count: total,
-      comply: ok,
-      not: no
-    });
+  key: sec.key,
+  // 영양 쪽 "기타사항"은 별도 표기
+  label: (() => {
+    const base = sec.name.replace(/\(.+\)/, "");
+    if (base === "기타사항") return "기타(영양)";
+    return base;
+  })(),
+  count: total,
+  comply: ok,
+  not: no
+});
   });
 
   return stats;
 }
 
+// ✅ 공통 푸터(막대그래프 + 서명 + 안내 + 감사문구)
+function makeReportFooterHTML_(show) {
+  if (!show) return "";
+  return `
+    <div class="page-section-footer">
+      ${makeRoundBarInlineHTML_()}
+      <div class="signature-block">
+        <div class="signature-header">
+          <span class="signature-label">확인자 서명</span>
+          <div class="signature-right">
+            <span class="signature-time" id="signatureTime"></span>
+            <button type="button" class="sign-clear-btn">초기화</button>
+          </div>
+        </div>
+        <canvas id="signCanvas" width="700" height="200"></canvas>
+      </div>
+
+      <div class="thanks">
+        <div class="thanks-note">
+          현장 서명은 1차 지도 결과에 대한 확인 절차이며 사무실 복귀 후 기준 검토에 따라<br>
+          일부 보완·수정 사항이 최종 결과에 반영될 수 있습니다.
+        </div>
+        바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^
+      </div>
+    </div>
+  `;
+}
+
 // ② 그래프가 들어갈 HTML 블록 생성 (페이지 분리 + 중앙 정렬 + 하단 문구)
-// showCaptionAndThanks 가 true 인 페이지에만 안내문 + 감사 문구를 넣는다.
 function makeRadarSectionHTML(sectionStats, showCaptionAndThanks = true) {
   // 전혀 체크 안 했으면 그래프 페이지를 아예 만들지 않음
   let totalQ = 0;
@@ -2785,29 +2827,7 @@ function makeRadarSectionHTML(sectionStats, showCaptionAndThanks = true) {
     `
     : "";
 
-const footerHtml = showCaptionAndThanks
-  ? `
-    <div class="page-section-footer">
-      <div class="signature-block">
-        <div class="signature-header">
-          <span class="signature-label">확인자 서명</span>
-          <div class="signature-right">
-            <span class="signature-time" id="signatureTime"></span>
-            <button type="button" class="sign-clear-btn">초기화</button>
-          </div>
-        </div>
-        <canvas id="signCanvas" width="700" height="200"></canvas>
-      </div>
-<div class="thanks">
-  <div class="thanks-note">
-    현장 서명은 1차 지도 결과에 대한 확인 절차이며 사무실 복귀 후 기준 검토에 따라<br>
-    일부 보완·수정 사항이 최종 결과에 반영될 수 있습니다.
-  </div>
-  바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^
-</div>
-    </div>
-  `
-  : "";
+const footerHtml = makeReportFooterHTML_(showCaptionAndThanks);
 
   return `
 <div class="pagebreak"></div>
@@ -2815,13 +2835,196 @@ const footerHtml = showCaptionAndThanks
   <div class="page-section-main center-graph">
     <h3 class="page-graph-title">영역별 지도 결과(${escapeHtml(currentReportMode)}관리)</h3>
     <div class="radar-wrap">
-      <canvas id="radarCanvas" width="640" height="640"></canvas>
+      <canvas id="radarCanvas" width="540" height="540"></canvas>
       ${captionHtml}
     </div>
   </div>
   ${footerHtml}
 </div>
   `;
+}
+
+// ✅ [추가] 차수별 적합율 막대그래프 페이지 HTML
+function makeRoundBarSectionHTML(){
+  return `
+  <div id="roundBarWrap">
+    <div class="pagebreak"></div>
+    <div class="page-section page-graph">
+      <div class="page-section-main center-graph">
+        <h3 class="page-graph-title">차수별 적합율 추이</h3>
+        <div class="radar-wrap">
+          <canvas id="roundBarCanvas" width="900" height="520"></canvas>
+          <div class="radar-caption">
+            ※ “저장하기”를 누를 때마다 차수별 적합율이 자동 누적되며, 같은 차수는 덮어쓰기 됩니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+// ✅ [추가] 히스토리 가져오기 (기관명으로 조회)
+async function fetchHistoryByOrg_(orgName){
+  if (!HISTORY_API_URL || HISTORY_API_URL.includes("여기에_")) return [];
+  const q = new URLSearchParams({ action: "get_history", orgName: orgName });
+  const url = HISTORY_API_URL + "?" + q.toString();
+
+  const res = await fetch(url, { method: "GET" });
+  const txt = await res.text();
+  let out = {};
+  try { out = JSON.parse(txt); } catch(e) {}
+  return Array.isArray(out?.rows) ? out.rows : [];
+}
+
+// ✅ [추가] 캔버스 막대그래프
+function drawRoundBarChart_(canvasId, rows){
+  const cv = document.getElementById(canvasId);
+  if (!cv || !cv.getContext) return;
+  const ctx = cv.getContext("2d");
+
+  // rows: [{visitRound, okRate}, ...]
+  const data = (rows || [])
+    .filter(r => r && r.visitRound != null && r.okRate != null)
+    .map(r => ({ round: Number(r.visitRound), rate: Number(r.okRate) }))
+    .sort((a,b) => a.round - b.round);
+
+  // 데이터 없으면 안내
+  ctx.clearRect(0,0,cv.width,cv.height);
+  if (!data.length) {
+    ctx.font = "24px sans-serif";
+    ctx.fillText("저장된 이전 차수 데이터가 없습니다.", 40, 80);
+    return;
+  }
+
+  const W = cv.width, H = cv.height;
+  const padL = 80, padR = 40, padT = 40, padB = 80;
+  const innerW = W - padL - padR;
+  const innerH = H - padT - padB;
+
+  const maxY = 100;
+  const minY = 70;
+
+// 축
+ctx.strokeStyle = "#cfcfcf";
+ctx.lineWidth = 2;
+ctx.beginPath();
+// 세로축은 제거
+ctx.moveTo(padL, padT + innerH);
+ctx.lineTo(padL + innerW, padT + innerH);
+ctx.stroke();
+
+// y 눈금(60~100)
+ctx.font = "16px sans-serif";
+ctx.fillStyle = "#111";
+ctx.strokeStyle = "#999";
+ctx.lineWidth = 1;
+
+// 60,70,80,90,100 표시 (원하면 10 간격/20 간격 바꿔도 됨)
+for (let v = minY; v <= maxY; v += 10) {
+  const y = padT + innerH - (v - minY) / (maxY - minY) * innerH;
+}
+
+// 막대 (✅ 최대 6차 기준으로 막대 폭/간격 고정)
+const n = data.length;
+
+// ===== (라인차트) x좌표 배치 계산은 기존 막대 폭 로직을 그대로 사용 =====
+
+// 6칸 레이아웃을 기준으로 폭/간격을 정한다 (n이 적어도 폭은 유지)
+const SLOT = 6;
+const gap = 18;
+
+const baseCount = Math.min(SLOT, Math.max(1, n));
+let barW = Math.floor((innerW - gap * (SLOT - 1)) / SLOT);
+barW = Math.max(24, barW);
+
+// n이 6을 넘으면 폭을 더 줄임
+if (n > SLOT) {
+  barW = Math.max(18, Math.floor((innerW - gap * (n - 1)) / n));
+}
+
+// ✅ 가운데 정렬: 점(포인트) 묶음의 총 폭 기준으로 startX를 이동
+const totalW = (barW * n) + (gap * (n - 1));
+const startX = padL + Math.max(0, Math.floor((innerW - totalW) / 2));
+
+// ===== (라인차트) 각 차수의 (x,y) 포인트 만들기 =====
+const pts = data.map((d, i) => {
+  const xLeft = startX + i * (barW + gap);
+  const x = xLeft + Math.floor(barW / 2);
+
+  // ✅ 70~100 스케일 기준 (너가 이미 minY=70, maxY=100으로 바꿔둔 상태 전제)
+  const clamped = Math.max(minY, Math.min(maxY, d.rate));
+  const t = (clamped - minY) / (maxY - minY);
+  const y = padT + innerH - (t * innerH);
+
+  return { d, x, y };
+});
+
+// ===== (라인차트) 선 그리기 =====
+if (pts.length >= 2) {
+  ctx.strokeStyle = "#f2a766";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) {
+    ctx.lineTo(pts[i].x, pts[i].y);
+  }
+  ctx.stroke();
+}
+
+// ===== (라인차트) 점(원) + 라벨 + 값 =====
+ctx.textAlign = "center";
+pts.forEach(({ d, x, y }) => {
+  // 점(포인트)
+  ctx.fillStyle = "#f2a766";
+  ctx.beginPath();
+  ctx.arc(x, y, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 라벨(차수) - 아래
+  ctx.fillStyle = "#111";
+  ctx.font = "16px sans-serif";
+  ctx.fillText(`${d.round}차`, x, padT + innerH + 28);
+
+  // 값(퍼센트) - 위
+  ctx.fillStyle = "#111";
+  ctx.font = "16px sans-serif";
+  ctx.fillText(`${d.rate.toFixed(1)}%`, x, y - 10);
+});
+ctx.textAlign = "left";
+}
+
+// ✅ [추가] buildReport 후 호출: 체크 시, 히스토리 조회→그래프 렌더
+async function renderPrevRoundsChartIfNeeded_(info){
+  if (!shouldApplyPrevRounds()) return;
+
+  const orgName = (info?.orgName || "").trim();
+  if (!orgName) return;
+
+  const rows = await fetchHistoryByOrg_(orgName);
+  drawRoundBarChart_("roundBarCanvas", rows);
+}
+
+// ✅ [추가] 레이더 그래프 페이지 안에 '차수별 적합율'을 끼워 넣는 인라인 블록
+function makeRoundBarInlineHTML_() {
+  // 기본은 숨김(체크 ON이면 syncPrevRoundsBarVisibility_()가 보여줌)
+  return `
+<div id="roundBarWrap" style="display:none; margin-top:5mm; width:100%;">
+  <h3 class="page-graph-title" style="margin: 0 0 4px 0;">차수별 적합율 추이</h3>
+  <div class="radar-wrap">
+    <canvas id="roundBarCanvas" width="640" height="210"></canvas>
+  </div>
+</div>
+  `;
+}
+
+// ✅ 체크박스 상태에 따라 보고서 안 '차수별 적합율' 페이지를 즉시 숨김/표시
+function syncPrevRoundsBarVisibility_(){
+  const wrap = document.getElementById("roundBarWrap");
+  if (!wrap) return; // 아직 보고서가 생성되지 않았으면 할 일 없음
+
+  const on = shouldApplyPrevRounds(); // 기존 체크 판별 함수 그대로 사용
+  wrap.style.display = on ? "" : "none";
 }
 
 // 영양 영역 레이더 페이지 HTML
@@ -2846,29 +3049,7 @@ function makeNutritionRadarSectionHTML(nutrStats, showCaptionAndThanks = true) {
     `
     : "";
 
-const footerHtml = showCaptionAndThanks
-  ? `
-    <div class="page-section-footer">
-      <div class="signature-block">
-        <div class="signature-header">
-          <span class="signature-label">확인자 서명</span>
-          <div class="signature-right">
-            <span class="signature-time" id="signatureTime"></span>
-            <button type="button" class="sign-clear-btn">초기화</button>
-          </div>
-        </div>
-        <canvas id="signCanvas" width="700" height="200"></canvas>
-      </div>
-<div class="thanks">
-  <div class="thanks-note">
-    현장 서명은 1차 지도 결과에 대한 확인 절차이며 사무실 복귀 후 기준 검토에 따라<br>
-    일부 보완·수정 사항이 최종 결과에 반영될 수 있습니다.
-  </div>
-  바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^
-</div>
-    </div>
-  `
-  : "";
+const footerHtml = makeReportFooterHTML_(showCaptionAndThanks);
 
   return `
 <div class="pagebreak"></div>
@@ -2877,6 +3058,60 @@ const footerHtml = showCaptionAndThanks
     <h3 class="page-graph-title">영역별 지도 결과(영양)</h3>
     <div class="radar-wrap">
       <canvas id="nutrRadarCanvas" width="640" height="640"></canvas>
+      ${captionHtml}
+    </div>
+  </div>
+  ${footerHtml}
+</div>
+  `;
+}
+
+// ✅ 위생·안전(6) + 영양(5) 통합 레이더 페이지 HTML
+// - 영양 데이터가 없으면 위생·안전(6각형)만 그려짐
+function makeCombinedRadarSectionHTML(sectionStats, nutrStats, showCaptionAndThanks = true) {
+  // 1) 위생·안전 노드(기존 6개)
+  const hygieneNodes = SECTIONS
+    .map(sec => sectionStats && sectionStats[sec.key])
+    .filter(Boolean);
+
+  // 2) 영양 노드(기존 5개)
+  const nutrNodes = Array.isArray(nutrStats) ? nutrStats.slice() : [];
+
+  // 3) 합치기 (영양 없으면 6개만)
+  const nodes = hygieneNodes.concat(nutrNodes);
+
+  // 데이터 없으면 페이지 생성 안 함
+  let totalQ = 0;
+  let answered = 0;
+  nodes.forEach((st) => {
+    if (!st) return;
+    totalQ += st.count || 0;
+    answered += (st.comply || 0) + (st.not || 0);
+  });
+  if (!totalQ || !answered) return "";
+
+  const captionHtml = showCaptionAndThanks
+    ? `
+      <div class="radar-caption">
+        각 꼭짓점은 항목별 준수율을 나타내며, 미흡 사항이 있는 경우 해당 항목 꼭짓점이 중앙 방향으로 축소됩니다.
+      </div>
+    `
+    : "";
+
+const footerHtml = makeReportFooterHTML_(showCaptionAndThanks);
+
+const graphTitle =
+  currentReportMode === "위생·안전"
+    ? "영역별 지도 결과(위생·안전관리)"
+    : "영역별 지도 결과(위생·안전·영양관리)";
+
+return `
+<div class="pagebreak"></div>
+<div class="page-section page-graph">
+  <div class="page-section-main center-graph">
+    <h3 class="page-graph-title">${graphTitle}</h3>
+    <div class="radar-wrap">
+      <canvas id="radarCanvas" width="540" height="540"></canvas>
       ${captionHtml}
     </div>
   </div>
@@ -2923,37 +3158,20 @@ function makeOtherCombinedRadarSectionHTML(sectionStats, nutrStats, showCaptionA
     `
     : "";
 
-  const footerHtml = showCaptionAndThanks
-    ? `
-      <div class="page-section-footer">
-        <div class="signature-block">
-          <div class="signature-header">
-            <span class="signature-label">확인자 서명</span>
-            <div class="signature-right">
-              <span class="signature-time" id="signatureTime"></span>
-              <button type="button" class="sign-clear-btn">초기화</button>
-            </div>
-          </div>
-          <canvas id="signCanvas" width="700" height="200"></canvas>
-        </div>
-<div class="thanks">
-  <div class="thanks-note">
-    현장 서명은 1차 지도 결과에 대한 확인 절차이며 사무실 복귀 후 기준 검토에 따라<br>
-    일부 보완·수정 사항이 최종 결과에 반영될 수 있습니다.
-  </div>
-  바쁘신 중에도 순회방문 지도에 협조해 주셔서 감사합니다^^
-</div>
-      </div>
-    `
-    : "";
+const footerHtml = makeReportFooterHTML_(showCaptionAndThanks);
 
-  return `
+const graphTitle =
+  currentReportMode === "위생·안전"
+    ? "영역별 지도 결과(위생·안전관리)"
+    : "영역별 지도 결과(위생·안전·영양관리)";
+
+return `
 <div class="pagebreak"></div>
 <div class="page-section page-graph">
   <div class="page-section-main center-graph">
-    <h3 class="page-graph-title">영역별 지도 결과(위생·안전·영양관리)</h3>
+    <h3 class="page-graph-title">${graphTitle}</h3>
     <div class="radar-wrap">
-      <canvas id="radarCanvas" width="640" height="640"></canvas>
+      <canvas id="radarCanvas" width="540" height="540"></canvas>
       ${captionHtml}
     </div>
   </div>
@@ -2972,7 +3190,7 @@ function drawRadarChartGeneric(canvasId, nodes){
 
   // 고해상도(인쇄) 대비: 장치 픽셀 비율 반영
   const dpr = window.devicePixelRatio || 1;
-  const logicalSize = 640;
+  const logicalSize = 460;
   canvas.width = logicalSize * dpr;
   canvas.height = logicalSize * dpr;
   canvas.style.width = logicalSize + "px";
@@ -3067,12 +3285,12 @@ function drawRadarChartGeneric(canvasId, nodes){
   // 5) 축 이름 라벨(부제목 + (적합/전체))
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.font = "18px 'Nanum Gothic', system-ui, sans-serif";
+  ctx.font = "14px 'Nanum Gothic', system-ui, sans-serif";
   ctx.fillStyle = "#111827";
 
   for (let i = 0; i < keys.length; i++) {
     const angle = -Math.PI / 2 + angleStep * i;
-    const rLab = radius + 10;
+    const rLab = radius + 6;
     const x = rLab * Math.cos(angle);
     const y = rLab * Math.sin(angle);
 
@@ -3093,7 +3311,7 @@ function drawRadarChartGeneric(canvasId, nodes){
 
     ctx.textAlign = align;
     ctx.textBaseline = "middle";
-    const lineHeight = 18;
+    const lineHeight = 14;
 
     if (baselineHint === "top") {
       ctx.fillText(label1, x, y);
@@ -3521,14 +3739,23 @@ ${
 ` : '';
 
   // ⑥ 전체 보고서 HTML 합치기 (1장 + 2장 + 그래프 페이지)
+
+// ✅ [추가] 통합 레이더(위생6 + 영양5 = 최대 11각형) 섹션 HTML
+const combinedRadarSection = makeCombinedRadarSectionHTML(sectionStats, nutrStats);
+
 const reportHTML =
   firstPageHTML +
   detailSectionHTML +
-  (isOtherCombinedRadar ? otherRadarSection : (radarSection + nutrRadarSection));
+  (isOtherCombinedRadar ? otherRadarSection : combinedRadarSection);
 
-  // ⑦ DOM에 반영
-  const area = document.getElementById("reportArea");
-  area.innerHTML = reportHTML;
+const area = document.getElementById("reportArea");
+area.innerHTML = reportHTML;
+
+// ✅ 생성 직후: 체크 상태에 맞춰 페이지 숨김/표시
+syncPrevRoundsBarVisibility_();
+
+// ✅ 체크 ON일 때만 조회/렌더(함수 내부에서도 체크로 return함)
+renderPrevRoundsChartIfNeeded_(info);
 
   // 세부 에디터/요약 x버튼 동작 복원
   if (hasAnyDetail) {
@@ -3549,12 +3776,16 @@ if (isOtherCombinedRadar) {
     drawOtherCombinedRadarChart(sectionStats, nutrStats);
   }
 } else {
-  // 육각형 그래프 실제 그리기 (위생·안전)
-  drawRadarChart(sectionStats);
+  // ✅ 위생·안전(6) + 영양(5) 통합 레이더(= 최대 11각형)
+  const hygieneNodes = SECTIONS
+    .map(sec => sectionStats && sectionStats[sec.key])
+    .filter(Boolean);
 
-  // 영양 레이더 그래프 (필요할 때만)
-  if (nutrRadarSection) {
-    drawNutritionRadarChart(nutrStats);
+  const nutrNodes = Array.isArray(nutrStats) ? nutrStats.slice() : [];
+  const nodes = hygieneNodes.concat(nutrNodes);
+
+  if (nodes.length) {
+    drawRadarChartGeneric("radarCanvas", nodes);
   }
 }
 }
@@ -4157,7 +4388,10 @@ function resetAll(){
 
 // ===============================
 // ✅ 센터 공용 업로드 설정/유틸
-// ===============================
+// (새로 배포한 Apps Script 웹앱 URL을 여기에 붙여넣기)
+
+const HISTORY_API_URL = "https://script.google.com/macros/s/AKfycbw7Wn2H3et3IYcHWphkqfunDuW4oJ5LHDb0JuYL2i1H_Cj9zTYASbW3GypIRZzXX_fA/exec";
+
 const CENTER_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxL9XrFm0Iq0HRybr1zhfoC4FT-LsQMQp4CUS96FXq-of3UNeaQvadUa3kH__15lumvaA/exec";
 
 function shouldUploadCenter(){
@@ -4220,6 +4454,82 @@ async function uploadToCenter(blob, filename, mimeType, folderName = ""){
 
   if (out && out.ok) setUploadStatus("센터 업로드 완료");
   else setUploadStatus("센터 업로드 실패");
+}
+
+// ✅ [추가] 이전차수 적용 체크 여부
+function shouldApplyPrevRounds(){
+  const cb = document.getElementById("chkApplyPrevRounds");
+  return !!(cb && cb.checked);
+}
+
+// ✅ [추가] "1차" / "1" / " 1 차 " → 1 로 정규화
+function parseRoundNumber_(raw){
+  const s = String(raw || "").trim().replace(/\s+/g, "");
+  const n = s.replace(/차$/,"");
+  const v = parseInt(n, 10);
+  return Number.isFinite(v) ? v : null;
+}
+
+// ✅ [추가] 전체 항목 기준 적합/미준수/적합율 계산
+function computeOverallSummary_(){
+  let total = 0, ok = 0, no = 0;
+
+  // 현재 화면에서 사용하는 ITEMS 전체(위생/영양 포함)가 “이번 보고서 총항목”이 됨
+  (ITEMS || []).forEach((it) => {
+    total++;
+    const sel = document.querySelector(`input[name="q_${it.id}"]:checked`);
+    if (!sel) return;
+    if (sel.value === "ok") ok++;
+    else if (sel.value === "no") no++;
+  });
+
+  const rate = total ? (ok / total) * 100 : 0;
+  return { total, ok, no, rate };
+}
+
+// ✅ [추가] 히스토리 upsert (기관명 + 회차 + 시설 + 보고서유형 기준으로 덮어쓰기)
+async function upsertHistoryRecord_(){
+  // ✅ 히스토리는 저장하기를 누르면 항상 저장 (체크박스와 무관)
+  if (!HISTORY_API_URL || HISTORY_API_URL.includes("여기에_")) return;
+
+  const orgName = (document.getElementById("orgName")?.value || "").trim();
+  if (!orgName) return; // 기관명 없으면 저장 불가(키가 없으니)
+
+  const visitRoundRaw = (document.getElementById("visitRound")?.value || "").trim();
+  const visitRound = parseRoundNumber_(visitRoundRaw);
+
+  const { total, ok, no, rate } = computeOverallSummary_();
+
+  const payload = {
+    action: "upsert_history",
+    record: {
+      orgName,                      // ✅ 기관 식별: 기관명
+      facility: String(currentFacility || ""),
+      reportMode: String(currentReportMode || ""),
+      visitDate: String(document.getElementById("visitDate")?.value || ""),
+      visitRound: visitRound,       // number or null
+      visitRoundRaw: visitRoundRaw, // 원문도 같이 저장(표시용)
+      totalItems: total,
+      okCount: ok,
+      noCount: no,
+      okRate: Math.round(rate * 10) / 10  // 소수 1자리
+    }
+  };
+
+  // ✅ preflight 피하려고 POST도 text/plain로 전송(네 uploadToCenter 스타일과 동일) :contentReference[oaicite:6]{index=6}
+  const res = await fetch(HISTORY_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  });
+
+  const txt = await res.text();
+  let out = {};
+  try { out = JSON.parse(txt); } catch(e) {}
+
+  if (!out || !out.ok) {
+    console.warn("history upsert failed:", out);
+  }
 }
 
 // 방문일자 미입력/형식불일치면 오늘 날짜로 fallback
@@ -4682,25 +4992,31 @@ async function saveAllThree(){
   const prevText = btn ? btn.textContent : "";
 
   try{
-    showLoading("저장 중… (1/3) PDF 생성 중");
+    showLoading("저장 중… (1/4) PDF 생성 중");
     if (btn){
       btn.disabled = true;
-      btn.textContent = "저장 중…(1/3)";
+      btn.textContent = "저장 중…(1/4)";
     }
-    setUploadStatus("저장(1/3): PDF 생성 중…");
+    setUploadStatus("저장(1/4): PDF 생성 중…");
     await saveReportPDF();
 
-    showLoading("저장 중… (2/3) 백업 파일 저장 중");
-    if (btn) btn.textContent = "저장 중…(2/3)";
-    setUploadStatus("저장(2/3): 백업 파일 저장 중…");
+    showLoading("저장 중… (2/4) 백업 파일 저장 중");
+    if (btn) btn.textContent = "저장 중…(2/4)";
+    setUploadStatus("저장(2/4): 백업 파일 저장 중…");
     await saveProgramWithData();
 
-    showLoading("저장 중… (3/3) Excel 저장 중");
-    if (btn) btn.textContent = "저장 중…(3/3)";
-    setUploadStatus("저장(3/3): Excel 저장 중…");
-    await saveReportXLSX();
+showLoading("저장 중… (3/4) Excel 저장 중");
+if (btn) btn.textContent = "저장 중…(3/4)";
+setUploadStatus("저장(3/4): Excel 저장 중…");
+await saveReportXLSX();
 
-    setUploadStatus("저장 완료");
+// ✅ [추가] 4/4) 히스토리(차수 요약) 업서트 저장
+showLoading("저장 중… (4/4) 차수 데이터 저장 중");
+if (btn) btn.textContent = "저장 중…(4/4)";
+setUploadStatus("저장(4/4): 차수 데이터 저장 중…");
+await upsertHistoryRecord_();
+
+setUploadStatus("저장 완료");
   } catch(err){
     console.error(err);
     setUploadStatus("저장 중 오류");
@@ -4816,7 +5132,7 @@ function closeUsage(){
 
 // === 업데이트 새소식 표시(업데이트내역 버튼 반짝) ===
 // ✅ 업데이트 내역(모달 내용)을 수정할 때마다 이 버전만 바꿔주면 됨
-const UPDATES_VERSION = "2026-03-04-v7";
+const UPDATES_VERSION = "2026-03-04-v8";
 const UPDATES_SEEN_KEY = "report_updates_seen_version";
 
 function applyUpdatesNewBadge(){
@@ -4996,6 +5312,22 @@ if (orgGradeEl) {
   orgGradeEl.addEventListener('change', triggerPreview);
   orgGradeEl.addEventListener('input', triggerPreview); // 일부 환경 보강
 }
+
+// ✅ 이전차수 적용 체크박스: 막대그래프 페이지 표시/숨김 즉시 반영
+const chkPrev = document.getElementById('chkApplyPrevRounds');
+if (chkPrev) {
+  chkPrev.addEventListener('change', () => {
+    // 1) 이미 생성된 보고서가 있으면 즉시 숨김/표시
+    syncPrevRoundsBarVisibility_();
+
+    // 2) 체크 ON이면 (보고서가 이미 있는 경우) 그래프도 즉시 그려줌
+    if (shouldApplyPrevRounds()) {
+      const orgName = (document.getElementById("orgName")?.value || "").trim();
+      renderPrevRoundsChartIfNeeded_({ orgName });
+    }
+  });
+}
+
 });
 
     </script>
@@ -5016,6 +5348,8 @@ if (orgGradeEl) {
         <li>2026-01-22<br>- 중복 저장시(기관명, 회차가 동일한) 구글드라이브에 앞서 저장된 파일들은 모두 덮어쓰기가 적용됩니다.</li>
         <br>
         <li>2026-03-04<br>- 기관등급 선택지 추가<br>미리보기 페이지에서 각 등급에따라 보고서유형 글자 우측에 등급 아이콘이 추가됩니다.</li>
+        <br>
+        <li>2026-03-14<br>- 차수별 추이 체크버튼 추가<br>버튼은 기본적으로 자동 체크되며, 저장된 방문 회차에 따라 차수별 적합율 추이 그래프가 표시됩니다.<br>- 영역별 지도 결과 그래프 통합(위생, 안전, 영양)<br>기존의 위생·안전 그래프와 위생·안전·영양 그래프가 하나로 합쳐져 보다 편리하게 확인할 수 있습니다.<br>- 히스토리 저장 추가<br>저장하기 버튼 클릭 시 기존 3회 저장에서 4회 저장으로 변경됩니다.<br>회차 종료 시 필요한 정보가 함께 저장되므로, 저장 완료까지 잠시 기다려주시기 바랍니다.</li>
       </ul>
     </div>
     <footer>
