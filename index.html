@@ -2,6 +2,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -1019,9 +1020,10 @@ color: #111827;
 
   <body>
   <!-- (프로그램 내부용) 현재 선택한 시설 / 보고서 종류를 저장 -->
-  <input type="hidden" id="savedFacility" />
-  <input type="hidden" id="savedReportMode" />
-  <input type="hidden" id="savedSignature" />
+<input type="hidden" id="savedFacility" />
+<input type="hidden" id="savedReportMode" />
+<input type="hidden" id="savedOrgGrade" />
+<input type="hidden" id="savedSignature" />
 
   <div class="wrap">
 
@@ -3425,9 +3427,13 @@ function buildReport() {
     console.warn("서명 백업 실패:", e);
   }
 
-  const info = {
-    orgName: (document.getElementById("orgName").value || "").trim(),
-    orgGrade: (document.getElementById("orgGrade")?.value || "").trim(),
+const currentOrgGrade = (document.getElementById("orgGrade")?.value || "").trim();
+const savedOrgGradeEl = document.getElementById("savedOrgGrade");
+if (savedOrgGradeEl) savedOrgGradeEl.value = currentOrgGrade;
+
+const info = {
+  orgName: (document.getElementById("orgName").value || "").trim(),
+  orgGrade: currentOrgGrade,
     visitor: (document.getElementById("visitor").value || "").trim(),
     visitDate: document.getElementById("visitDate").value || "",
     visitStart: document.getElementById("visitStart").value || "",
@@ -3633,8 +3639,8 @@ const manpowerTableHTML = (String(currentFacility).trim() === '기타시설') ? 
 const orgGrade = (document.getElementById("orgGrade")?.value || "").trim();
 
 // ✅ GitHub에 올린 이미지 경로(HTML 기준 상대경로로 맞춰야 함)
-const GRADE_ICON_SEED  = "./assets/grade_seed.png";
-const GRADE_ICON_FRUIT = "./assets/grade_fruit.png";
+const GRADE_ICON_SEED  = "https://raw.githubusercontent.com/SSM1760/auto-report/main/assets/grade_seed.png";
+const GRADE_ICON_FRUIT = "https://raw.githubusercontent.com/SSM1760/auto-report/main/assets/grade_fruit.png";
 
 const gradeIconSrc =
   orgGrade.includes("새싹") ? GRADE_ICON_SEED :
@@ -5273,11 +5279,16 @@ currentFacility   = facility;
 currentReportMode = kind;
 
 // ⬇⬇⬇ 추가: 숨은 필드에도 현재 선택값 저장
-const savedFacilityInput  = document.getElementById("savedFacility");
+const savedFacilityInput   = document.getElementById("savedFacility");
 const savedReportModeInput = document.getElementById("savedReportMode");
-if (savedFacilityInput)  savedFacilityInput.value  = facility;
+const savedOrgGradeInput   = document.getElementById("savedOrgGrade");
+const orgGradeEl           = document.getElementById("orgGrade");
+
+if (savedFacilityInput)   savedFacilityInput.value   = facility;
 if (savedReportModeInput) savedReportModeInput.value = kind;
-// ⬆⬆⬆ 여기까지 추가
+if (savedOrgGradeInput && orgGradeEl) {
+  savedOrgGradeInput.value = orgGradeEl.value || "";
+}
 
 // 선택한 유형에 맞게 데이터셋(SECTIONS/ITEMS) 교체
 applyDatasetForCurrentType();
@@ -5311,14 +5322,15 @@ if (up && !up.hidden) closeUpdates();
   });
 })();
 
-// DOM이 전부 만들어진 다음에 실행
 document.addEventListener('DOMContentLoaded', () => {
   // ⬇ 저장된 HTML(파일로 저장 후 다시 연 것)이라면 숨은 필드에 값이 들어 있음
-  const savedFacilityInput  = document.getElementById('savedFacility');
+  const savedFacilityInput   = document.getElementById('savedFacility');
   const savedReportModeInput = document.getElementById('savedReportMode');
+  const savedOrgGradeInput   = document.getElementById('savedOrgGrade');
 
   const savedFacility = savedFacilityInput?.value?.trim();
   const savedMode     = savedReportModeInput?.value?.trim();
+  const savedOrgGrade = savedOrgGradeInput?.value?.trim();
 
   // 저장된 값이 있으면 그걸로 현재 선택값을 덮어쓴다
   if (savedFacility && savedMode) {
@@ -5328,7 +5340,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 현재 선택값(기본값 or 저장값)에 맞춰 데이터셋 적용
   applyDatasetForCurrentType();
-toggleDirCookBlock();
+  toggleDirCookBlock();
+
+  // ✅ 저장된 기관등급 복원
+  const orgGradeEl = document.getElementById('orgGrade');
+  if (orgGradeEl && savedOrgGrade) {
+    orgGradeEl.value = savedOrgGrade;
+  }
 
   // 체크리스트/메모 UI 생성
   //  - 새로 연 원본 파일: 아직 .item이 없어서 buildUI()가 처음 한 번 만들어줌
@@ -5342,12 +5360,16 @@ toggleDirCookBlock();
   }
   applyUpdatesNewBadge();
 
-// ✅ 기관등급 변경 시 미리보기 즉시 갱신
-const orgGradeEl = document.getElementById('orgGrade');
-if (orgGradeEl) {
-  orgGradeEl.addEventListener('change', triggerPreview);
-  orgGradeEl.addEventListener('input', triggerPreview); // 일부 환경 보강
-}
+  // ✅ 기관등급 변경 시 미리보기 즉시 갱신 + 숨은값 저장
+  if (orgGradeEl) {
+    const syncOrgGrade = () => {
+      if (savedOrgGradeInput) savedOrgGradeInput.value = orgGradeEl.value || '';
+      triggerPreview();
+    };
+
+    orgGradeEl.addEventListener('change', syncOrgGrade);
+    orgGradeEl.addEventListener('input', syncOrgGrade); // 일부 환경 보강
+  }
 
 // ✅ 이전차수 적용 체크박스: 막대그래프 페이지 표시/숨김 즉시 반영
 const chkPrev = document.getElementById('chkApplyPrevRounds');
