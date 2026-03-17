@@ -1,8 +1,5 @@
 
 
-
-
-
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -631,11 +628,11 @@ select {
 /* ===== 로고 헤더 ===== */
 #reportHeader{
   position: relative;
-  min-height: 22mm;
+  min-height: 18mm;
   display: flex;
   align-items: center;
   justify-content: center;     /* 제목은 가운데 */
-  margin-bottom: 6mm;
+  margin-bottom: 3mm;
 }
 #reportLogo{
   position: absolute;
@@ -808,7 +805,7 @@ select {
 }
 
 #reportHeader #reportTitle{
-  margin-top: 60px !important;     /* ← 제목을 아래로 내리는 여백 */
+  margin-top: 42px !important;     /* ← 제목을 아래로 내리는 여백 */
 }
 
 /* ===== 육각형 레이더 그래프 레이아웃 ===== */
@@ -838,7 +835,7 @@ select {
 
 /* ===== 페이지 단위 레이아웃 (그래프 페이지 중앙 정렬 + 하단 고정 문구) ===== */
 .page-section{
-  min-height: auto;   /* ✅ 페이지를 억지로 한 장 높이로 늘리지 않음 */
+  min-height: auto;
   display: flex;
   flex-direction: column;
   page-break-inside: avoid;
@@ -849,12 +846,20 @@ select {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;   /* 전체 페이지 기준 세로 가운데 배치 */
+  justify-content: center;
 }
 
-/* ✅ 1페이지(첫장)는 위쪽 정렬로 사용 */
+/* ✅ 1페이지(첫장)는 위쪽 정렬 + 분할 허용 */
 .page-section-main.first-page{
   justify-content: flex-start;
+  page-break-inside: auto !important;
+  break-inside: auto !important;
+}
+
+/* ✅ 첫 장 자체도 필요하면 분할 허용 */
+.page-section.first-page-section{
+  page-break-inside: auto !important;
+  break-inside: auto !important;
 }
 
 /* 그래프 영역 정가운데 배치 */
@@ -3652,8 +3657,8 @@ const gradeIconHtml = gradeIconSrc
   : "";
 
   // ④ 1페이지(기본 정보 + 요약표)
-  const firstPageHTML = `
-<div class="page-section first-page">
+const firstPageHTML = `
+<div class="page-section first-page-section">
   <div class="page-section-main first-page">
 
     <div id="reportHeader">
