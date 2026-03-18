@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -1054,7 +1055,7 @@ color: #111827;
     <label class="small">&nbsp;</label>
     <label class="kicker" style="display:flex; align-items:center; gap:6px; height:42px;">
       <input type="checkbox" id="chkApplyPrevRounds" checked>
-      차수별 적합율 추이
+      차수별 적합률 추이
     </label>
   </div>
 </div>
@@ -2851,18 +2852,18 @@ const footerHtml = makeReportFooterHTML_(showCaptionAndThanks);
   `;
 }
 
-// ✅ [추가] 차수별 적합율 막대그래프 페이지 HTML
+// ✅ [추가] 차수별 적합률 막대그래프 페이지 HTML
 function makeRoundBarSectionHTML(){
   return `
   <div id="roundBarWrap">
     <div class="pagebreak"></div>
     <div class="page-section page-graph">
       <div class="page-section-main center-graph">
-        <h3 class="page-graph-title">차수별 적합율 추이</h3>
+        <h3 class="page-graph-title">차수별 적합률 추이</h3>
         <div class="radar-wrap">
           <canvas id="roundBarCanvas" width="900" height="520"></canvas>
           <div class="radar-caption">
-            ※ “저장하기”를 누를 때마다 차수별 적합율이 자동 누적되며, 같은 차수는 덮어쓰기 됩니다.
+            ※ “저장하기”를 누를 때마다 차수별 적합률이 자동 누적되며, 같은 차수는 덮어쓰기 됩니다.
           </div>
         </div>
       </div>
@@ -3011,7 +3012,7 @@ async function renderPrevRoundsChartIfNeeded_(info){
   // 1) 저장된 히스토리 가져오기
   const historyRows = await fetchHistoryByOrg_(orgName);
 
-  // 2) 현재 작성중인 보고서의 회차/적합율 계산
+  // 2) 현재 작성중인 보고서의 회차/적합률 계산
   const currentRoundRaw = (info?.visitRound || "").trim();
   const currentRound = parseRoundNumber_(currentRoundRaw);
   const currentSummary = computeOverallSummary_();
@@ -3049,11 +3050,11 @@ async function renderPrevRoundsChartIfNeeded_(info){
   drawRoundBarChart_("roundBarCanvas", mergedRows);
 }
 
-// ✅ [추가] 레이더 그래프 페이지 안에 '차수별 적합율'을 끼워 넣는 인라인 블록
+// ✅ [추가] 레이더 그래프 페이지 안에 '차수별 적합률'을 끼워 넣는 인라인 블록
 function makeRoundBarInlineHTML_() {
   return `
 <div id="roundBarWrap" style="display:none; margin-top:2mm; width:100%;">
-  <h3 class="page-graph-title" style="margin: 0 0 4px 0;">차수별 적합율 추이</h3>
+  <h3 class="page-graph-title" style="margin: 0 0 4px 0;">차수별 적합률 추이</h3>
   <div class="radar-wrap">
     <canvas id="roundBarCanvas" width="640" height="210"></canvas>
   </div>
@@ -3061,7 +3062,7 @@ function makeRoundBarInlineHTML_() {
   `;
 }
 
-// ✅ 체크박스 상태에 따라 보고서 안 '차수별 적합율' 페이지를 즉시 숨김/표시
+// ✅ 체크박스 상태에 따라 보고서 안 '차수별 적합률' 페이지를 즉시 숨김/표시
 function syncPrevRoundsBarVisibility_(){
   const wrap = document.getElementById("roundBarWrap");
   if (!wrap) return; // 아직 보고서가 생성되지 않았으면 할 일 없음
@@ -4517,7 +4518,7 @@ function parseRoundNumber_(raw){
   return Number.isFinite(v) ? v : null;
 }
 
-// ✅ [추가] 전체 항목 기준 적합/미준수/적합율 계산
+// ✅ [추가] 전체 항목 기준 적합/미준수/적합률 계산
 function computeOverallSummary_(){
   let total = 0, ok = 0, no = 0;
 
@@ -5412,7 +5413,7 @@ if (chkPrev) {
         <br>
         <li>2026-03-04<br>- 기관등급 선택지 추가<br>미리보기 페이지에서 각 등급에따라 보고서유형 글자 우측에 등급 아이콘이 추가됩니다.</li>
         <br>
-        <li>2026-03-14<br>- 차수별 적합율 추이 체크버튼 추가<br>버튼은 기본적으로 자동 체크되며, 저장된 방문 회차와 현재 방문회차에 따라 차수별 적합율 추이 그래프가 표시됩니다.<br>- 영역별 지도 결과 그래프 통합(위생, 안전, 영양)<br>기존의 위생·안전 그래프와 위생·안전·영양 그래프가 하나로 합쳐져 보다 편리하게 확인할 수 있습니다.<br>- 히스토리 저장 추가<br>저장하기 버튼 클릭 시 기존 3회 저장에서 4회 저장으로 변경됩니다.<br>회차 종료 시 필요한 정보가 함께 저장되므로, 저장 완료까지 잠시 기다려주시기 바랍니다.</li>
+        <li>2026-03-14<br>- 차수별 적합률 추이 체크버튼 추가<br>버튼은 기본적으로 자동 체크되며, 저장된 방문 회차와 현재 방문회차에 따라 차수별 적합률 추이 그래프가 표시됩니다.<br>- 영역별 지도 결과 그래프 통합(위생, 안전, 영양)<br>기존의 위생·안전 그래프와 위생·안전·영양 그래프가 하나로 합쳐져 보다 편리하게 확인할 수 있습니다.<br>- 히스토리 저장 추가<br>저장하기 버튼 클릭 시 기존 3회 저장에서 4회 저장으로 변경됩니다.<br>회차 종료 시 필요한 정보가 함께 저장되므로, 저장 완료까지 잠시 기다려주시기 바랍니다.</li>
       </ul>
     </div>
     <footer>
