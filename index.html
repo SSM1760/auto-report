@@ -1,6 +1,8 @@
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -453,6 +455,20 @@ select {
   padding: 6px;
 }
 
+/* 이전 방문 시 지도사항/개선여부 표 높이 살짝 압축 */
+.summary-table.prev-notes-table th,
+.summary-table.prev-notes-table td{
+  padding: 2px 8px !important;
+}
+
+.summary-table.prev-notes-table th{
+  line-height: 1.5 !important;
+}
+
+.summary-table.prev-notes-table td{
+  line-height: 1.15 !important;
+}
+
 /* 영역별 요약표 컬럼 폭(구분/숫자칸 고정, 개선사항은 남는 폭) */
 .summary-col-name   { width: 21.8ch; } /* 구분: 한글 6글자 */
 .summary-col-small  { width: 6ch;  } /* 항목수/준수/미흡: 숫자 3개 */
@@ -520,7 +536,7 @@ select {
   margin: 0 auto;
   background: #fff;
   box-sizing: border-box;
-  padding: 10mm;
+  padding: 3mm 10mm 10mm 10mm;   /* 상단만 줄임 */
   border: none !important;
   box-shadow: none !important;
   border-radius: 0 !important;
@@ -530,7 +546,7 @@ select {
 @media print {
   #reportArea {
     margin: 0;
-    padding: 10mm;
+    padding: 3mm 10mm 10mm 10mm;   /* 상단만 줄임 */
     width: 210mm;
     min-height: auto;   /* ✅ 고정 최소높이 제거 */
 
@@ -3407,8 +3423,24 @@ function drawOtherCombinedRadarChart(sectionStats, nutrStats){
   drawRadarChartGeneric("radarCanvas", nodes);
 }
 
-      // ===== 3) 보고서 생성 =====
+// ===== 3) 보고서 생성 =====
+function shouldForceDetailPageBreak_(areaEl) {
+  if (!areaEl) return true;
+
+  const firstPage = areaEl.querySelector('.page-section');
+  if (!firstPage) return true;
+
+  // 첫 본문이 1페이지 높이를 넘는지 확인
+  // 넘지 않으면 detail을 2페이지부터 시작시키기 위해 pagebreak 필요
+  // 이미 넘었으면(= 2페이지까지 사용 중이면) 이어서 붙이기 위해 pagebreak 불필요
+  const pageHeightPx = Math.round((297 / 25.4) * 96); // A4 높이(mm→px), 대략 1122px
+  const tolerance = 24; // 브라우저별 오차 보정
+
+  return firstPage.scrollHeight <= (pageHeightPx - tolerance);
+}
+
 function buildReport() {
+
   // ✅ 0) 기존 서명 보존: 현재 보고서에 서명이 있으면 dataURL로 백업
   try {
     const oldCanvas  = document.getElementById("signCanvas");
@@ -3732,24 +3764,25 @@ ${manpowerTableHTML}
       <tbody>${rows}</tbody>
     </table>
 
-    ${info.prevNotes
-      ? `<div style="margin-top:10px">
-           <table class="summary-table centered-table" style="width:100%">
-             <tr>
-               <th style="width:25%;line-height:1.35">이전 방문 시<br>지도사항 및 개선여부</th>
-               <td style="text-align:left;white-space:pre-wrap;padding-left:8px">
-                 ${
-                   escapeHtml(info.prevNotes)
-                     .split('\n')
-                     .map(line => line.trimStart())
-                     .join('\n')
-                 }
-               </td>
-             </tr>
-           </table>
-         </div>`
-      : ""
-    }
+${info.prevNotes
+  ? `<div style="margin-top:8px">
+       <table class="summary-table centered-table prev-notes-table" style="width:100%">
+         <tr>
+           <th style="width:25%;line-height:1.35">이전 방문 시<br>지도사항 및 개선여부</th>
+<td style="text-align:center;vertical-align:middle;white-space:pre-line;padding:8px 8px;">
+  ${
+    escapeHtml(info.prevNotes)
+      .split('\n')
+      .map(line => line.trim())
+      .join('\n')
+  }
+</div>
+           </td>
+         </tr>
+       </table>
+     </div>`
+  : ""
+}
 
   </div><!-- /.page-section-main -->
  <!-- ✅ 1페이지 하단 안내 문구 -->
@@ -3762,9 +3795,8 @@ ${manpowerTableHTML}
 </div><!-- /.page-section (1장) -->
 `;
 
-  // ⑤ 2페이지: 개선 필요사항(세부) – 내용 있을 때만
-  const detailSectionHTML = hasAnyDetail ? `
-<div class="pagebreak"></div>
+ // ⑤ 개선 필요사항(세부) 본문 HTML
+  const detailSectionBodyHTML = hasAnyDetail ? `
 <div class="page-section">
   <div class="page-section-main first-page">
     <h3 class="report-section-title report-section-title-detail">개선 필요사항(세부)</h3>
@@ -3791,13 +3823,25 @@ ${
 // ✅ [추가] 통합 레이더(위생6 + 영양5 = 최대 11각형) 섹션 HTML
 const combinedRadarSection = makeCombinedRadarSectionHTML(sectionStats, nutrStats);
 
-const reportHTML =
+const graphSectionHTML = (isOtherCombinedRadar ? otherRadarSection : combinedRadarSection);
+const area = document.getElementById("reportArea");
+
+// 1차 렌더: 첫 페이지 + 그래프만 먼저 넣어서 첫 본문이 몇 페이지까지 밀리는지 측정
+area.innerHTML = firstPageHTML + graphSectionHTML;
+
+// 첫 본문이 1페이지 안에 끝나면 detail 앞에 강제 pagebreak
+// 이미 2페이지까지 밀렸으면 detail을 그대로 이어붙임
+const needDetailPageBreak = hasAnyDetail ? shouldForceDetailPageBreak_(area) : false;
+
+const detailSectionHTML = hasAnyDetail
+  ? `${needDetailPageBreak ? '<div class="pagebreak"></div>' : ''}${detailSectionBodyHTML}`
+  : '';
+
+// 2차 렌더: 최종 보고서 조립
+area.innerHTML =
   firstPageHTML +
   detailSectionHTML +
-  (isOtherCombinedRadar ? otherRadarSection : combinedRadarSection);
-
-const area = document.getElementById("reportArea");
-area.innerHTML = reportHTML;
+  graphSectionHTML;
 
 // ✅ 생성 직후: 체크 상태에 맞춰 페이지 숨김/표시
 syncPrevRoundsBarVisibility_();
