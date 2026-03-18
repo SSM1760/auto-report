@@ -469,6 +469,15 @@ select {
   line-height: 1.15 !important;
 }
 
+.prev-notes-content{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  text-align: center;
+  white-space: pre-line;
+}
+
 /* 영역별 요약표 컬럼 폭(구분/숫자칸 고정, 개선사항은 남는 폭) */
 .summary-col-name   { width: 21.8ch; } /* 구분: 한글 6글자 */
 .summary-col-small  { width: 6ch;  } /* 항목수/준수/미흡: 숫자 3개 */
@@ -476,11 +485,27 @@ select {
 /* 항상 새 페이지에서 시작시키는 강제 분리 마커 */
 .pagebreak,
 .html2pdf__page-break {
-  page-break-before: always;   /* 구형 브라우저 */
-  break-before: page;          /* 최신 명세 */
+  page-break-before: always;
+  break-before: page;
 }
 
-.pagebreak { display:block; height:0; }  /* 화면에서 여백 안 생기게 */
+.pagebreak { display:block; height:0; }
+
+/* ✅ 첫 페이지에서 표/문단이 중간에 잘리지 않도록 */
+@media print {
+  .summary-table tbody tr,
+  .prev-notes-wrap,
+  .prev-notes-table,
+  .first-page-note,
+  .keep-together {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .summary-table thead {
+    display: table-header-group;
+  }
+}
 
 /* 개선 세부 문단 + 삭제 버튼 */
 .improve-block{
@@ -3765,19 +3790,20 @@ ${manpowerTableHTML}
     </table>
 
 ${info.prevNotes
-  ? `<div style="margin-top:8px">
-       <table class="summary-table centered-table prev-notes-table" style="width:100%">
+? `<div class="prev-notes-wrap keep-together" style="margin-top:8px">
+     <table class="summary-table centered-table prev-notes-table keep-together" style="width:100%">
          <tr>
            <th style="width:25%;line-height:1.35">이전 방문 시<br>지도사항 및 개선여부</th>
 <td style="text-align:center;vertical-align:middle;white-space:pre-line;padding:8px 8px;">
-  ${
-    escapeHtml(info.prevNotes)
-      .split('\n')
-      .map(line => line.trim())
-      .join('\n')
-  }
-</div>
-           </td>
+  <div class="prev-notes-content">
+    ${
+      escapeHtml(info.prevNotes)
+        .split('\n')
+        .map(line => line.trim())
+        .join('\n')
+    }
+  </div>
+</td>
          </tr>
        </table>
      </div>`
@@ -3787,7 +3813,7 @@ ${info.prevNotes
   </div><!-- /.page-section-main -->
  <!-- ✅ 1페이지 하단 안내 문구 -->
   <div class="page-section-footer">
-    <div class="first-page-note">
+    <div class="first-page-note keep-together">
       ※ 본 순회방문 지도는 식품의약품안전처·식생활안전관리원
       ‘어린이 급식소(집단·소규모) 위생·안전·영양관리 체크리스트 해설서(2026)’를 근거로 실시했습니다.
     </div>
