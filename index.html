@@ -3,6 +3,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -467,15 +468,6 @@ select {
 
 .summary-table.prev-notes-table td{
   line-height: 1.15 !important;
-}
-
-.prev-notes-content{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100%;
-  text-align: center;
-  white-space: pre-line;
 }
 
 /* 영역별 요약표 컬럼 폭(구분/숫자칸 고정, 개선사항은 남는 폭) */
@@ -3795,15 +3787,14 @@ ${info.prevNotes
          <tr>
            <th style="width:25%;line-height:1.35">이전 방문 시<br>지도사항 및 개선여부</th>
 <td style="text-align:center;vertical-align:middle;white-space:pre-line;padding:8px 8px;">
-  <div class="prev-notes-content">
-    ${
-      escapeHtml(info.prevNotes)
-        .split('\n')
-        .map(line => line.trim())
-        .join('\n')
-    }
-  </div>
-</td>
+  ${
+    escapeHtml(info.prevNotes)
+      .split('\n')
+      .map(line => line.trim())
+      .join('\n')
+  }
+</div>
+           </td>
          </tr>
        </table>
      </div>`
