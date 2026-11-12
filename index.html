@@ -4598,10 +4598,12 @@ function computeOverallSummary_(){
 // ✅ [추가] 히스토리 upsert (기관명 + 회차 + 시설 + 보고서유형 기준으로 덮어쓰기)
 async function upsertHistoryRecord_(){
   // ✅ 히스토리는 저장하기를 누르면 항상 저장 (체크박스와 무관)
-  if (!HISTORY_API_URL || HISTORY_API_URL.includes("여기에_")) return;
+  if (!HISTORY_API_URL || HISTORY_API_URL.includes("여기에_")) {
+    throw new Error("이력 저장 주소를 확인해주세요.");
+  }
 
   const orgName = (document.getElementById("orgName")?.value || "").trim();
-  if (!orgName) return; // 기관명 없으면 저장 불가(키가 없으니)
+  if (!orgName) throw new Error("기관명을 입력해주세요.");
 
   const visitRoundRaw = (document.getElementById("visitRound")?.value || "").trim();
   const visitRound = parseRoundNumber_(visitRoundRaw);
@@ -4635,9 +4637,10 @@ async function upsertHistoryRecord_(){
   let out = {};
   try { out = JSON.parse(txt); } catch(e) {}
 
-  if (!out || !out.ok) {
-    console.warn("history upsert failed:", out);
+  if (!res.ok || !out?.ok || !/^\d{2} : \d{2}$/.test(out.reportTime || "")) {
+    throw new Error("시트 저장 시각을 확인하지 못했습니다. 연결 상태와 Apps Script 배포 버전을 확인해주세요.");
   }
+  return out.reportTime;
 }
 
 // 방문일자 미입력/형식불일치면 오늘 날짜로 fallback
@@ -5100,31 +5103,39 @@ async function saveAllThree(){
   const prevText = btn ? btn.textContent : "";
 
   try{
-    showLoading("저장 중… (1/4) PDF 생성 중");
-    if (btn){
+    showLoading("저장 중… (1/4) 차수 데이터 저장 중");
+    if (btn) {
       btn.disabled = true;
       btn.textContent = "저장 중…(1/4)";
     }
-    setUploadStatus("저장(1/4): PDF 생성 중…");
-    await saveReportPDF();
+    setUploadStatus("저장(1/4): 차수 데이터 저장 중…");
+    const reportTime = await upsertHistoryRecord_();
 
-    showLoading("저장 중… (2/4) 백업 파일 저장 중");
+    showLoading("저장 중… (2/4) PDF 생성 중");
     if (btn) btn.textContent = "저장 중…(2/4)";
-    setUploadStatus("저장(2/4): 백업 파일 저장 중…");
+    setUploadStatus("저장(2/4): PDF 생성 중…");
+    const signatureTime = area.querySelector("#signatureTime");
+    if (signatureTime) {
+      clearInterval(window._signatureClockTimer);
+      signatureTime.textContent = reportTime;
+    }
+    try {
+      await saveReportPDF();
+    } finally {
+      if (signatureTime) startSignatureClock();
+    }
+
+    showLoading("저장 중… (3/4) 백업 파일 저장 중");
+    if (btn) btn.textContent = "저장 중…(3/4)";
+    setUploadStatus("저장(3/4): 백업 파일 저장 중…");
     await saveProgramWithData();
 
-showLoading("저장 중… (3/4) Excel 저장 중");
-if (btn) btn.textContent = "저장 중…(3/4)";
-setUploadStatus("저장(3/4): Excel 저장 중…");
-await saveReportXLSX();
+    showLoading("저장 중… (4/4) Excel 저장 중");
+    if (btn) btn.textContent = "저장 중…(4/4)";
+    setUploadStatus("저장(4/4): Excel 저장 중…");
+    await saveReportXLSX();
 
-// ✅ [추가] 4/4) 히스토리(차수 요약) 업서트 저장
-showLoading("저장 중… (4/4) 차수 데이터 저장 중");
-if (btn) btn.textContent = "저장 중…(4/4)";
-setUploadStatus("저장(4/4): 차수 데이터 저장 중…");
-await upsertHistoryRecord_();
-
-setUploadStatus("저장 완료");
+    setUploadStatus("저장 완료");
   } catch(err){
     console.error(err);
     setUploadStatus("저장 중 오류");
