@@ -4257,23 +4257,58 @@ function wireSummaryDeleteButtons(){
 
 // ✅ 서명 헤더에 현재 시간(HH : MM) 표시
 function startSignatureClock(){
-  const el = document.getElementById('signatureTime');
+  clearInterval(window._signatureClockTimer);
+  window._signatureClockTimer = null;
+  const el = document.getElementById("signatureTime");
   if (!el) return;
 
-  // 중복 타이머 방지
-  if (window._signatureClockTimer) {
-    clearInterval(window._signatureClockTimer);
+  const formatter = new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", hourCycle: "h23"
+  });
+  const syncInterval = 60_000;
+  let serverTime;
+  let syncedAt;
+  let nextSyncAt = 0;
+  const isActive = () => window._signatureClockTimer === timer && el.isConnected;
+
+  async function sync(){
+    nextSyncAt = Infinity;
+    try {
+      const url = new URL(HISTORY_API_URL);
+      url.searchParams.set("action", "get_server_time");
+      const response = await fetch(url, { cache: "no-store" });
+      const result = await response.json();
+      if (!response.ok || !result.ok || !Number.isFinite(result.epochMs)) {
+        throw new Error("서버 시각을 받지 못했습니다.");
+      }
+      if (!isActive()) return;
+      serverTime = result.epochMs;
+      syncedAt = performance.now();
+      nextSyncAt = syncedAt + syncInterval;
+      update();
+    } catch {
+      if (!isActive()) return;
+      if (serverTime === undefined) el.textContent = "시간 확인 중";
+      nextSyncAt = performance.now() + 10_000;
+    }
   }
 
-  const update = () => {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    el.textContent = `${h} : ${m}`;
-  };
+  function update(){
+    if (!isActive()) return;
+    const now = performance.now();
+    if (serverTime !== undefined) {
+      const parts = formatter.formatToParts(serverTime + now - syncedAt);
+      const hours = parts.find(part => part.type === "hour").value;
+      const minutes = parts.find(part => part.type === "minute").value;
+      el.textContent = hours + " : " + minutes;
+    }
+    if (now >= nextSyncAt) void sync();
+  }
 
-  update(); // 처음 한 번 즉시 표시
-  window._signatureClockTimer = setInterval(update, 1000); // 1초마다 갱신
+  el.textContent = "시간 확인 중";
+  const timer = setInterval(update, 1000);
+  window._signatureClockTimer = timer;
+  update();
 }
 
 // ✅ 서명 패드 초기화 (마우스/터치 공통)
@@ -5117,6 +5152,7 @@ async function saveAllThree(){
     const signatureTime = area.querySelector("#signatureTime");
     if (signatureTime) {
       clearInterval(window._signatureClockTimer);
+      window._signatureClockTimer = null;
       signatureTime.textContent = reportTime;
     }
     try {
