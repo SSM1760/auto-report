@@ -31,12 +31,12 @@
     box-sizing: border-box;
   }
 
-  /* 🔒 모바일에서 아래로 끌어내릴 때 새로고침/오버스크롤 막기 */
+                                         
   html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overscroll-behavior-y: none;   /* 세로 방향 오버스크롤 금지 */
+    overscroll-behavior-y: none;                       
     overscroll-behavior-x: none;
     overscroll-behavior: none;
   }
@@ -125,11 +125,11 @@ select {
         font-size: 12px;
       }
 
-/* 🔔 업데이트내역 새소식: 무지개가 움직이듯 반짝반짝 */
+                                   
 #btnUpdates.is-new{
   position: relative;
   overflow: hidden;
-  isolation: isolate;          /* pseudo가 버튼 밖으로 튀는 것 방지 */
+  isolation: isolate;                                      
   border-color: rgba(0,0,0,.10);
   color: #0b1220;
   font-weight: 800;
@@ -140,7 +140,7 @@ select {
   animation: updatesPop 1.1s ease-in-out infinite;
 }
 
-/* 무지개 배경이 좌→우로 흐르는 레이어 */
+                          
 #btnUpdates.is-new::before{
   content:"";
   position:absolute;
@@ -154,10 +154,10 @@ select {
   background-size: 400% 100%;
   animation: updatesRainbowMove 1.6s linear infinite;
   opacity: .75;
-  z-index: -1; /* 텍스트 뒤로 */
+  z-index: -1;             
 }
 
-/* 반짝(샤인)이 스윽 지나가는 레이어 */
+                         
 #btnUpdates.is-new::after{
   content:"";
   position:absolute;
@@ -172,7 +172,7 @@ select {
   animation: updatesShine 1.05s ease-in-out infinite;
   mix-blend-mode: overlay;
   opacity: .75;
-  z-index: -1; /* 텍스트 뒤로 */
+  z-index: -1;             
 }
 
 @keyframes updatesRainbowMove{
@@ -186,13 +186,13 @@ select {
   100% { transform: translateX(45%) rotate(0deg); opacity: 0; }
 }
 
-/* 살짝 “클릭 유도” 느낌으로 통통 */
+                        
 @keyframes updatesPop{
   0%,100% { transform: translateY(0) scale(1); }
   50%     { transform: translateY(-1px) scale(1.03); }
 }
 
-/* 사용자 설정이 ‘모션 줄이기’면 애니메이션 끄기 */
+                                
 @media (prefers-reduced-motion: reduce){
   #btnUpdates.is-new{ animation: none; }
   #btnUpdates.is-new::before,
@@ -205,12 +205,12 @@ select {
   pointer-events: none;
 }
 
-/* +조리원 추가 버튼만 더 작게 */
+                      
 #btnAddCook{
-  padding: 4px 6px;   /* 기존 sm(6px 8px)보다 축소 */
-  font-size: 11px;    /* 기존 12px → 11px */
-  line-height: 1;     /* 높이 슬림하게 */
-  border-radius: 8px; /* 살짝 더 컴팩트한 느낌 */
+  padding: 4px 6px;                            
+  font-size: 11px;                        
+  line-height: 1;                  
+  border-radius: 8px;                   
 }
 
       .toolbar {
@@ -224,7 +224,7 @@ select {
         top: 12px;
       }
 
-      /* 위생·안전 / 영양 구분용 큰 제목 (체크리스트 상단) */
+                                          
       .checklist-mode-heading {
         margin: 8px 0 6px;
         text-align: center;
@@ -232,7 +232,7 @@ select {
         font-weight: 700;
       }
 
-      /* 두 번째 이후 그룹은 위쪽 여백을 조금 더 */
+                                   
       #checklist .checklist-mode-heading:not(:first-child) {
         margin-top: 18px;
       }
@@ -283,14 +283,14 @@ select {
         color: var(--muted);
       }
 
-/* 모든 결과보고서 표 기본 디자인 통일 (겹치는 선 최소화 버전) */
+                                         
 .summary-table {
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* 셀 기본 스타일: 처음에는 선을 모두 제거 */
+                             
 .summary-table th,
 .summary-table td {
   padding: 8px 10px;
@@ -301,70 +301,70 @@ select {
   border-radius: 0 !important;
 }
 
-/* 가로줄: 각 행의 '아래쪽'만 선을 그린다 */
+                             
 .summary-table th,
 .summary-table td {
   border-bottom: 1px solid #000000;
 }
 
-/* 표 맨 위 한 줄만 위쪽 선 추가 */
+                        
 .summary-table tr:first-child th,
 .summary-table tr:first-child td {
   border-top: 1px solid #000000;
 }
 
-/* 첫 번째 열만 왼쪽 선 추가 → 내부 세로줄은 오른쪽 선으로만 표현 */
+                                           
 .summary-table th:first-child,
 .summary-table td:first-child {
   border-left: 1px solid #000000;
 }
 
-/* 모든 셀의 오른쪽에 선을 그려서
-   내부 세로줄 + 오른쪽 외곽선을 한 번만 그림 */
+                    
+                               
 .summary-table th,
 .summary-table td {
   border-right: 1px solid #000000;
 }
 
-/* 개선 필요사항(세부) 내용 셀만 좌측정렬 */
+                            
 .summary-table td.improve-cell {
   text-align: left !important;
   white-space: pre-wrap;
   padding: 8px;
 }
 
-/* 미리보기에서 바로 편집 가능하도록 */
+                        
 .improve-editor {
   white-space: pre-wrap;
   min-height: 28px;
   outline: none;
 }
 .improve-editor:focus {
-  box-shadow: 0 0 0 2px var(--brand-weak) inset; /* 포커스 표시 */
+  box-shadow: 0 0 0 2px var(--brand-weak) inset;             
 }
 
-/* 헤더(기관명, 방문자, 방문일자, 원장 등) 배경색 - 살짝 연한 노랑 */
+                                             
 .summary-table th {
-  background-color: #ffe6a4 !important;  /* 기존 #ffcd4a → #ffe6a4 로 변경 */
+  background-color: #ffe6a4 !important;                                 
   font-weight: 600;
 }
 
-/* 모든 표는 직사각형 (둥근 모서리 제거) */
+                            
 .summary-table,
 .summary-table th,
 .summary-table td {
   border-radius: 0 !important;
 }
 
-/* ===== 영역별 점검결과 요약 표: 헤더 아래 줄 두꺼워 보이는 현상 보정 ===== */
+                                                      
 
-/* 1) 헤더(tr = thead 안 첫 줄)의 아래 선은 없앤다 */
+                                        
 .summary-table.centered-table thead th {
   border-bottom: none;
 }
 
-/* 2) 대신, 본문 첫 행(td)의 위쪽에 선을 그려서
-      헤더와 본문 사이 경계선을 이쪽이 담당하도록 한다 */
+                                
+                                    
 .summary-table.centered-table tbody tr:first-child td {
   border-top: 1px solid #000000;
 }
@@ -394,16 +394,16 @@ select {
         border-radius: 12px;
       }
 
-/* 체크리스트 | 미리보기 2열 배치 */
+                        
 #checkAndReport{display:grid; grid-template-columns:1fr; gap:16px;}
 @media (min-width:980px){
-  #checkAndReport{grid-template-columns:1.6fr 1fr;}   /* 체크리스트 쪽을 더 넓게 */
+  #checkAndReport{grid-template-columns:1.6fr 1fr;}                      
 }
 @media (min-width:1536px){
   #checkAndReport{grid-template-columns:1.8fr 1fr;}
 }
 
-/* 우측 미리보기 카드 고정 */
+                   
 @media (min-width:980px){
   #reportCard{ position: sticky; top:12px; align-self:start; }
 }
@@ -414,49 +414,49 @@ select {
         }
       }
 
-/* 이름 입력칸을 라벨 옆에 작게 배치 */
+                         
 .inline-field{display:flex; align-items:center; gap:8px;}
 .inline-field .name-compact{width:160px; max-width:40%;}
 
-/* 조리원 그룹 간 간격 */
+                 
 .cook-group{ margin-top:8px; }
 
-/* 입력 패널 구분선 */
+               
 .hr-sep{
   height:0;
-  border-top:2px solid var(--brand);   /* 파란색 굵은 실선 */
-  margin:16px 0;                       /* 위아래 간격 조금 더 넓게 */
+  border-top:2px solid var(--brand);                  
+  margin:16px 0;                                           
   width:100%;
-  opacity:0.9;                         /* 살짝 진하게 */
+  opacity:0.9;                                     
 }
 
 .inline-field .btn.sm{ margin-left:6px; }
 
-/* 보고서 표 공통 가운데 정렬 강제 */
+                        
 .centered-table th,
 .centered-table td {
   text-align: center !important;
   vertical-align: middle;
 }
 
-/* [표1] 방문자/방문회차 헤더칸 폭: 한글 4글자 정도 */
-.th-narrow-4ch { width: 6ch; }  /* 패딩/보더 감안해 6ch 권장 */
-/* [표1] 기관/방문 정보 열 폭 재조정 */
-.summary-table.table-visit .col-head-5   { width: 8ch; }   /* 기관명/방문자/방문회차 헤더 (5글자) */
-.summary-table.table-visit .col-value-lg { width: 20ch; }  /* 기관명/방문일자 값 (넓은 칸) */
-.summary-table.table-visit .col-value-sm { width: 12ch; }   /* 방문자/회차 값 (3글자보다 살짝 여유, 줄바꿈 방지) */
+                                    
+.th-narrow-4ch { width: 6ch; }                        
+                           
+.summary-table.table-visit .col-head-5   { width: 8ch; }                              
+.summary-table.table-visit .col-value-lg { width: 20ch; }                         
+.summary-table.table-visit .col-value-sm { width: 12ch; }                                       
 
-/* [표3] 교육/물품 내용 박스: 3~4줄 높이 */
+                               
 .support-cell {
   line-height: 1.4;
-  max-height: 5.6em;   /* 1.4em × 4줄 ≒ 5.6em */
-  overflow: auto;      /* 넘치면 스크롤 */
+  max-height: 5.6em;                           
+  overflow: auto;                   
   white-space: pre-wrap;
-  text-align: left;    /* 내용은 가독 위해 왼쪽 정렬 유지 */
+  text-align: left;                            
   padding: 6px;
 }
 
-/* 이전 방문 시 지도사항/개선여부 표 높이 살짝 압축 */
+                                  
 .summary-table.prev-notes-table th,
 .summary-table.prev-notes-table td{
   padding: 2px 8px !important;
@@ -470,11 +470,11 @@ select {
   line-height: 1.15 !important;
 }
 
-/* 영역별 요약표 컬럼 폭(구분/숫자칸 고정, 개선사항은 남는 폭) */
-.summary-col-name   { width: 21.8ch; } /* 구분: 한글 6글자 */
-.summary-col-small  { width: 6ch;  } /* 항목수/준수/미흡: 숫자 3개 */
+                                         
+.summary-col-name   { width: 21.8ch; }                 
+.summary-col-small  { width: 6ch;  }                       
 
-/* 항상 새 페이지에서 시작시키는 강제 분리 마커 */
+                               
 .pagebreak,
 .html2pdf__page-break {
   page-break-before: always;
@@ -483,7 +483,7 @@ select {
 
 .pagebreak { display:block; height:0; }
 
-/* ✅ 첫 페이지에서 표/문단이 중간에 잘리지 않도록 */
+                                 
 @media print {
   .summary-table tbody tr,
   .prev-notes-wrap,
@@ -499,18 +499,18 @@ select {
   }
 }
 
-/* 개선 세부 문단 + 삭제 버튼 */
+                      
 .improve-block{
   position: relative;
-  padding-right: 22px;   /* x 버튼 자리 */
+  padding-right: 22px;                
   margin: 0;
 }
 
-/* ✅ 문단(미준수 항목) 사이에 '한 줄 공백' 넣기 */
+                                  
 .improve-block:not(:last-child)::after{
   content: "";
   display: block;
-  height: 1.2em; /* 한 줄 정도 공백 */
+  height: 1.2em;                
 }
 
 .improve-del{
@@ -524,12 +524,12 @@ select {
 }
 .improve-del:hover{ background:#e5e7eb; }
 
-/* PDF/인쇄에서는 x 버튼 숨김 */
+                       
 @media print{
   .improve-del{ display:none !important; }
 }
 
-/* 요약표 줄 삭제 버튼 */
+                 
 .memo-line{ position:relative; display:inline-block; padding-right:20px; }
 .sum-del{
   position:absolute; right:0; top:0;
@@ -541,31 +541,31 @@ select {
 }
 .sum-del:hover{ background:#e5e7eb; }
 
-/* 인쇄/PDF에선 삭제 버튼 숨김 */
+                       
 @media print{
   .sum-del, .improve-del{ display:none !important; }
 }
 
-/* A4 크기 고정 (210mm × 297mm) */
+                              
 #reportArea {
   width: 210mm;
-  min-height: auto;   /* ✅ 고정 최소높이 제거 */
+  min-height: auto;                     
   margin: 0 auto;
   background: #fff;
   box-sizing: border-box;
-  padding: 3mm 10mm 10mm 10mm;   /* 상단만 줄임 */
+  padding: 3mm 10mm 10mm 10mm;               
   border: none !important;
   box-shadow: none !important;
   border-radius: 0 !important;
 }
 
-/* 인쇄할 때도 동일하게 유지 */
+                    
 @media print {
   #reportArea {
     margin: 0;
-    padding: 3mm 10mm 10mm 10mm;   /* 상단만 줄임 */
+    padding: 3mm 10mm 10mm 10mm;               
     width: 210mm;
-    min-height: auto;   /* ✅ 고정 최소높이 제거 */
+    min-height: auto;                     
 
     border: none !important;
     box-shadow: none !important;
@@ -573,50 +573,50 @@ select {
   }
 }
 
-/* '개선 필요사항 메모' 카드 전체 숨김 */
+                           
 .card:has(#improveList){
   display: none !important;
 }
 
-/* 인쇄/PDF에서도 확실히 숨김 */
+                      
 @media print{
   .card:has(#improveList){
     display: none !important;
   }
 }
 
-/* 데스크탑에서 '기본 정보' 카드가 화면에 고정되고,
-   카드 내부만 스크롤되도록 */
+                               
+                   
 @media (min-width: 980px) {
   .sticky {
     position: sticky;
     top: 12px;
     align-self: start;
 
-    /* 화면 높이 안에서만 보이게 */
-    max-height: calc(100vh - 24px); /* top 12px + 아래 여유 12px */
+                        
+    max-height: calc(100vh - 24px);                            
     overflow: auto;
 
-    /* 스크롤 체인/터치 스크롤 품질 개선 */
+                             
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
   }
 }
 
 .wrap{
-  /* 전체 폭을 더 넓게 (좌우 남는 여백 최소화) */
-  max-width: 1920px;             /* 기존 1600px → 1920px (원하면 100%로 바꿔도 됨) */
+                                 
+  max-width: 1920px;                                                       
   margin:16px auto;
   padding:0 16px;
 
   display:grid;
-  grid-template-columns:320px 1fr;  /* 왼쪽 기본정보(고정 320px) + 오른쪽 영역(가변) */
+  grid-template-columns:320px 1fr;                                      
   gap:16px;
 }
 
-/* ====== 카드 내부 분리 스크롤 (PC에서만, ID 타깃) ====== */
+                                               
 @media (min-width:980px){
-  /* 컨테이너는 고정 + 내부만 스크롤 */
+                          
   #checkCard,
   #reportCard{
     position: sticky;
@@ -625,20 +625,20 @@ select {
     display: flex;
     flex-direction: column;
     max-height: calc(100vh - 24px);
-    /* overflow: hidden;  ← 이 줄이 내용 잘림 원흉이라 제거! */
+                                                  
   }
-  /* 본문만 세로 스크롤 */
+                  
   #checkCard .body,
   #reportCard .body{
     overflow-y: auto;
-    overflow-x: visible;        /* A4 폭 유지 */
-    min-height: 0;              /* flex 컨테이너에서 필수 */
+    overflow-x: visible;                     
+    min-height: 0;                                  
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
   }
 }
 
-/* 인쇄/PDF에서는 스크롤/고정 해제 */
+                         
 @media print{
   #checkCard,
   #reportCard{
@@ -652,32 +652,32 @@ select {
 }
 
 #reportTitle {
-  text-align: center;          /* 가운데 정렬 */
-  font-weight: 700;            /* 굵은 글씨 */
-  font-size: 1.6rem;           /* 살짝 큰 글씨 (기존보다 약간 확대) */
-  margin: 12px 0 16px;         /* 위아래 간격 */
-  letter-spacing: -0.3px;      /* 한글 가독성 보정 */
+  text-align: center;                      
+  font-weight: 700;                       
+  font-size: 1.6rem;                                     
+  margin: 12px 0 16px;                     
+  letter-spacing: -0.3px;                     
 }
 
-/* ===== 로고 헤더 ===== */
+                       
 #reportHeader{
   position: relative;
   min-height: 18mm;
   display: flex;
   align-items: center;
-  justify-content: center;     /* 제목은 가운데 */
+  justify-content: center;                  
   margin-bottom: 3mm;
 }
 #reportLogo{
   position: absolute;
   left: 0;
   top: 0;
-  max-height: 18mm;            /* 인쇄용 권장 높이 */
+  max-height: 18mm;                           
   max-width: 75mm;
   object-fit: contain;
 }
 
-/* 우측 상단 "집단급식소" 뱃지 */
+                      
 #reportBadge{
   position: absolute;
   right: 0;
@@ -687,7 +687,7 @@ select {
   color: #374151;
   letter-spacing: -0.2px;
 
-  /* ✅ 추가(글자 + 이미지 나란히) */
+                          
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -698,36 +698,36 @@ select {
   width: auto;
 }
 
-/* ▶ 보고서 미리보기(= #reportArea) 전체 글자 10pt, 큰 제목은 유지 */
+                                                    
 #reportArea { font-size: 10pt; }
 #reportArea * { font-size: inherit !important; }
 #reportArea #reportTitle { font-size: 2rem !important; }
-/* 🔹 여기 추가 */
+              
 #reportArea #reportBadge { 
   font-size: 15px !important;
 }
 
 #reportArea .page-graph-title{
-  font-size: 1.2rem !important;   /* 원하시는 크기로 조절 (1.6rem, 2rem 등) */
+  font-size: 1.2rem !important;                                     
   color: #111827 !important;
 }
 
-/* 개선 필요사항(세부) 슬림 최종본 */
+                        
 .summary-table.detail-compact{
   width: 100%;
-  table-layout: fixed;             /* 열 폭을 고정 비율로 사용 */
+  table-layout: fixed;                                 
 }
 
 .summary-table.detail-compact th{
-  width: 18%;                      /* ⬅️ 왼쪽 칸은 항상 같은 폭 */
+  width: 18%;                                            
   font-size: 13px !important;
   line-height: 1.2 !important;
   padding: 6px 8px !important;
-  white-space: normal;             /* 필요하면 줄바꿈 허용 */
+  white-space: normal;                              
 }
 
 .summary-table.detail-compact td.improve-cell{
-  width: 82%;                      /* 나머지 폭은 오른쪽 칸 */
+  width: 82%;                                        
   text-align: left !important;
   font-size: 13px !important;
   line-height: 1.25 !important;
@@ -735,14 +735,14 @@ select {
 }
 
 .summary-table.detail-compact .improve-editor{
-  min-height:14px !important;    /* 기본 높이 낮춤 */
+  min-height:14px !important;                  
   line-height:1.25 !important;
-  font-size:12px !important;     /* 에디터 내부 글자 조금 더 작게 */
+  font-size:12px !important;                            
 }
 
 .summary-table.detail-compact .improve-block{
-  margin: 0 !important;       /* 블록 간격 축소 */
-  padding-right:16px !important;  /* 삭제 버튼 자리 */
+  margin: 0 !important;                     
+  padding-right:16px !important;                
 }
 
 @media print{
@@ -750,7 +750,7 @@ select {
   .summary-table.detail-compact .improve-editor{ line-height:1.22 !important; }
 }
 
-/* 사용가이드 모달 */
+              
 .guide-backdrop{
   position: fixed; inset: 0; background: rgba(0,0,0,.35);
   display:none; align-items:center; justify-content:center; z-index: 9999;
@@ -766,9 +766,9 @@ select {
 }
 .guide-modal header h3{ margin:0; font-size:16px; }
 .guide-modal .content{ padding:14px; line-height:1.6; }
-/* ✅ 업데이트내역(업데이트 모달) 본문 글씨만 작게 */
+                                 
 #updatesBackdrop .content{
-  font-size: 13px;      /* 원하는 크기로 조절: 12px~14px 추천 */
+  font-size: 13px;                                    
   line-height: 1.45;
 }
 
@@ -778,7 +778,7 @@ select {
   display:flex; align-items:center; justify-content:space-between;
 }
 
-/* 🔰 시작 보고서 선택 모달 전용 레이아웃 */
+                             
 .report-type-grid{
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -833,16 +833,16 @@ select {
   background: var(--brand-weak);
 }
 
-/* 로고 ↔ 제목 간격 (센터 기준으로 정리) */
+                             
 #reportHeader{
-  align-items: center;          /* 로고 높이 기준으로 제목 중앙 정렬 */
+  align-items: center;                                   
 }
 
 #reportHeader #reportTitle{
-  margin-top: 42px !important;     /* ← 제목을 아래로 내리는 여백 */
+  margin-top: 42px !important;                           
 }
 
-/* ===== 육각형 레이더 그래프 레이아웃 ===== */
+                                  
 .radar-wrap{
   margin-top:10px;
   display:flex;
@@ -867,7 +867,7 @@ select {
   line-height:1.4;
 }
 
-/* ===== 페이지 단위 레이아웃 (그래프 페이지 중앙 정렬 + 하단 고정 문구) ===== */
+                                                        
 .page-section{
   min-height: auto;
   display: flex;
@@ -883,33 +883,33 @@ select {
   justify-content: center;
 }
 
-/* ✅ 1페이지(첫장)는 위쪽 정렬 + 분할 허용 */
+                               
 .page-section-main.first-page{
   justify-content: flex-start;
   page-break-inside: auto !important;
   break-inside: auto !important;
 }
 
-/* ✅ 첫 장 자체도 필요하면 분할 허용 */
+                          
 .page-section.first-page-section{
   page-break-inside: auto !important;
   break-inside: auto !important;
 }
 
-/* 그래프 영역 정가운데 배치 */
+                    
 .page-section-main.center-graph{
-  justify-content: flex-start;   /* ✅ 위쪽 정렬 */
-  align-items: center;           /* 가로 가운데 유지 */
-  padding-top: 2mm;              /* ✅ 아주 약간만 위 여백 */
+  justify-content: flex-start;                
+  align-items: center;                          
+  padding-top: 2mm;                                 
 }
 
 .page-section-footer{
-  margin-top: 2mm;   /* ✅ 마지막 페이지 높이 초과 방지 */
+  margin-top: 2mm;                           
   font-size: 12px;
   color: var(--muted);
 }
 
-/* ✅ 서명 영역 스타일 (가운데 정렬) */
+                          
 .page-section-footer .signature-block{
   margin-top: 4mm;
   padding-top: 0;
@@ -920,7 +920,7 @@ select {
   gap: 6px;
 }
 
-/* "확인자 서명" + (오른쪽) 시간+초기화 */
+                             
 .page-section-footer .signature-header{
   display: flex;
   align-items: center;
@@ -928,7 +928,7 @@ select {
   max-width: 100mm;
 }
 
-/* 가운데 정렬된 "시설장 서명" */
+                      
 .page-section-footer .signature-label{
   flex: 1;
   text-align: center;
@@ -936,20 +936,20 @@ select {
   color: var(--text);
 }
 
-/* 오른쪽에 붙는 시간+초기화 묶음 */
+                       
 .page-section-footer .signature-right{
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-/* ⏰ 현재 시간 (작은 글씨) */
+                     
 .page-section-footer .signature-time{
   font-size: 11px;
   color: var(--muted);
 }
 
-/* 초기화 버튼 */
+            
 .sign-clear-btn{
   font-size: 11px;
   padding: 2px 8px;
@@ -963,7 +963,7 @@ select {
   background: #e5e7eb;
 }
 
-/* 서명 캔버스 */
+            
 #signCanvas{
   border: 1px solid var(--line);
   border-radius: 4px;
@@ -974,17 +974,17 @@ select {
   display: block;
 }
 
-/* 감사 문구는 서명란 아래 중앙 정렬 */
+                         
 .page-section-footer .thanks{
-  margin-top: 2mm;   /* ✅ 하단 여백 살짝 압축 */
+  margin-top: 2mm;                      
   text-align: center;
   font-weight: 700;
   color: var(--text);
 }
 
-/* ✅ 감사문구/안내문 줄간격 & 문단간격 */
+                           
 .page-section-footer .thanks{
-  line-height: 1.45;           /* 전체 줄간격 살짝 늘림 */
+  line-height: 1.45;                             
 }
 
 .page-section-footer .thanks .thanks-note{
@@ -996,7 +996,7 @@ select {
   margin-bottom: 1mm;
 }
 
-/* 레이더 그래프 제목 스타일 */
+                    
 .page-graph-title{
   margin-bottom: 12px;
   font-size: 1.2rem;
@@ -1005,26 +1005,26 @@ select {
 color: #111827;
 }
 
-/* 보고서 섹션 제목 (영역별 점검결과 요약 / 개선 필요사항(세부)) */
+                                           
 #reportArea .report-section-title{
   margin-top: 16px;
   margin-bottom: 8px;
-  text-align: center;          /* 가운데 정렬 */
-  font-size: 1.2rem !important;/* 기본 10pt보다 크게, 필요하면 1.4~1.5로 조절 */
+  text-align: center;                      
+  font-size: 1.2rem !important;                                    
   font-weight: 700;
 }
 
-/* ✅ '개선 필요사항(세부)' 제목 전용 크기 */
+                              
 #reportArea .report-section-title-detail{
-  font-size: 2.0rem !important;   /* ← 여기 숫자만 마음대로 조절하면 됨 */
+  font-size: 2.0rem !important;                             
 }
 
-/* ✅ 저장 중 로딩(피넛) 오버레이 */
+                        
 #loadingOverlay{
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.35);
-  display: none;          /* 기본 숨김 */
+  display: none;                     
   align-items: center;
   justify-content: center;
   z-index: 9999;
@@ -1058,7 +1058,7 @@ color: #111827;
   </head>
 
   <body>
-  <!-- (프로그램 내부용) 현재 선택한 시설 / 보고서 종류를 저장 -->
+  
 <input type="hidden" id="savedFacility" />
 <input type="hidden" id="savedReportMode" />
 <input type="hidden" id="savedOrgGrade" />
@@ -1066,7 +1066,7 @@ color: #111827;
 
   <div class="wrap">
 
-    <!-- 좌: 기본 정보 + 툴바 -->
+    
     <div class="card sticky">
   <h2 class="with-action">
   <span id="usageTap">기본 정보</span>
@@ -1125,18 +1125,18 @@ color: #111827;
       </div>
     </div>
 
-<!-- ✅ [추가] 기타시설이면 숨길 블록 시작 -->
+
 <div id="dirCookBlock">
 <div class="hr-sep" role="separator" aria-hidden="true"></div>
 
-<!-- 원장 -->
+
 <div class="row" style="margin-top:8px">
-  <!-- 1줄: 라벨 옆에 '성함' 작은 입력칸 -->
+  
   <div class="inline-field" style="grid-column:1 / -1;">
     <label class="small" for="dirName">원장 성함</label>
     <input id="dirName" type="text" placeholder="성함 입력" class="name-compact"/>
   </div>
-  <!-- 2줄: 날짜 2칸 (접두사 '원장 —' 제거) -->
+  
   <div>
     <label class="small">건강진단 실시일</label>
     <input id="dirHealthDate" type="date" />
@@ -1148,19 +1148,19 @@ color: #111827;
 </div>
 <div class="hr-sep" role="separator" aria-hidden="true"></div>
 
-<!-- 조리원 (여러 명 지원) -->
+
 <div class="row" style="margin-top:8px">
   <div id="cookGroupWrap" style="grid-column:1 / -1;">
-    <!-- 기본 1명 세트 -->
+    
     <div class="cook-group">
-      <!-- 이름 + 추가버튼 : 한 줄 -->
+      
       <div class="inline-field" style="grid-column:1 / -1;">
         <label class="small">조리원 성함</label>
         <input type="text" placeholder="성함 입력" class="name-compact cook-name"/>
         <button type="button" class="btn sm weak" id="btnAddCook">+ 조리원 추가</button>
       </div>
 
-      <!-- 날짜 2칸을 한 줄(row)로 묶기 -->
+      
       <div class="row" style="grid-column:1 / -1; margin-top:8px;">
         <div>
           <label class="small">건강진단 실시일</label>
@@ -1175,7 +1175,7 @@ color: #111827;
   </div>
 </div>
 </div>
-<!-- ✅ [추가] 기타시설이면 숨길 블록 끝 -->
+
 
 <div style="margin-top:12px">
   <label class="small">교육지원</label>
@@ -1195,12 +1195,12 @@ color: #111827;
 
     <h2 style="margin-top:14px">도구</h2>
 <div class="toolbar body">
-  <!-- ✅ 3종(PDF/백업HTML/Excel) 한번에 저장 -->
+  
   <button class="btn brand" id="btnSaveAll" type="button" onclick="saveAllThree()">
     저장하기
   </button>
 
-  <!-- ✅ 임시저장(백업HTML과 동일한 1개 파일 저장) -->
+  
   <button class="btn brand" id="btnTempSave" type="button" onclick="saveTempOne()">
     임시저장
   </button>
@@ -1216,13 +1216,13 @@ color: #111827;
   </div>
 </div>
 
-    <!-- 우: 체크리스트 & 결과 -->
+    
     <div class="right">
 
-      <!-- 체크리스트 + 결과 미리보기 (2열) -->
+      
       <div id="checkAndReport">
         
-        <!-- 체크리스트 -->
+        
         <div class="card" id="checkCard">
           <h2>체크리스트</h2>
           <div class="body">
@@ -1233,7 +1233,7 @@ color: #111827;
           </div>
         </div>
 
-        <!-- 결과 미리보기 -->
+        
         <div class="card print-paper" id="reportCard">
   <h2 class="with-action">
     <span>결과보고서 (미리보기)</span>
@@ -1249,25 +1249,25 @@ color: #111827;
         </div>
       </div>
 
-      <!-- 개선 메모 -->
+      
       <div class="card">
         <h2>개선 필요사항 메모</h2>
         <div class="body">
           <div class="improve-list" id="improveList"></div>
         </div>
       </div>
-    </div> <!-- /.right -->
+    </div> 
 
-  </div> <!-- /.wrap -->
+  </div> 
 
-<!-- html2pdf -->
+
 <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 
-<!-- ✅ XLSX(SheetJS) -->
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <script>
-// 각 항목별 '세부' 문구 템플릿 (원하는 대로 수정하세요)
+                                   
 const ITEM_DETAIL_TEXT = {
   1: `- 전처리 구역과 조리 구역이 낮은 벽 또는 문으로 분리
 - 교차오염 방지 조치(팻말, 바닥 색깔 등으로 구분)`,
@@ -1402,7 +1402,7 @@ const ITEM_DETAIL_TEXT = {
 
   43: `- 위생관리 사항 점검을 실시하고 위생관리 점검표를 기록하여 3개월간 보관`,
 
- // --- 집단급식소 | 위생·안전·영양 개선 필요사항 ---
+                                    
   51: `- 식단의 발행처 및 담당자(팀 또는 영양사) 명시
 * 개인 영양사가 작성한 경우, 면허증 확인 가능`,
 
@@ -1477,7 +1477,7 @@ const ITEM_DETAIL_TEXT = {
   65: `- 어린이 기호식품의 품질인증표시에 대해 알고, 식품 구매 시 고려`,
 
 
-  // --- 소규모급식소 | 위생·안전 개선 필요사항 --- id 101번부터
+                                             
   101: `[채광]
 - 조리실 밝기 정도가 식재료의 상태가 확인 가능하고 작업하는데 어려움이 없음
 [환기시설]
@@ -1573,7 +1573,7 @@ const ITEM_DETAIL_TEXT = {
 
   129: `- 소독 전문업체를 통해 정기적으로 소독을 실시하고 관련 증빙 서류를 보관`,
 
-  // --- 소규모급식소 | 위생·안전·영양 개선 필요사항 --- id 151번부터
+                                                
   151: `- 식단의 발행처 및 담당자(팀 또는 영양사) 명시
 * 개인 영양사가 작성한 경우, 면허증 확인 가능`,
 
@@ -1647,7 +1647,7 @@ const ITEM_DETAIL_TEXT = {
 
   165: `- 어린이 기호식품의 품질인증표시에 대해 알고, 식품 구매 시 고려`,
 
-  // --- 유치원 | 위생·안전 개선 필요사항 --- id 201번부터
+                                          
   201: `- 전처리 구역과 조리 구역이 낮은 벽 또는 문으로 분리
 - 교차오염 방지 조치(팻말, 바닥 색깔 등으로 구분)`,
 
@@ -1784,7 +1784,7 @@ const ITEM_DETAIL_TEXT = {
   242: `- 위생관리 사항 점검을 실시하고 위생관리 점검표를 기록하여 3개월간 보관`,
 
 
-  // --- 유치원 | 위생·안전·영양 개선 필요사항 ---id 251번부터
+                                            
   251: `- 식단의 발행처 및 담당자(팀 또는 영양사) 명시
 * 개인 영양사가 작성한 경우, 면허증 확인 가능`,
 
@@ -1851,7 +1851,7 @@ const ITEM_DETAIL_TEXT = {
   264: `- 어린이 기호식품의 품질인증표시에 대해 알고, 식품 구매 시 고려`,
 
 
-  // --- 기타시설 | 위생·안전개선 필요사항 --- id 301번부터
+                                          
   301: `- 소비기한(유통기한)이 경과된 원료 또는 완제품을 보관 및 사용하지 않는 경우`,
 
   302: `- 끓인 물 사용: 깨끗한 주전자에 매일 물을 끓여 제공
@@ -1906,7 +1906,7 @@ const ITEM_DETAIL_TEXT = {
   307: `- 급식에 제공된 음식물이 보관되어 있지 않고 전량 폐기`,
 
 
-  // --- 기타시설 | 영양 개선 필요사항 --- id 351번부터
+                                        
   351: `- 급식대상자에 적합한 식단을 사용
 * 해당 어린이 급식소의 급식대상자에 맞게 사용
 * 연령에 맞는 열량, 단백질 등을 표시함
@@ -1929,13 +1929,13 @@ const ITEM_DETAIL_TEXT = {
 
 };
 
-// ===== 보고서 유형 선택 (시설/보고서 종류) 상태 =====
-// 시설: "집단급식소" | "소규모급식소" | "유치원"
-// 종류: "위생·안전" | "위생·안전·영양"
-let currentFacility = "집단급식소";     // 기본값
-let currentReportMode = "위생·안전";    // 기본값
+                                       
+                                 
+                           
+let currentFacility = "집단급식소";           
+let currentReportMode = "위생·안전";          
 
-      // ===== 유틸: 디바운스 & 미리보기 자동 갱신 트리거 =====
+                                              
       function debounce(fn, delay = 150) {
         let t;
         return (...args) => {
@@ -1945,18 +1945,18 @@ let currentReportMode = "위생·안전";    // 기본값
       }
 
       const triggerPreview = debounce(() => {
-        // 미리보기가 만들어진 뒤(플레이스홀더가 없을 때)만 갱신
+                                         
         if (!document.getElementById("reportPlaceholder")) {
           buildReport();
         }
       }, 150);
 
-      // ===== 1) 데이터 정의 =====
+                              
 
-/**
- * 1-1. 집단급식소 | 위생·안전 기본 세트(BASE)
- *  → 지금 들어 있는 내용 그대로 사용 (1~43번)
- */
+   
+                                 
+                                
+   
 const BASE_SECTIONS = [
   { key: "fac",  name: "시설·환경(11문항)" },
   { key: "per",  name: "개인위생(3문항)" },
@@ -1966,9 +1966,9 @@ const BASE_SECTIONS = [
   { key: "etc",  name: "기타사항(6문항)" }
 ];
 
-//집단급식소 위생.영양 부제목 내용
+                    
 const BASE_ITEMS = [
-  // 시설·환경 (1~11)
+                 
   { id: 1,  sec: "fac",  label: "전처리 구역 및 조리구역 구분" },
   { id: 2,  sec: "fac",  label: "배수구 덮개 설치" },
   { id: 3,  sec: "fac",  label: "조리·세척시설 및 손 씻는 시설 설치" },
@@ -1981,12 +1981,12 @@ const BASE_ITEMS = [
   { id: 10, sec: "fac",  label: "문과 창문에 방충망 설치" },
   { id: 11, sec: "fac",  label: "수돗물, 먹는물 수질기준에 적합한 지하수 등 시설 구비" },
 
-  // 개인위생 (12~14)
+                 
   { id: 12, sec: "per",  label: "건강진단 실시 및 결과서 보관" },
   { id: 13, sec: "per",  label: "작업 전 조리원 건강상태 확인 감염병 의심 증상자 조리 금지" },
   { id: 14, sec: "per",  label: "조리원 개인위생관리(위생모, 마스크, 위생복 착용 등)" },
 
-  // 원료사용 (15~22)
+                 
   { id: 15, sec: "raw",  label: "검수일지 기록 및 3개월 보관" },
   { id: 16, sec: "raw",  label: "무허가(무신고) 원료 및 식품 사용 금지" },
   { id: 17, sec: "raw",  label: "부패, 변질된 원료 및 식품 사용 금지" },
@@ -1996,7 +1996,7 @@ const BASE_ITEMS = [
   { id: 21, sec: "raw",  label: "수질기준에 적합한 물 사용" },
   { id: 22, sec: "raw",  label: "위해평가 완료 전 일시 금지된 식품 사용 금지" },
 
-  // 공정관리 (23~34)
+                 
   { id: 23, sec: "proc", label: "원료보관실, 조리실 등 내부 청결 관리" },
   { id: 24, sec: "proc", label: "주방용구 소독 후 사용" },
   { id: 25, sec: "proc", label: "칼, 도마 용도별 구분 사용" },
@@ -2010,12 +2010,12 @@ const BASE_ITEMS = [
   { id: 33, sec: "proc", label: "배식 시 올바른 위생복장(위생모, 마스크 등) 착용" },
   { id: 34, sec: "proc", label: "위생적인 배식과정 관리" },
 
-  // 보관관리 (35~37)
+                 
   { id: 35, sec: "keep", label: "부패·변질이 되기 쉬운 것은 냉장·냉동시설에 보관·관리" },
   { id: 36, sec: "keep", label: "식품을 보관하는 냉장고는 0-5℃, 냉동고는 -18℃ 이하 유지" },
   { id: 37, sec: "keep", label: "식품과 비식품(소모품) 구분 보관" },
 
-  // 기타사항 (38~43)
+                 
   { id: 38, sec: "etc",  label: "급식은 직접 조리하여 제공" },
   { id: 39, sec: "etc",  label: "음식물 재사용 금지" },
   { id: 40, sec: "etc",  label: "조리·제공한 식품의 매회 1인분 분량을 -18℃ 이하에서 144시간 이상 보관" },
@@ -2024,7 +2024,7 @@ const BASE_ITEMS = [
   { id: 43, sec: "etc",  label: "위생관리 사항을 매일 점검하고 위생관리 점검표를 기록 및 보관" }
 ];
 
-//집단급식소 영양 부제목
+              
 const BASE_FULL_SECTIONS = BASE_SECTIONS.concat([
   { key: "nutr", name: "식단(7문항)" },
   { key: "nutr2", name: "급식제공(3문항)" },
@@ -2033,9 +2033,9 @@ const BASE_FULL_SECTIONS = BASE_SECTIONS.concat([
   { key: "nutr5", name: "기타사항(1문항)" },
 ]);
 
-//집단급식소 영양 부제목 안에들어갈 내용 + 영역별 점검요약
+                                  
 const BASE_NUTR_ITEMS = [
-//식단
+    
 { id: 51, sec: "nutr", label: "영양사가 작성한 식단 사용", weightNote: "영양" },
 { id: 52, sec: "nutr", label: "식단 변경 시 영양사 감수 진행", weightNote: "영양" },
 { id: 53, sec: "nutr", label: "식단 표기사항(열량, 단백질, 식품 알레르기 유발물질 표시 등) 표시", weightNote: "영양" },
@@ -2044,24 +2044,24 @@ const BASE_NUTR_ITEMS = [
 { id: 56, sec: "nutr", label: "정보공개포털에 사용하는 식단 게시", weightNote: "영양" },
 { id: 57, sec: "nutr", label: "어린이 보호자에게 사용하는 식단(변경 식단 포함) 정보 제공", weightNote: "영양" },
 
-//급식제공
+      
 { id: 58, sec: "nutr2", label: "식단과 일치하는 급·간식 제공", weightNote: "영양" },
 { id: 59, sec: "nutr2", label: "식품 알레르기에 대한 지침 마련 및 조사 실시", weightNote: "영양" },
 { id: 60, sec: "nutr2", label: "식품 알레르기 대처방안 마련", weightNote: "영양" },
 
-//조리
+    
 { id: 61, sec: "nutr3", label: "식재료의 양, 조리 방법 등 참고하여 조리", weightNote: "영양" },
 { id: 62, sec: "nutr3", label: "영유아 국 권장 염도를 알고, 권장 염도로 제공", weightNote: "영양" },
 
-//배식
+    
 { id: 63, sec: "nutr4", label: "영유아 적정 배식량에 대해 알고, 1인 1회 적정량 제공", weightNote: "영양" },
 { id: 64, sec: "nutr4", label: "영유아 연령 특성을 고려한 급·간식 제공", weightNote: "영양" },
 
-//기타사항
+      
 { id: 65, sec: "nutr5", label: "어린이 기호식품 품질인증표시 인지", weightNote: "영양" },
 ];
 
-// 소규모 급식소 위생.안전 부제목
+                    
 const SMALL_BASE_SECTIONS = [
   { key: "sm_hyg", name: "시설·환경(3문항)" },
   { key: "sm_hyg2", name: "개인위생(2문항)" },
@@ -2071,18 +2071,18 @@ const SMALL_BASE_SECTIONS = [
   { key: "sm_hyg6", name: "기타사항(4문항)" },
 ];
 
-// 소규모 급식소 위생.안전 부제목 안에들어갈 내용 + 영역별 점검요약 id 100 번대
+                                                  
 const SMALL_BASE_ITEMS = [
-//시설·환경
+       
 { id: 101, sec: "sm_hyg", label: "채광이 잘되고 기계 환기시설을 하여 청정한 실내 환경 유지" },
 { id: 102, sec: "sm_hyg", label: "문과 창문에 방충망 설치" },
 { id: 103, sec: "sm_hyg", label: "자외선 또는 전기살균소독기, 열탕 세척 소독 시설 설치" },
 
-//개인위생
+      
 { id: 104, sec: "sm_hyg2", label: "건강진단 실시 및 결과서 보관" },
 { id: 105, sec: "sm_hyg2", label: "조리원 개인위생관리(위생모, 마스크, 위생복 착용 등)" },
 
-//원료사용
+      
 { id: 106, sec: "sm_hyg3", label: "무허가(무신고) 원료 및 식품 사용 금지" },
 { id: 107, sec: "sm_hyg3", label: "부패, 변질된 원료 및 식품 사용 금지" },
 { id: 108, sec: "sm_hyg3", label: "무표시 원료 및 식품 사용 금지" },
@@ -2090,7 +2090,7 @@ const SMALL_BASE_ITEMS = [
 { id: 110, sec: "sm_hyg3", label: "수질기준에 적합한 물 사용" },
 { id: 111, sec: "sm_hyg3", label: "위해평가 완료 전 일시 금지된 식품 사용 금지" },
 
-//공정관리
+      
 { id: 112, sec: "sm_hyg4", label: "원료보관실, 조리실 등 내부 청결 관리" },
 { id: 113, sec: "sm_hyg4", label: "주방용구 소독 후 사용" },
 { id: 114, sec: "sm_hyg4", label: "칼, 도마 용도별 구분 사용" },
@@ -2104,18 +2104,18 @@ const SMALL_BASE_ITEMS = [
 { id: 122, sec: "sm_hyg4", label: "배식 시 올바른 위생복장(위생모, 마스크 등) 착용" },
 { id: 123, sec: "sm_hyg4", label: "위생적인 배식과정 관리" },
 
-//보관관리
+      
 { id: 124, sec: "sm_hyg5", label: "부패·변질이 되기 쉬운 것은 냉장·냉동시설에 보관·관리" },
 { id: 125, sec: "sm_hyg5", label: "식품을 보관하는 냉장고는 0-5℃, 냉동고는 -18℃ 이하 유지" },
 
-//기타사항
+      
 { id: 126, sec: "sm_hyg6", label: "급식은 직접 조리하여 제공" },
 { id: 127, sec: "sm_hyg6", label: "음식물 재사용 금지" },
 { id: 128, sec: "sm_hyg6", label: "조리·제공한 식품의 매회 1인분 분량을 -18℃ 이하에서 144시간 이상 보관" },
 { id: 129, sec: "sm_hyg6", label: "조리실, 식품 등의 원료·제품 보관실 등을 정기적으로 소독 및 소독필증 보관" },
 ];
 
-// 소규모 급식소 영양 부제목
+                 
 const SMALL_FULL_SECTIONS = SMALL_BASE_SECTIONS.concat([
   { key: "sm_nutr", name: "식단(7문항)" },
   { key: "sm_nutr2", name: "급식제공(3문항)" },
@@ -2124,9 +2124,9 @@ const SMALL_FULL_SECTIONS = SMALL_BASE_SECTIONS.concat([
   { key: "sm_nutr5", name: "기타사항(1문항)" },
 ]);
 
-// 소규모 급식소 영양 부제목 안에들어갈 내용 + 영역별 점검요약 id 150 번대
+                                               
 const SMALL_NUTR_ITEMS = [
-//식단
+    
 { id: 151, sec: "sm_nutr", label: "영양사가 작성한 식단 사용", weightNote: "영양" },
 { id: 152, sec: "sm_nutr", label: "식단 변경 시 영양사 감수 진행", weightNote: "영양" },
 { id: 153, sec: "sm_nutr", label: "식단 표기사항(열량, 단백질, 식품 알레르기 유발물질 표시 등) 표시", weightNote: "영양" },
@@ -2135,24 +2135,24 @@ const SMALL_NUTR_ITEMS = [
 { id: 156, sec: "sm_nutr", label: "정보공개포털에 사용하는 식단 게시", weightNote: "영양" },
 { id: 157, sec: "sm_nutr", label: "어린이 보호자에게 사용하는 식단(변경 식단 포함) 정보 제공", weightNote: "영양" },
 
-//급식제공
+      
 { id: 158, sec: "sm_nutr2", label: "식단과 일치하는 급·간식 제공", weightNote: "영양" },
 { id: 159, sec: "sm_nutr2", label: "식품 알레르기에 대한 지침 마련 및 조사 실시", weightNote: "영양" },
 { id: 160, sec: "sm_nutr2", label: "식품 알레르기 대처방안 마련", weightNote: "영양" },
 
-//조리
+    
 { id: 161, sec: "sm_nutr3", label: "식재료의 양, 조리 방법 등 참고하여 조리", weightNote: "영양" },
 { id: 162, sec: "sm_nutr3", label: "영유아 국 권장 염도를 알고, 권장 염도로 제공", weightNote: "영양" },
 
-//배식
+    
 { id: 163, sec: "sm_nutr4", label: "영유아 적정 배식량에 대해 알고, 1인 1회 적정량 제공", weightNote: "영양" },
 { id: 164, sec: "sm_nutr4", label: "영유아 연령 특성을 고려한 급·간식 제공", weightNote: "영양" },
 
-//기타사항
+      
 { id: 165, sec: "sm_nutr5", label: "어린이 기호식품 품질인증표시 인지", weightNote: "영양" },
 ];
 
-// 유치원 위생.안전 부제목
+                
 const KINDER_BASE_SECTIONS = [
   { key: "k_hyg", name: "시설·환경(11문항)" },
   { key: "k_hyg2", name: "개인위생(3문항)" },
@@ -2162,9 +2162,9 @@ const KINDER_BASE_SECTIONS = [
   { key: "k_hyg6", name: "기타사항(5문항)" }
 ];
 
-// 유치원 위생.안전 부제목 안에들어갈 내용 + 영역별 점검요약, id 200 번대
+                                               
 const KINDER_BASE_ITEMS = [
-  // 시설·환경 (1~11)
+                 
   { id: 201,  sec: "k_hyg",  label: "전처리 구역 및 조리구역 구분" },
   { id: 202,  sec: "k_hyg",  label: "배수구 덮개 설치" },
   { id: 203,  sec: "k_hyg",  label: "조리·세척시설 및 손 씻는 시설 설치" },
@@ -2177,12 +2177,12 @@ const KINDER_BASE_ITEMS = [
   { id: 210, sec: "k_hyg",  label: "문과 창문에 방충망 설치" },
   { id: 211, sec: "k_hyg",  label: "수돗물, 먹는물 수질기준에 적합한 지하수 등 시설 구비" },
 
-  // 개인위생 (12~14)
+                 
   { id: 212, sec: "k_hyg2",  label: "건강진단 실시 및 결과서 보관" },
   { id: 213, sec: "k_hyg2",  label: "작업 전 조리원 건강상태 확인 감염병 의심 증상자 조리 금지" },
   { id: 214, sec: "k_hyg2",  label: "조리원 개인위생관리(위생모, 마스크, 위생복 착용 등)" },
 
-  // 원료사용 (15~22)
+                 
   { id: 215, sec: "k_hyg3",  label: "검수일지 기록 및 3개월 보관" },
   { id: 216, sec: "k_hyg3",  label: "무허가(무신고) 원료 및 식품 사용 금지" },
   { id: 217, sec: "k_hyg3",  label: "부패, 변질된 원료 및 식품 사용 금지" },
@@ -2192,7 +2192,7 @@ const KINDER_BASE_ITEMS = [
   { id: 221, sec: "k_hyg3",  label: "수질기준에 적합한 물 사용" },
   { id: 222, sec: "k_hyg3",  label: "위해평가 완료 전 일시 금지된 식품 사용 금지" },
 
-  // 공정관리 (23~34)
+                 
   { id: 223, sec: "k_hyg4", label: "원료보관실, 조리실 등 내부 청결 관리" },
   { id: 224, sec: "k_hyg4", label: "주방용구 소독 후 사용" },
   { id: 225, sec: "k_hyg4", label: "칼, 도마 용도별 구분 사용" },
@@ -2206,12 +2206,12 @@ const KINDER_BASE_ITEMS = [
   { id: 233, sec: "k_hyg4", label: "배식 시 올바른 위생복장(위생모, 마스크 등) 착용" },
   { id: 234, sec: "k_hyg4", label: "위생적인 배식과정 관리" },
 
-  // 보관관리 (35~37)
+                 
   { id: 235, sec: "k_hyg5", label: "부패·변질이 되기 쉬운 것은 냉장·냉동시설에 보관·관리" },
   { id: 236, sec: "k_hyg5", label: "식품을 보관하는 냉장고는 5℃ 이하, 냉동고는 -18℃ 이하 유지" },
   { id: 237, sec: "k_hyg5", label: "식품과 비식품(소모품) 구분 보관" },
 
-  // 기타사항 (38~43)
+                 
   { id: 238, sec: "k_hyg6",  label: "음식물 재사용 금지" },
   { id: 239, sec: "k_hyg6",  label: "조리·제공한 식품의 매회 1인분 분량을 -18℃ 이하에서 144시간 이상 보관" },
   { id: 240, sec: "k_hyg6",  label: "집단급식소의 설치·운영자 및 조리사의 식품위생교육 이수 및 이수증 보관" },
@@ -2219,7 +2219,7 @@ const KINDER_BASE_ITEMS = [
   { id: 242, sec: "k_hyg6",  label: "위생관리 사항을 매일 점검하고 위생관리 점검표를 기록 및 보관" }
 ];
 
-// 유치원 영양 부제목
+             
 const KINDER_FULL_SECTIONS = KINDER_BASE_SECTIONS.concat([
   { key: "k_nutr", name: "식단(6문항)" },
   { key: "k_nutr2", name: "급식제공(3문항)" },
@@ -2228,9 +2228,9 @@ const KINDER_FULL_SECTIONS = KINDER_BASE_SECTIONS.concat([
   { key: "k_nutr5", name: "기타사항(1문항)" },
 ]);
 
-// 유치원 영양 부제목 안에들어갈 내용 + 영역별 점검요약 id 250 번대
+                                           
 const KINDER_NUTR_ITEMS = [
-//식단
+    
 { id: 251, sec: "k_nutr", label: "영양사가 작성한 식단 사용",   weightNote: "영양" },
 { id: 252, sec: "k_nutr", label: "식단 변경 시 영양사 감수 진행",   weightNote: "영양" },
 { id: 253, sec: "k_nutr", label: "식단 표기사항(열량, 단백질, 식품 알레르기 유발물질 표시 등) 표시",   weightNote: "영양" },
@@ -2238,24 +2238,24 @@ const KINDER_NUTR_ITEMS = [
 { id: 255, sec: "k_nutr", label: "공개된 장소에 사용하는 식단 정보 게시",   weightNote: "영양" },
 { id: 256, sec: "k_nutr", label: "보호자에게 사용하는 식단 제공",   weightNote: "영양" },
 
-//급식제공
+      
 { id: 257, sec: "k_nutr2", label: "식단과 일치하는 급·간식 제공",   weightNote: "영양" },
 { id: 258, sec: "k_nutr2", label: "식품 알레르기에 대한 지침 마련 및 조사 실시",   weightNote: "영양" },
 { id: 259, sec: "k_nutr2", label: "식품 알레르기에 대한 대처 방안 마련",   weightNote: "영양" },
 
-//조리
+    
 { id: 260, sec: "k_nutr3", label: "식재료의 양, 조리방법 등 참고하여 조리",   weightNote: "영양" },
 { id: 261, sec: "k_nutr3", label: "국의 권장 염도를 알고, 권장 염도로 제공",   weightNote: "영양" },
 
-//배식
+    
 { id: 262, sec: "k_nutr4", label: "영유아 적정 배식량에 대해 알고 1인 1회 적정량 제공",   weightNote: "영양" },
 { id: 263, sec: "k_nutr4", label: "영유아 연령 특성을 고려한 급·간식 제공",   weightNote: "영양" },
 
-//기타사항
+      
 { id: 264, sec: "k_nutr5", label: "어린이 기호식품의 품질인증 표시 인지",   weightNote: "영양" }
 ];
 
-// 기타시설 위생.안전 부제목
+                 
 const OTHER_BASE_SECTIONS = [
   { key: "o_hyg", name: "원료사용(2문항)" },
   { key: "o_hyg2", name: "공정관리(2문항)" },
@@ -2263,99 +2263,99 @@ const OTHER_BASE_SECTIONS = [
   { key: "o_hyg4", name: "기타사항(1문항)" },
 ];
 
-// 기타시설 위생.안전 부제목 안에들어갈 내용 + 영역별 점검요약 id 300 번대
+                                               
 const OTHER_BASE_ITEMS = [
-//원료사용
+      
 { id: 301, sec: "o_hyg", label: "소비기한이 경과된 원료 및 식품 사용 금지" },
 { id: 302, sec: "o_hyg", label: "수질기준에 적합한 물 사용" },
 
-//공정관리
+      
 { id: 303, sec: "o_hyg2", label: "주방용구 세척·살균 및 소독·관리" },
 { id: 304, sec: "o_hyg2", label: "조리 식품 보관 및 배식과정을 위생적으로 관리" },
 
-//보관관리
+      
 { id: 305, sec: "o_hyg3", label: "냉장고 온도는 0-5℃, 냉동고는 -18℃ 이하 유지" },
 { id: 306, sec: "o_hyg3", label: "부패·변질이 되기 쉬운 것은 냉장·냉동시설에 보관·관리" },
 
-//기타사항
+      
 { id: 307, sec: "o_hyg4", label: "음식물 재사용 금지" },
 ];
 
-// 기타시설 위생.안전.영양 부제목
+                    
 const OTHER_NUTR_SECTIONS = [
   { key: "o_nutr", name: "식단(2문항)" },
   { key: "o_nutr2", name: "급식제공(2문항)" },
 ];
 
-// 기타시설 전체(위생·안전 + 영양) 섹션(건들지마시오)
+                                 
 const OTHER_FULL_SECTIONS = OTHER_BASE_SECTIONS.concat(OTHER_NUTR_SECTIONS);
 
-// 기타시설 위생.안전.영양 부제목 안에들어갈 내용 + 영역별 점검요약 id 350 번대 — weightNote가 "영양"이면 체크리스트에서 '영양' 그룹으로 내려감
+                                                                                             
 const OTHER_NUTR_ITEMS = [
-//식단
+    
   { id: 351, sec: "o_nutr", label: "대상자에 적합한 급·간식 제공", weightNote: "영양" },
   { id: 352, sec: "o_nutr", label: "공개된 장소에 식단 게시", weightNote: "영양" },
 
-//급식제공
+      
   { id: 353, sec: "o_nutr2", label: "식품 알레르기 조사 실시", weightNote: "영양" },
   { id: 354, sec: "o_nutr2", label: "식품 알레르기 대처방안 마련", weightNote: "영양" },
 ];
 
-/**
- * 1-8. 현재 선택된 시설/보고서 종류에 따라 실제로 사용할 SECTIONS/ITEMS
- */
+   
+                                                   
+   
 let SECTIONS = BASE_SECTIONS;
 let ITEMS    = BASE_ITEMS;
 
-/**
- * 1-9. 시설/종류별 세트 선택 함수
- *  - 위생·안전       → 각 시설의 기본 세트만 사용
- *  - 위생·안전·영양  → 각 시설 기본 세트 + 영양 항목 concat
- *  - 섹션(key)을 위생·안전/영양용으로 분리해서
- *    '영역별 점검결과 요약'에서 행이 각각 따로 나오도록 구성
- */
+   
+                       
+                                   
+                                           
+                               
+                                      
+   
 function applyDatasetForCurrentType() {
   let sections;
   let items;
 
   if (currentFacility === "집단급식소") {
     if (currentReportMode === "위생·안전·영양") {
-      sections = BASE_FULL_SECTIONS;                     // 위생·안전 + 영양관리
-      items    = BASE_ITEMS.concat(BASE_NUTR_ITEMS);     // 1~43 + 44
+      sections = BASE_FULL_SECTIONS;                                    
+      items    = BASE_ITEMS.concat(BASE_NUTR_ITEMS);                 
     } else {
-      sections = BASE_SECTIONS;                          // 위생·안전만
+      sections = BASE_SECTIONS;                                   
       items    = BASE_ITEMS;
     }
 
   } else if (currentFacility === "소규모급식소") {
     if (currentReportMode === "위생·안전·영양") {
-      sections = SMALL_FULL_SECTIONS;                    // 소규모 위생·안전 + 영양
+      sections = SMALL_FULL_SECTIONS;                                     
       items    = SMALL_BASE_ITEMS.concat(SMALL_NUTR_ITEMS);
     } else {
-      sections = SMALL_BASE_SECTIONS;                    // 소규모 위생·안전만
+      sections = SMALL_BASE_SECTIONS;                                 
       items    = SMALL_BASE_ITEMS;
     }
 
   } else if (currentFacility === "유치원") {
     if (currentReportMode === "위생·안전·영양") {
-      sections = KINDER_FULL_SECTIONS;                   // 유치원 위생·안전 + 영양
+      sections = KINDER_FULL_SECTIONS;                                    
       items    = KINDER_BASE_ITEMS.concat(KINDER_NUTR_ITEMS);
     } else {
-      sections = KINDER_BASE_SECTIONS;                   // 유치원 위생·안전만
+      sections = KINDER_BASE_SECTIONS;                                
       items    = KINDER_BASE_ITEMS;
     }
 
 } else if (currentFacility === "기타시설") {
   if (currentReportMode === "위생·안전·영양") {
-    sections = OTHER_FULL_SECTIONS;                    // ✅ 기타시설 위생·안전 + 영양
+    sections = OTHER_FULL_SECTIONS;                                        
     items    = OTHER_BASE_ITEMS.concat(OTHER_NUTR_ITEMS);
   } else {
-    sections = OTHER_BASE_SECTIONS;                    // 기타시설 위생·안전만
+    sections = OTHER_BASE_SECTIONS;                                  
     items    = OTHER_BASE_ITEMS;
   }
 
   } else {
-    // 혹시 모를 예외: 기본값은 집단급식소 위생·안전
+                                 
     sections = BASE_SECTIONS;
     items    = BASE_ITEMS;
   }
@@ -2364,11 +2364,11 @@ function applyDatasetForCurrentType() {
   ITEMS    = items;
 }
 
-            // ===== 2) UI 생성 =====
+                                   
       const checklistEl = document.getElementById("checklist");
       const improveListEl = document.getElementById("improveList");
 
-      // ✅ 체크리스트 한 줄에 적합/미준수 동작을 붙이는 공통 함수
+                                          
       function attachRadioLogic(row, secKey, it) {
         const okInput =
           row.querySelector(`input[type="radio"][name="q_${it.id}"][value="ok"]`) ||
@@ -2379,14 +2379,14 @@ function applyDatasetForCurrentType() {
 
         if (!okInput || !noInput) return;
 
-        // ✅ 미준수 선택 시: 요약 + 세부 자동 추가
+                                    
         function addAutoMemo() {
-// 1) 요약 추가(중복 방지)
+                  
 const sumTa = document.getElementById(`im_${secKey}`);
 
-// ✅ id 포함 포맷으로 통일 (removeSummaryById가 id로 지우게 만들기 위함)
+                                                      
 const summaryText = `${it.id}. ${it.label} : 개선 필요`;
-const legacyText  = `${it.label} : 개선 필요`; // ✅ 과거 포맷이 이미 들어가있을 수 있어 같이 정리
+const legacyText  = `${it.label} : 개선 필요`;                                
 
 if (sumTa) {
   const lines = (sumTa.value || "")
@@ -2405,7 +2405,7 @@ if (sumTa) {
   sumTa.value = next.join("\n");
 }
 
-          // 2) 세부(자동블록) 추가(마커로 중복 방지)
+                                      
           const detTa = document.getElementById(`det_${secKey}`);
           if (detTa) {
             const blocks = smartParseDetail(detTa.value);
@@ -2423,23 +2423,23 @@ if (sumTa) {
           updateImproveCount(secKey);
         }
 
-        // ✅ 적합 선택 시: 요약/세부 둘 다 지우기
+                                   
         function onOkChange() {
           if (!okInput.checked) return;
 
-          removeSummaryById(secKey, it.id);  // 요약 textarea에서 제거
-          removeDetailById(secKey, it.id);   // 세부 textarea에서 제거
+          removeSummaryById(secKey, it.id);                     
+          removeDetailById(secKey, it.id);                      
 
           updateImproveCount(secKey);
           triggerPreview();
         }
 
-        // ✅ 미준수 선택 시: 자동으로 요약/세부에 추가
+                                     
         function onNoChange() {
           if (!noInput.checked) return;
 
-          addAutoMemo();   // 미흡 메모 자동 추가
-          triggerPreview(); // 미리보기 갱신
+          addAutoMemo();                 
+          triggerPreview();           
         }
 
         okInput.addEventListener("change", onOkChange);
@@ -2452,20 +2452,20 @@ if (sumTa) {
     return acc;
   }, {});
 
-  // ✅ 이미 체크리스트가 만들어져 있는지(= 저장된 HTML을 다시 연 상황인지) 확인
+                                                   
   const alreadyBuilt = !forceRebuild && !!checklistEl.querySelector(".item");
 
 if (!alreadyBuilt) {
-  // ▶ 처음 실행 또는 보고서 종류 변경(forceRebuild=true)일 때만 DOM 새로 구성
+                                                          
   checklistEl.innerHTML = "";
   improveListEl.innerHTML = "";
 
-  // 위생·안전 / 영양 항목을 분리해서 그루핑
+                            
   const hygieneBySec = {};
   const nutrBySec = {};
 
   ITEMS.forEach((it) => {
-    // weightNote === "영양" 이거나 라벨에 [영양] 이 포함되면 영양 그룹으로 분류
+                                                         
     const isNutr =
       it.weightNote === "영양" ||
       (typeof it.label === "string" && /\[.+영양\]/.test(it.label));
@@ -2479,17 +2479,17 @@ if (!alreadyBuilt) {
     return Object.values(map).some((arr) => arr && arr.length);
   }
 
-  // 공통으로 섹션 + 항목 DOM 만들어주는 함수
+                              
   function appendGroup(groupLabel, bySecMap) {
     if (!hasAnyItems(bySecMap)) return;
 
-    // 큰 제목(위생·안전 / 영양)
+                       
     const big = document.createElement("div");
     big.className = "checklist-mode-heading";
     big.textContent = groupLabel;
     checklistEl.appendChild(big);
 
-    // 섹션별 접기/펼치기 + 항목들
+                       
     for (const sec of SECTIONS) {
       const secItems = bySecMap[sec.key] || [];
       if (!secItems.length) continue;
@@ -2531,7 +2531,7 @@ if (!alreadyBuilt) {
         row.appendChild(right);
         box.appendChild(row);
 
-        // ✅ 이 행의 라디오에 요약/세부 자동 연동 로직 부착
+                                        
         attachRadioLogic(row, sec.key, it);
       });
 
@@ -2540,13 +2540,13 @@ if (!alreadyBuilt) {
     }
   }
 
-  // 1) 위생·안전 그룹
+                
   appendGroup("위생·안전", hygieneBySec);
 
-  // 2) 영양 그룹(있는 경우에만)
+                      
   appendGroup("영양", nutrBySec);
 
-  // ✅ 개선 메모 박스 (섹션별 1개씩, 기존 로직 유지)
+                                   
   for (const sec of SECTIONS) {
     const imp = document.createElement("div");
     imp.className = "improve-item";
@@ -2566,9 +2566,9 @@ if (!alreadyBuilt) {
   }
 
         } else {
-          // ▶ 저장본 HTML을 다시 연 경우:
-          //    이미 checklist 안에 .item 들이 들어있으니, DOM은 그대로 두고
-          //    각 행에 라디오 로직만 다시 연결해 준다.
+                                 
+                                                           
+                                       
           for (const sec of SECTIONS) {
             const secItems = bySec[sec.key] || [];
             secItems.forEach((it) => {
@@ -2579,13 +2579,13 @@ if (!alreadyBuilt) {
           }
         }
 
-        // 라디오 변경 시 자동 미리보기
+                           
         checklistEl.addEventListener("change", triggerPreview);
 
-        // 메모 입력 시 카운트 & 미리보기 (요약 + 세부 모두)
+                                          
         SECTIONS.forEach((s) => {
-          const sumTa = document.getElementById(`im_${s.key}`);   // 요약 textarea
-          const detTa = document.getElementById(`det_${s.key}`);  // 세부 textarea
+          const sumTa = document.getElementById(`im_${s.key}`);                 
+          const detTa = document.getElementById(`det_${s.key}`);                
 
           if (sumTa)
             sumTa.addEventListener("input", () => {
@@ -2600,13 +2600,13 @@ if (!alreadyBuilt) {
             });
         });
 
-        // 기본정보 변경 시 자동 미리보기
+                            
         [
           "orgName","visitor","visitDate",
           "visitStart","visitEnd","visitRound",
           "dirName","dirHealthDate","dirEduDate",
           "prevNotes",
-          "eduSupport","itemSupport"   // ⬅️ 이 두 줄 추가
+          "eduSupport","itemSupport"                 
         ].forEach((id) => {
           const el = document.getElementById(id);
           if (!el) return;
@@ -2614,14 +2614,14 @@ if (!alreadyBuilt) {
           el.addEventListener(evt, triggerPreview);
         });
 
-        // 조리원 동적 필드(현재 존재하는 모든 그룹에 리스너 연결)
+                                           
         function attachCookListeners(scope = document) {
           scope.querySelectorAll("#cookGroupWrap .cook-group input").forEach((inp) => {
             const evt = (inp.tagName === "SELECT") ? "change" : "input";
             inp.addEventListener(evt, triggerPreview);
           });
 
-          // ⬇⬇ 삭제 버튼에도 리스너 연결
+                              
           scope.querySelectorAll("#cookGroupWrap .cook-remove").forEach((btn) => {
             btn.addEventListener("click", () => {
               const g = btn.closest(".cook-group");
@@ -2656,10 +2656,10 @@ if (!alreadyBuilt) {
   </div>
 `;
           wrap.appendChild(div);
-          attachCookListeners(div); // 입력/삭제 리스너
+          attachCookListeners(div);             
         }
 
-// 조리원 추가 버튼 (✅ 중복 등록 방지: onclick으로 덮어쓰기)
+                                         
 const btnAddCook = document.getElementById("btnAddCook");
 if (btnAddCook) {
   btnAddCook.onclick = () => {
@@ -2668,19 +2668,19 @@ if (btnAddCook) {
   };
 }
 
-        // 09:00 ~ 18:00, 30분 간격으로 시간 옵션 채우기
-        // ➜ 이미 저장본(체크리스트 .item 이 존재)에서는 select 옵션을 다시 갈아엎지 않음
+                                            
+                                                              
         if (!alreadyBuilt) {
           buildTimeOptions(document.getElementById("visitStart"), "09:00", "18:00", 30);
           buildTimeOptions(document.getElementById("visitEnd"),   "09:00", "18:00", 30);
         }
 
-        // 미리보기 즉시 반영
+                     
         triggerPreview();
       }
 
 
-      // 전체 항목을 ‘적합’으로 체크
+                         
       function markAllOk() {
         const oks = document.querySelectorAll('input[type="radio"][value="ok"]');
         oks.forEach((inp) => {
@@ -2690,17 +2690,17 @@ if (btnAddCook) {
         triggerPreview();
       }
 
-      // (A) 기존 호환용 - 요약만 추가할 때 사용 가능
+                                     
 function addImproveMemo(secKey, text){
   addBothMemos(secKey, text, null);
 }
 
-// (B) 요약 + 세부를 각각 추가
+                     
 function addBothMemos(secKey, summaryText, detailText){
   const sumTa = document.getElementById(`im_${secKey}`);
   const detTa = document.getElementById(`det_${secKey}`);
 
-  // 요약: 줄 단위
+             
   if (summaryText) {
     const lines = (sumTa.value || "").split(/\n/).map(s=>s.trim()).filter(Boolean);
     if (!lines.includes(summaryText.trim())) {
@@ -2708,7 +2708,7 @@ function addBothMemos(secKey, summaryText, detailText){
     }
   }
 
-  // 세부: 문단(빈 줄) 단위
+                   
   if (detailText !== null && detailText !== undefined) {
     const block = String(detailText).trim();
     const blocks = (detTa.value || "").split(/\n{2,}/).map(s=>s.trim()).filter(Boolean);
@@ -2731,18 +2731,18 @@ function addBothMemos(secKey, summaryText, detailText){
   document.getElementById(`dc_${secKey}`).textContent = detBlocks.length ? `${detBlocks.length}건` : '–';
 }
 
-// ===== 육각형 레이더 그래프용 헬퍼 =====
+                              
 
-// ✅ ①-1. 섹션(부제목) 기준 통계 (위생·안전용 레이더)
-//    → 위생·안전 그래프에서는 영양 섹션(key에 'nutr'가 들어가는 것)은 모두 제외
+                                    
+                                                      
 function getSectionStats() {
   const stats = {};
 
   SECTIONS.forEach((sec) => {
-    // 영양 전용 섹션은 '위생·안전' 레이더에서 제외
-    //  - 집단급식소: nutr, nutr2, nutr3, nutr4 ...
-    //  - 소규모급식소: sm_nutr, sm_nutr2 ...
-    //  - 유치원: k_nutr, k_nutr2 ...
+                                 
+                                              
+                                       
+                                  
     if (sec.key.includes("nutr")) {
       return;
     }
@@ -2761,32 +2761,32 @@ function getSectionStats() {
 
     stats[sec.key] = {
   key: sec.key,
-  // "기타사항"이면서 위생·안전 쪽 마지막 섹션이면 라벨 변경
+                                     
   label: (() => {
     const base = sec.name.replace(/\(.+\)/, "");
     if (base === "기타사항") return "기타(위생)";
     return base;
   })(),
   count: total,
-  comply: ok, // 적합 개수
-  not: no     // 미준수 개수
+  comply: ok,         
+  not: no              
 };
   });
 
   return stats;
 }
 
-// ✅ ①-2. 영양 영역용 축 통계 (위생·안전·영양 전용)
-//    → "영양(큰제목) 아래 부제목들" 각각이 레이더 축 1개가 되도록 집계
+                                   
+                                              
 function getNutritionStats() {
-  // 1) 현재 SECTIONS 중에서 영양 섹션만 추출 (key에 'nutr' 포함)
+                                                  
   const nutrSections = SECTIONS.filter((sec) => sec.key.includes("nutr"));
   if (!nutrSections.length) return [];
 
   const stats = [];
 
   nutrSections.forEach((sec) => {
-    // 해당 영양 부제목에 속한 항목들만 모음
+                            
     const items = ITEMS.filter((it) => it.sec === sec.key);
 
     const total = items.length;
@@ -2802,7 +2802,7 @@ function getNutritionStats() {
 
     stats.push({
   key: sec.key,
-  // 영양 쪽 "기타사항"은 별도 표기
+                       
   label: (() => {
     const base = sec.name.replace(/\(.+\)/, "");
     if (base === "기타사항") return "기타(영양)";
@@ -2817,7 +2817,7 @@ function getNutritionStats() {
   return stats;
 }
 
-// ✅ 공통 푸터(막대그래프 + 서명 + 안내 + 감사문구)
+                                  
 function makeReportFooterHTML_(show) {
   if (!show) return "";
   return `
@@ -2845,9 +2845,9 @@ function makeReportFooterHTML_(show) {
   `;
 }
 
-// ② 그래프가 들어갈 HTML 블록 생성 (페이지 분리 + 중앙 정렬 + 하단 문구)
+                                                 
 function makeRadarSectionHTML(sectionStats, showCaptionAndThanks = true) {
-  // 전혀 체크 안 했으면 그래프 페이지를 아예 만들지 않음
+                                   
   let totalQ = 0;
   let answered = 0;
   SECTIONS.forEach((sec) => {
@@ -2885,7 +2885,7 @@ const footerHtml = makeReportFooterHTML_(showCaptionAndThanks);
   `;
 }
 
-// ✅ [추가] 차수별 적합률 막대그래프 페이지 HTML
+                                
 function makeRoundBarSectionHTML(){
   return `
   <div id="roundBarWrap">
@@ -2905,7 +2905,7 @@ function makeRoundBarSectionHTML(){
   `;
 }
 
-// ✅ [추가] 히스토리 가져오기 (기관명으로 조회)
+                              
 async function fetchHistoryByOrg_(orgName){
   if (!HISTORY_API_URL || HISTORY_API_URL.includes("여기에_")) return [];
   const q = new URLSearchParams({ action: "get_history", orgName: orgName });
@@ -2918,19 +2918,19 @@ async function fetchHistoryByOrg_(orgName){
   return Array.isArray(out?.rows) ? out.rows : [];
 }
 
-// ✅ [추가] 캔버스 막대그래프
+                   
 function drawRoundBarChart_(canvasId, rows){
   const cv = document.getElementById(canvasId);
   if (!cv || !cv.getContext) return;
   const ctx = cv.getContext("2d");
 
-  // rows: [{visitRound, okRate}, ...]
+                                      
   const data = (rows || [])
     .filter(r => r && r.visitRound != null && r.okRate != null)
     .map(r => ({ round: Number(r.visitRound), rate: Number(r.okRate) }))
     .sort((a,b) => a.round - b.round);
 
-  // 데이터 없으면 안내
+               
   ctx.clearRect(0,0,cv.width,cv.height);
   if (!data.length) {
     ctx.font = "24px sans-serif";
@@ -2946,32 +2946,32 @@ function drawRoundBarChart_(canvasId, rows){
   const maxY = 100;
   const minY = 70;
 
-// 축
+    
 ctx.strokeStyle = "#cfcfcf";
 ctx.lineWidth = 2;
 ctx.beginPath();
-// 세로축은 제거
+          
 ctx.moveTo(padL, padT + innerH);
 ctx.lineTo(padL + innerW, padT + innerH);
 ctx.stroke();
 
-// y 눈금(60~100)
+               
 ctx.font = "16px sans-serif";
 ctx.fillStyle = "#111";
 ctx.strokeStyle = "#999";
 ctx.lineWidth = 1;
 
-// 60,70,80,90,100 표시 (원하면 10 간격/20 간격 바꿔도 됨)
+                                             
 for (let v = minY; v <= maxY; v += 10) {
   const y = padT + innerH - (v - minY) / (maxY - minY) * innerH;
 }
 
-// 막대 (✅ 최대 6차 기준으로 막대 폭/간격 고정)
+                               
 const n = data.length;
 
-// ===== (라인차트) x좌표 배치 계산은 기존 막대 폭 로직을 그대로 사용 =====
+                                                   
 
-// 6칸 레이아웃을 기준으로 폭/간격을 정한다 (n이 적어도 폭은 유지)
+                                         
 const SLOT = 6;
 const gap = 18;
 
@@ -2979,21 +2979,21 @@ const baseCount = Math.min(SLOT, Math.max(1, n));
 let barW = Math.floor((innerW - gap * (SLOT - 1)) / SLOT);
 barW = Math.max(24, barW);
 
-// n이 6을 넘으면 폭을 더 줄임
+                    
 if (n > SLOT) {
   barW = Math.max(18, Math.floor((innerW - gap * (n - 1)) / n));
 }
 
-// ✅ 가운데 정렬: 점(포인트) 묶음의 총 폭 기준으로 startX를 이동
+                                           
 const totalW = (barW * n) + (gap * (n - 1));
 const startX = padL + Math.max(0, Math.floor((innerW - totalW) / 2));
 
-// ===== (라인차트) 각 차수의 (x,y) 포인트 만들기 =====
+                                         
 const pts = data.map((d, i) => {
   const xLeft = startX + i * (barW + gap);
   const x = xLeft + Math.floor(barW / 2);
 
-  // ✅ 70~100 스케일 기준 (너가 이미 minY=70, maxY=100으로 바꿔둔 상태 전제)
+                                                          
   const clamped = Math.max(minY, Math.min(maxY, d.rate));
   const t = (clamped - minY) / (maxY - minY);
   const y = padT + innerH - (t * innerH);
@@ -3001,7 +3001,7 @@ const pts = data.map((d, i) => {
   return { d, x, y };
 });
 
-// ===== (라인차트) 선 그리기 =====
+                           
 if (pts.length >= 2) {
   ctx.strokeStyle = "#f2a766";
   ctx.lineWidth = 4;
@@ -3013,21 +3013,21 @@ if (pts.length >= 2) {
   ctx.stroke();
 }
 
-// ===== (라인차트) 점(원) + 라벨 + 값 =====
+                                   
 ctx.textAlign = "center";
 pts.forEach(({ d, x, y }) => {
-  // 점(포인트)
+           
   ctx.fillStyle = "#f2a766";
   ctx.beginPath();
   ctx.arc(x, y, 4, 0, Math.PI * 2);
   ctx.fill();
 
-  // 라벨(차수) - 아래
+                
   ctx.fillStyle = "#111";
   ctx.font = "16px sans-serif";
   ctx.fillText(`${d.round}차`, x, padT + innerH + 28);
 
-  // 값(퍼센트) - 위
+               
   ctx.fillStyle = "#111";
   ctx.font = "16px sans-serif";
   ctx.fillText(`${d.rate.toFixed(1)}%`, x, y - 10);
@@ -3035,22 +3035,22 @@ pts.forEach(({ d, x, y }) => {
 ctx.textAlign = "left";
 }
 
-// ✅ [추가] buildReport 후 호출: 체크 시, 히스토리 조회→그래프 렌더
+                                                
 async function renderPrevRoundsChartIfNeeded_(info){
   if (!shouldApplyPrevRounds()) return;
 
   const orgName = (info?.orgName || "").trim();
   if (!orgName) return;
 
-  // 1) 저장된 히스토리 가져오기
+                     
   const historyRows = await fetchHistoryByOrg_(orgName);
 
-  // 2) 현재 작성중인 보고서의 회차/적합률 계산
+                              
   const currentRoundRaw = (info?.visitRound || "").trim();
   const currentRound = parseRoundNumber_(currentRoundRaw);
   const currentSummary = computeOverallSummary_();
 
-  // 현재 보고서가 유효하면 히스토리에 합칠 임시 row 생성
+                                    
   const currentRow =
     currentRound != null
       ? {
@@ -3059,8 +3059,8 @@ async function renderPrevRoundsChartIfNeeded_(info){
         }
       : null;
 
-  // 3) 히스토리 + 현재 작성중 보고서 합치기
-  //    같은 차수가 이미 히스토리에 있으면 "현재 작성중 값"으로 덮어쓰기
+                             
+                                             
   const mergedMap = new Map();
 
   (historyRows || []).forEach((row) => {
@@ -3083,7 +3083,7 @@ async function renderPrevRoundsChartIfNeeded_(info){
   drawRoundBarChart_("roundBarCanvas", mergedRows);
 }
 
-// ✅ [추가] 레이더 그래프 페이지 안에 '차수별 적합률'을 끼워 넣는 인라인 블록
+                                                
 function makeRoundBarInlineHTML_() {
   return `
 <div id="roundBarWrap" style="display:none; margin-top:2mm; width:100%;">
@@ -3095,17 +3095,17 @@ function makeRoundBarInlineHTML_() {
   `;
 }
 
-// ✅ 체크박스 상태에 따라 보고서 안 '차수별 적합률' 페이지를 즉시 숨김/표시
+                                              
 function syncPrevRoundsBarVisibility_(){
   const wrap = document.getElementById("roundBarWrap");
-  if (!wrap) return; // 아직 보고서가 생성되지 않았으면 할 일 없음
+  if (!wrap) return;                            
 
-  const on = shouldApplyPrevRounds(); // 기존 체크 판별 함수 그대로 사용
+  const on = shouldApplyPrevRounds();                      
   wrap.style.display = on ? "" : "none";
 }
 
-// 영양 영역 레이더 페이지 HTML
-// showCaptionAndThanks 가 true 인 페이지에만 안내문 + 감사 문구를 넣는다.
+                     
+                                                        
 function makeNutritionRadarSectionHTML(nutrStats, showCaptionAndThanks = true) {
   if (!nutrStats) return "";
 
@@ -3143,21 +3143,21 @@ const footerHtml = makeReportFooterHTML_(showCaptionAndThanks);
   `;
 }
 
-// ✅ 위생·안전(6) + 영양(5) 통합 레이더 페이지 HTML
-// - 영양 데이터가 없으면 위생·안전(6각형)만 그려짐
+                                     
+                                
 function makeCombinedRadarSectionHTML(sectionStats, nutrStats, showCaptionAndThanks = true) {
-  // 1) 위생·안전 노드(기존 6개)
+                       
   const hygieneNodes = SECTIONS
     .map(sec => sectionStats && sectionStats[sec.key])
     .filter(Boolean);
 
-  // 2) 영양 노드(기존 5개)
+                    
   const nutrNodes = Array.isArray(nutrStats) ? nutrStats.slice() : [];
 
-  // 3) 합치기 (영양 없으면 6개만)
+                        
   const nodes = hygieneNodes.concat(nutrNodes);
 
-  // 데이터 없으면 페이지 생성 안 함
+                       
   let totalQ = 0;
   let answered = 0;
   nodes.forEach((st) => {
@@ -3197,13 +3197,13 @@ return `
   `;
 }
 
-// ✅ 기타시설 전용: 위생·안전 + 영양 통합 레이더 페이지 HTML
+                                        
 function makeOtherCombinedRadarSectionHTML(sectionStats, nutrStats, showCaptionAndThanks = true) {
   const nutrArr = Array.isArray(nutrStats) ? nutrStats : [];
 
-  // SECTIONS 순서를 그대로 따라가되,
-  // - nutr 포함 섹션은 nutrStats에서 찾아 붙이고
-  // - 그 외 섹션은 sectionStats에서 붙임
+                           
+                                     
+                                
   const nodes = [];
   SECTIONS.forEach((sec) => {
     if (sec.key.includes("nutr")) {
@@ -3215,7 +3215,7 @@ function makeOtherCombinedRadarSectionHTML(sectionStats, nutrStats, showCaptionA
     }
   });
 
-  // 데이터 없으면 페이지 생성 안 함
+                       
   let totalQ = 0;
   let answered = 0;
   nodes.forEach((st) => {
@@ -3258,14 +3258,14 @@ return `
 }
 
 
-// ③-1. 공통 레이더 그래프 그리기 (캔버스 id + 노드 배열)
+                                       
 function drawRadarChartGeneric(canvasId, nodes){
   const canvas = document.getElementById(canvasId);
   if (!canvas || !canvas.getContext || !nodes || !nodes.length) return;
 
   const ctx = canvas.getContext("2d");
 
-  // 고해상도(인쇄) 대비: 장치 픽셀 비율 반영
+                             
   const dpr = window.devicePixelRatio || 1;
   const logicalSize = 460;
   canvas.width = logicalSize * dpr;
@@ -3285,7 +3285,7 @@ function drawRadarChartGeneric(canvasId, nodes){
   const statsMap = {};
   nodes.forEach(n => { statsMap[n.key] = n; });
 
-  // 각 축 값: 적합 개수 / 전체 개수 (0.0 ~ 1.0)
+                                     
   const values = nodes.map(n => {
     if (!n.count) return 0;
     return n.comply / n.count;
@@ -3297,7 +3297,7 @@ function drawRadarChartGeneric(canvasId, nodes){
 
   const angleStep = (Math.PI * 2) / keys.length;
 
-  // 1) 보조격자 (33%, 66%, 100%)
+                             
   ctx.strokeStyle = "#e5e7eb";
   ctx.lineWidth = 1;
   for (let level = 1; level <= 3; level++) {
@@ -3314,7 +3314,7 @@ function drawRadarChartGeneric(canvasId, nodes){
     ctx.stroke();
   }
 
-  // 2) 중심에서 각 꼭짓점으로 축
+                      
   ctx.strokeStyle = "#cbd5e1";
   for (let i = 0; i < keys.length; i++) {
     const angle = -Math.PI / 2 + angleStep * i;
@@ -3326,7 +3326,7 @@ function drawRadarChartGeneric(canvasId, nodes){
     ctx.stroke();
   }
 
-  // 3) 데이터 폴리곤
+               
   ctx.beginPath();
   for (let i = 0; i < keys.length; i++) {
     const angle = -Math.PI / 2 + angleStep * i;
@@ -3338,14 +3338,14 @@ function drawRadarChartGeneric(canvasId, nodes){
   }
   ctx.closePath();
 
-  // 노란색 계열
+           
   ctx.fillStyle = "rgba(234, 179, 8, 0.25)";
   ctx.strokeStyle = "#eab308";
   ctx.lineWidth = 2;
   ctx.fill();
   ctx.stroke();
 
-  // 4) 꼭짓점 동그라미
+                
   ctx.fillStyle = "#ca8a04";
   for (let i = 0; i < keys.length; i++) {
     const angle = -Math.PI / 2 + angleStep * i;
@@ -3359,7 +3359,7 @@ function drawRadarChartGeneric(canvasId, nodes){
 
   ctx.restore();
 
-  // 5) 축 이름 라벨(부제목 + (적합/전체))
+                              
   ctx.save();
   ctx.translate(cx, cy);
   ctx.font = "14px 'Nanum Gothic', system-ui, sans-serif";
@@ -3377,7 +3377,7 @@ function drawRadarChartGeneric(canvasId, nodes){
     const ok     = stat.comply ?? 0;
     const label2 = `(${ok}/${total})`;
 
-    // 네가 쓰던 정렬 로직 그대로 사용
+                         
     let align = "center";
     if (Math.cos(angle) > 0.2) align = "left";
     else if (Math.cos(angle) < -0.2) align = "right";
@@ -3405,7 +3405,7 @@ function drawRadarChartGeneric(canvasId, nodes){
   ctx.restore();
 }
 
-// ③-2. 기존 메인(위생·안전) 레이더: 섹션 통계 → 공통 함수로
+                                        
 function drawRadarChart(sectionStats){
   const nodes = SECTIONS
     .map(sec => sectionStats[sec.key])
@@ -3414,14 +3414,14 @@ function drawRadarChart(sectionStats){
   drawRadarChartGeneric("radarCanvas", nodes);
 }
 
-// ③-3. 영양 전용 레이더
+                 
 function drawNutritionRadarChart(nutrStats){
   const nodes = (nutrStats || []).slice();
   if (!nodes.length) return;
   drawRadarChartGeneric("nutrRadarCanvas", nodes);
 }
 
-// ✅ 기타시설 통합 레이더(위생·안전+영양) 그리기
+                              
 function drawOtherCombinedRadarChart(sectionStats, nutrStats){
   const nutrArr = Array.isArray(nutrStats) ? nutrStats : [];
 
@@ -3440,25 +3440,25 @@ function drawOtherCombinedRadarChart(sectionStats, nutrStats){
   drawRadarChartGeneric("radarCanvas", nodes);
 }
 
-// ===== 3) 보고서 생성 =====
+                        
 function shouldForceDetailPageBreak_(areaEl) {
   if (!areaEl) return true;
 
   const firstPage = areaEl.querySelector('.page-section');
   if (!firstPage) return true;
 
-  // 첫 본문이 1페이지 높이를 넘는지 확인
-  // 넘지 않으면 detail을 2페이지부터 시작시키기 위해 pagebreak 필요
-  // 이미 넘었으면(= 2페이지까지 사용 중이면) 이어서 붙이기 위해 pagebreak 불필요
-  const pageHeightPx = Math.round((297 / 25.4) * 96); // A4 높이(mm→px), 대략 1122px
-  const tolerance = 24; // 브라우저별 오차 보정
+                          
+                                                
+                                                      
+  const pageHeightPx = Math.round((297 / 25.4) * 96);                           
+  const tolerance = 24;               
 
   return firstPage.scrollHeight <= (pageHeightPx - tolerance);
 }
 
 function buildReport() {
 
-  // ✅ 0) 기존 서명 보존: 현재 보고서에 서명이 있으면 dataURL로 백업
+                                               
   try {
     const oldCanvas  = document.getElementById("signCanvas");
     const savedInput = document.getElementById("savedSignature");
@@ -3466,14 +3466,14 @@ function buildReport() {
     if (oldCanvas && oldCanvas.getContext && savedInput) {
       const dataUrl = oldCanvas.toDataURL("image/png");
 
-      // 완전히 빈 캔버스와 비교
+                      
       const blank = document.createElement("canvas");
       blank.width  = oldCanvas.width;
       blank.height = oldCanvas.height;
       const isBlank = dataUrl === blank.toDataURL();
 
-      // ✅ 실제로 뭔가 그려져 있을 때만 savedSignature를 덮어쓴다
-      //    (빈 캔버스면 기존 savedSignature 값은 그대로 둔다)
+                                                
+                                                
       if (!isBlank && dataUrl && dataUrl.length > 100) {
         savedInput.value = dataUrl;
       }
@@ -3500,26 +3500,26 @@ const info = {
     prevNotes: (document.getElementById("prevNotes").value || "").trim()
   };
 
-  // ① 조리원 표 데이터
+                
   const cooks = Array.from(document.querySelectorAll('#cookGroupWrap .cook-group')).map(g => ({
     name:  (g.querySelector('.cook-name')?.value || '').trim(),
     health:(g.querySelector('.cook-health')?.value || ''),
     edu:   (g.querySelector('.cook-edu')?.value || '')
   }));
 
-  // 섹션 통계(육각형 그래프용)
+                    
   const sectionStats = getSectionStats();
-  // 영양 영역 통계(위생·안전·영양 모드에서만 사용)
+                                
   const nutrStats = (currentReportMode === "위생·안전·영양")
     ? getNutritionStats()
     : [];
 
-// ② 보고서 헤더 로고 (Base64 데이터URL 사용)
+                                 
 const logoImg = `<img id="reportLogo"
   src="data:image/png;base64,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JTDZkpKhC9GFTQZI1oW/KgOpIRukp50XvkYVMCAiIjolIxkf4T7w5w7AnVLqBaYjOsdbx2Wwzv5KcAEws7aW8l/fTAej6DSn8ZBOzUz+L8+P8KacAjRDTzPYK8GerI/jEXWQA/gSad/vRnKXx7zgzkKiyRlhB3cydAFocFNujwJsHxJVfcC0J4I9YRxB+VBLzQxpN3QBpqY6IzWUBGFuUgykUlU2dAFoEJMf4SOOWutRpMWiKO7hn0HhGm9rUP0kqW/GiGtSEREReZKA5m7gYhDRuE09aEVEREQ0OzFmpDIASjEwjc9lugbXCKaR01pnSqknTHtUn40HpvgjIiIiIiIiIiKiS/IPAFjsg65bFSqQmgfaD81AiHV3iYgi2gB4HboQEb3CfEYiIiIiIiIiIiKii/GPyv9+CbTP62KrQqyTmgXYB83D89AFICJqIzM15xxoTGQtTCIiIiIiIiIiIqKLUQ2khl4ntZPFXudgAI2MfOgCEBGdo7VOAXwauhyBvQL4xJS+REREREREREREdIlGG0gVu0D7oWljBz4RTYIEU//APNL8vsDMRE2HLggRERERERERERHREKqB1CzgfpMQO1ns9QHAQ4h90aRlQxeAiMiW1joDsMS071/fANxyJioRERERERERERFdslgzUm+KrVqG2NFir9eYdmc0dceOfCKaFK11obVeA/gd07mHvcKU9Xet9YZrohIREREREREREdGl+xlIXex1gbBrkiahdiTB1D8xj1SJc/UMM4PpX/LfYPuVc5OIaHK01rkEVP8Jcx97HLZE77zClOkTgKXWeq21zoctEhEREREREREREdE4KK31z/9TbNU9gM+B9v242OtVoH0BAIqtWgBYy+sm5L7J2RNMyt0jgKwa7Cy26ohwv8+3xV5vAu2LRkApdQtgMXQ5elYwRSpVyXVwC5MCuHz14QigkP/ml3JeKqX0+a1++qK13sUqCxEREVEbpdQaps/DitY6iVUWIgpLKXUP8xxoI9VapxGLQ0RERJZOA6krAH8H3P8/Y80mlKDqCmbmawLgOsZxCICZbXrEW9C0seNdUjr/N+Cx/yVr5RIRERERERERERERERH15reT/58F3v8KQBp4nwB+piJOy/1LAC+BGdmVgDNWfT1BZioBOC72OnN8f9BZyAh/ThIRERERERERERERERGd9cuMVCB4Wtbg6X1dFFuV4C114i2AD0OVZWRe8RYszWGClfli331dvGKrcoSbHfy82GvblCdEREREREREREREREREwdQFUjcAvgY8xu8hAnShyMzVJX4NsC4wvxmsL3gLlFZfx4jplhMAPwLu8s/FXt8H3B8RERERERERERERERGRldPUvkD4VKprALvA+/QmQd0cNZ9T1l0tA6vlTMjy/wPjmNH6DKAMhObyAt4+T7RAqYV14P1lgfdHREREREREREREREREZOXdjFQgeHrWl8VeLwPtazQqQdequr+5yPEWGP15qMVeHzvssxfyffwv4C5ned4QERERERERERERERHRNNTNSAWAA4DPJxDogAAAIABJREFUgY5xXWzVerHXaaD9jYLM+sxq/unQc1HGYhN4f5f6PRIREREREREREREREdEI/KPh72ng44QOstH4rAPvLw28PyIiIiIiIiIiIiIiIiJrtYFUSSX7HPA4N8VWJQH3RyNSbNUa4VJBA8DzFNIZExERERERERERERER0Xw1zUgFws8I3AXeH43HLvD+0sD7IyIiIiIiIiIiIiIiInLSZyD1A2elzk+E2agAA6lEREREREREREREREQ0sMZA6mKvCwAPgY93H3h/NKBiqxYIPxv1Qc49IiIiIiIiIiIiIiIiosG0zUgFws8MvJEZjDQPG3A2KhEREREREREREREREc2Q0lq3blBs1RHATcBjvgJYctbhtBVbtQRwBHAVcLfPi72+Dbg/IiIiIiIiIiIiIiIiIi/nZqQC4dPxXiF8Oljq3z3CBlHLfRIREREREREREREREREN7uyMVAAotipH+BSu/7fY62PgfVIPiq1KAPwIvNuXxV4vA++TiIhmSil1C2Bx8uej1sx4QURERERERERERGH8ZrndDsD3wMdOATCN68QUW7VAnHVMdxH2STQopdQSwAq/BnsyMNgzepXfrtBap4MWhprcA/hw8rc/YK4xotmSQQQrAJnWOhu4ONSjym9fygHkPA+ILoNSKgGQADhozUHpRERERER9sZqRCkSblfplsde7wPukiIqtugfwOfBuJz0btfJAm8ifFgDKIFkBs5YsH3YvjFJnr5UHADutdd5PiYZRCUjeAljKn6vXyBEm8JXZBpflmjsVLDitlFoB+Lvyp1cAt6e/VewZkfLdLU/+XLAuMZRSGWoCqQwoDKOH62EFc58t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"
   alt="기관 로고">`;
 
-  // 간단 검증: 종료시간이 시작시간보다 빠르면 경고만 띄움
+                                   
   if (info.visitStart && info.visitEnd) {
     const toMin = (t) => {
       const [h, m] = String(t).split(':').map(Number);
@@ -3532,7 +3532,7 @@ const logoImg = `<img id="reportLogo"
     }
   }
 
-  // ③ 영역별 요약표 행 생성
+                   
   const rows = SECTIONS.map((s) => {
     const items = ITEMS.filter((x) => x.sec === s.key);
     const count = items.length;
@@ -3559,7 +3559,7 @@ const sumHtml = sumLines.length
       const m = line.match(/^(\d+)[\.\)]\s/);
       if (m) id = parseInt(m[1], 10);
 
-      // ✅ 미리보기 표시용: 앞의 "1. " 같은 번호만 제거
+                                       
       const displayText = line.replace(/^\d+[\.\)]\s*/, "").trim();
 
       return `<span class="memo-line" data-sec="${s.key}" ${id ? `data-id="${id}"` : ""} data-text="${escapeHtml(line)}">
@@ -3594,7 +3594,7 @@ const sumHtml = sumLines.length
   const eduSupport  = (document.getElementById("eduSupport")?.value || "").trim();
   const itemSupport = (document.getElementById("itemSupport")?.value || "").trim();
 
-// ✅ 세부(개선 필요사항) 표에 '실제로 내용이 있는 섹션'만 추려냄
+                                        
 const detailSections = SECTIONS.filter(s => {
   const raw = (document.getElementById(`det_${s.key}`)?.value || "");
   const cleaned = raw
@@ -3603,16 +3603,16 @@ const detailSections = SECTIONS.filter(s => {
     .replace(/[ \t\u00A0\u3000]+/g, " ")
     .trim();
 
-  // 혹시 기본값으로 "-" 같은게 들어가 있는 경우도 빈 것으로 취급
+                                         
   if (!cleaned || cleaned === "-") return false;
 
   return true;
 });
 
-// 2페이지 자체를 만들지 여부
+                  
 const hasAnyDetail = detailSections.length > 0;
 
- // 육각형 그래프가 실제로 생성되는지 여부(데이터 체크)
+                                 
   const hasBaseRadar = (() => {
     let totalQ = 0;
     let answered = 0;
@@ -3640,10 +3640,10 @@ const hasAnyDetail = detailSections.length > 0;
     return totalQ && answered;
   })();
 
-  // ⚙️ 실제 HTML 생성
-  // - 위생·안전 보고서만 있을 때 → radarSection 에만 문구
-  // - 위생·안전·영양 보고서일 때 → nutrRadarSection(마지막 장)에만 문구
-// ✅ 기타시설 + 위생·안전·영양이면 그래프를 1장(통합)만 생성
+                  
+                                           
+                                                     
+                                      
 const isOtherCombinedRadar =
   (String(currentFacility).trim() === "기타시설" &&
    currentReportMode === "위생·안전·영양");
@@ -3652,7 +3652,7 @@ const otherRadarSection = isOtherCombinedRadar
   ? makeOtherCombinedRadarSectionHTML(sectionStats, nutrStats, true)
   : "";
 
-// 기존 2장 그래프는 기타시설 통합모드에서는 만들지 않음
+                                 
 const radarSection = (!isOtherCombinedRadar && hasBaseRadar)
   ? makeRadarSectionHTML(sectionStats, !hasNutrRadar)
   : "";
@@ -3661,13 +3661,13 @@ const nutrRadarSection = (!isOtherCombinedRadar && hasNutrRadar)
   ? makeNutritionRadarSectionHTML(nutrStats, true)
   : "";
 
-// ✅ 기타시설이면 [표2] 인력정보 표 숨김
+                          
 const manpowerTableHTML = (String(currentFacility).trim() === '기타시설') ? '' : `
-  <!-- [표2] 인력 정보 (원장 + 조리원) -->
+  
   <div style="margin-top:10px;overflow:hidden">
     <table class="summary-table centered-table" style="width:100%; table-layout:fixed;">
       <colgroup>
-        <col style="width:14.5ch;">  <!-- ✅ 원장/조리원(이름) 칸: 기관명/방문일자(th)와 동일 -->
+        <col style="width:14.5ch;">  
         <col>
         <col>
       </colgroup>
@@ -3689,10 +3689,10 @@ const manpowerTableHTML = (String(currentFacility).trim() === '기타시설') ? 
   </div>
 `;
 
-// ✅ 기관등급(열매/새싹) → 우측상단 아이콘 결정
+                              
 const orgGrade = (document.getElementById("orgGrade")?.value || "").trim();
 
-// ✅ GitHub에 올린 이미지 경로(HTML 기준 상대경로로 맞춰야 함)
+                                           
 const GRADE_ICON_SEED  = "https://raw.githubusercontent.com/SSM1760/auto-report/main/assets/grade_seed.png";
 const GRADE_ICON_FRUIT = "https://raw.githubusercontent.com/SSM1760/auto-report/main/assets/grade_fruit.png";
 
@@ -3705,7 +3705,7 @@ const gradeIconHtml = gradeIconSrc
   ? `<img class="grade-icon" src="${gradeIconSrc}" alt="${escapeHtml(orgGrade)}" />`
   : "";
 
-  // ④ 1페이지(기본 정보 + 요약표)
+                        
 const firstPageHTML = `
 <div class="page-section first-page-section">
   <div class="page-section-main first-page">
@@ -3716,7 +3716,7 @@ const firstPageHTML = `
       <h1 id="reportTitle">${escapeHtml(currentReportMode)}관리 순회방문 결과보고서</h1>
     </div>
 
-    <!-- [표1] 기관/방문 정보 -->
+    
     <div style="margin-top:10px;overflow:hidden">
       <table class="summary-table centered-table table-visit" style="width:100%">
         <colgroup>
@@ -3742,7 +3742,7 @@ const firstPageHTML = `
 
 ${manpowerTableHTML}
 
-    <!-- [표3] 교육/물품 지원 -->
+    
     <div style="margin-top:10px;overflow:hidden">
       <table class="summary-table centered-table" style="width:100%">
         <tr>
@@ -3760,7 +3760,7 @@ ${manpowerTableHTML}
       </table>
     </div>
 
-    <!-- 영역별 요약 -->
+    
     <h3 class="report-section-title">영역별 점검결과 요약</h3>
     <table class="summary-table centered-table" style="width:100%">
       <colgroup>
@@ -3800,18 +3800,18 @@ ${info.prevNotes
   : ""
 }
 
-  </div><!-- /.page-section-main -->
- <!-- ✅ 1페이지 하단 안내 문구 -->
+  </div>
+ 
   <div class="page-section-footer">
     <div class="first-page-note keep-together">
       ※ 본 순회방문 지도는 식품의약품안전처·식생활안전관리원
       ‘어린이 급식소(집단·소규모) 위생·안전·영양관리 체크리스트 해설서(2026)’를 근거로 실시했습니다.
     </div>
   </div>
-</div><!-- /.page-section (1장) -->
+</div>
 `;
 
- // ⑤ 개선 필요사항(세부) 본문 HTML
+                         
   const detailSectionBodyHTML = hasAnyDetail ? `
 <div class="page-section">
   <div class="page-section-main first-page">
@@ -3834,57 +3834,57 @@ ${
 </div>
 ` : '';
 
-  // ⑥ 전체 보고서 HTML 합치기 (1장 + 2장 + 그래프 페이지)
+                                          
 
-// ✅ [추가] 통합 레이더(위생6 + 영양5 = 최대 11각형) 섹션 HTML
+                                             
 const combinedRadarSection = makeCombinedRadarSectionHTML(sectionStats, nutrStats);
 
 const graphSectionHTML = (isOtherCombinedRadar ? otherRadarSection : combinedRadarSection);
 const area = document.getElementById("reportArea");
 
-// 1차 렌더: 첫 페이지 + 그래프만 먼저 넣어서 첫 본문이 몇 페이지까지 밀리는지 측정
+                                                   
 area.innerHTML = firstPageHTML + graphSectionHTML;
 
-// 첫 본문이 1페이지 안에 끝나면 detail 앞에 강제 pagebreak
-// 이미 2페이지까지 밀렸으면 detail을 그대로 이어붙임
+                                           
+                                  
 const needDetailPageBreak = hasAnyDetail ? shouldForceDetailPageBreak_(area) : false;
 
 const detailSectionHTML = hasAnyDetail
   ? `${needDetailPageBreak ? '<div class="pagebreak"></div>' : ''}${detailSectionBodyHTML}`
   : '';
 
-// 2차 렌더: 최종 보고서 조립
+                   
 area.innerHTML =
   firstPageHTML +
   detailSectionHTML +
   graphSectionHTML;
 
-// ✅ 생성 직후: 체크 상태에 맞춰 페이지 숨김/표시
+                               
 syncPrevRoundsBarVisibility_();
 
-// ✅ 체크 ON일 때만 조회/렌더(함수 내부에서도 체크로 return함)
+                                          
 renderPrevRoundsChartIfNeeded_(info);
 
-  // 세부 에디터/요약 x버튼 동작 복원
+                        
   if (hasAnyDetail) {
     hydrateImproveEditors();
   }
   wireSummaryDeleteButtons();
 
-  // ✅ 서명 패드 초기화
+                
   initSignaturePad();
 
-  // 플레이스홀더 제거
+              
   const ph = document.getElementById("reportPlaceholder");
   if (ph) ph.remove();
 
-// ✅ 기타시설 통합모드면 통합 그래프만 그림
+                          
 if (isOtherCombinedRadar) {
   if (otherRadarSection) {
     drawOtherCombinedRadarChart(sectionStats, nutrStats);
   }
 } else {
-  // ✅ 위생·안전(6) + 영양(5) 통합 레이더(= 최대 11각형)
+                                         
   const hygieneNodes = SECTIONS
     .map(sec => sectionStats && sectionStats[sec.key])
     .filter(Boolean);
@@ -3897,7 +3897,7 @@ if (isOtherCombinedRadar) {
   }
 }
 }
-// ✅ 체크리스트 라디오를 '적합'으로 강제 설정 + 체인지 이벤트 발생
+                                         
 function setChecklistOk(id){
   const ok = document.querySelector(`input[name="q_${id}"][value="ok"]`);
   if (ok) {
@@ -3907,36 +3907,36 @@ function setChecklistOk(id){
 }
 
 function hydrateImproveEditors(){
-  // 각 섹션의 세부 textarea 내용을 블록 단위 UI로 렌더하고 동기화
+                                             
   document.querySelectorAll('#reportArea .improve-editor').forEach(container=>{
-    const key = container.dataset.key;          // fac / per / raw / proc / keep / etc
+    const key = container.dataset.key;                                                
     const ta  = document.getElementById(`det_${key}`);
 
-    // 초기화
+          
     container.innerHTML = "";
     container.classList.add('improve-editor');
-    container.contentEditable = false;          // 컨테이너 자체는 편집 금지
+    container.contentEditable = false;                           
 
-    // 원본 textarea에서 블록 파싱 (마커 유지)
+                                  
     const raw = ta?.value || "";
 const blocks = smartParseDetail(raw);
 
     if(!blocks.length){
-      // 빈 경우 플레이스홀더
+                    
       const ph = document.createElement('div');
       ph.textContent = '-';
       container.appendChild(ph);
       return;
     }
 
-    // 블록 → 개별 편집행 + x 버튼
+                         
     blocks.forEach(block=>{
       const { marker, text } = extractMarker(block);
       if(!text) return;
 
       const row = document.createElement('div');
       row.className = 'improve-block';
-      row.dataset.marker = marker;               // 삭제/재구성 시 마커 유지
+      row.dataset.marker = marker;                                
 
       const del = document.createElement('button');
       del.className = 'improve-del';
@@ -3945,11 +3945,11 @@ const blocks = smartParseDetail(raw);
       del.setAttribute('aria-label','이 문단 삭제');
       del.textContent = '×';
       del.addEventListener('click', ()=>{
-  // 요약에서 연결된 줄도 같이 제거 시도
+                         
   const secKey = container.dataset.key;
   tryRemoveSummaryLinked(secKey, row);
 
-  // 세부 DOM 삭제 → textarea 동기화
+                             
   row.remove();
   if(!container.querySelector('.improve-block')){
     container.innerHTML = '';
@@ -3966,7 +3966,7 @@ const blocks = smartParseDetail(raw);
       edit.contentEditable = 'true';
       edit.textContent = stripMarkerForDisplay(block);
 
-      // 편집 시 textarea로 역동기화(디바운스)
+                                  
       edit.addEventListener('input', debounce(()=>{
         rebuildDetailFromDOM(container);
       }, 200));
@@ -3991,14 +3991,14 @@ const blocks = smartParseDetail(raw);
       }
 
 function formatKDate(yyyy_mm_dd){
-  // "2025-09-16" → "2025. 9. 16."
+                                  
   if (!yyyy_mm_dd) return "";
   const [y,m,d] = yyyy_mm_dd.split("-").map(v=>parseInt(v,10));
   if (!y || !m || !d) return "";
   return `${y}. ${m}. ${d}.`;
 }
 
-// 09:00 ~ 18:00, 30분 간격 옵션 생성
+                              
 function buildTimeOptions(selectEl, start="09:00", end="18:00", stepMin=30){
   if (!selectEl) return;
   const [sh, sm] = start.split(":").map(Number);
@@ -4026,8 +4026,8 @@ function buildTimeOptions(selectEl, start="09:00", end="18:00", stepMin=30){
 
       function normalizeBlock(s){
         return String(s || "")
-          .replace(/\r\n?/g, "\n")     // CRLF → LF
-          .split("\n").map(v => v.trimEnd()).join("\n") // 줄끝 공백 제거
+          .replace(/\r\n?/g, "\n")                 
+          .split("\n").map(v => v.trimEnd()).join("\n")            
           .trim();
       }
       function parseBlocks(text){
@@ -4038,38 +4038,38 @@ function buildTimeOptions(selectEl, start="09:00", end="18:00", stepMin=30){
         return (blocks || []).map(normalizeBlock).filter(Boolean).join("\n\n");
       }
 
-// === 자동블록/수정블록 판별을 위한 보조 ===
+                              
 
-// 항목의 '서명' 문자열(블록의 첫 줄에 남아있을 확률이 높은 키워드)
+                                         
 function getItemSignature(id, label){
-  // 1순위: 해설 템플릿의 첫 줄, 2순위: "id. label"
+                                       
   const src = (ITEM_DETAIL_TEXT[id] || "").split(/\r?\n/)[0] || `${id}. ${label}`;
   return normalizeLine(src);
 }
 
-// 블록에서 '표시줄(마커 제외) 첫 줄'을 뽑아 표준화
+                                
 function blockFirstLine(block){
   const b = normalizeBlock(block);
-  // 첫 줄이 [[AUTO_xx]]면 그 줄은 건너뛰고, 그 다음 줄을 헤더로 본다
+                                                
   const lines = b.split("\n").filter(Boolean);
   const start = (lines[0] && /^\[\[AUTO_\d+\]\]$/.test(lines[0])) ? lines.slice(1) : lines;
   return normalizeLine(start[0] || "");
 }
 
-// 공백/기호 차이를 줄인 비교용 정규화
+                       
 function normalizeLine(s){
   return String(s || "")
     .replace(/\r\n?/g, "\n")
     .trim()
-    .replace(/\s+/g, " ")    // 다중 공백 → 1칸
-    .replace(/[·•\-–—:：]+$/, "")  // 끝의 구분기호 제거
+    .replace(/\s+/g, " ")                 
+    .replace(/[·•\-–—:：]+$/, "")               
     .toLowerCase();
 }
 
 function makeDetailMarker(id){ return `[[AUTO_${id}]]`; }
 function makeDetailBlock(id, text){ return `${makeDetailMarker(id)}\n${normalizeBlock(text)}`; }
 
-// 블록 맨 앞에 [[AUTO_숫자]] 마커가 있으면 추출
+                                 
 function extractMarker(block){
   const b = normalizeBlock(block);
   const m = b.match(/^\[\[AUTO_(\d+)\]\]\s*\n?/);
@@ -4079,12 +4079,12 @@ function extractMarker(block){
   return { marker: markerLine, text: normalizeBlock(text) };
 }
 
-// 미리보기 표시용(마커 제거된 텍스트)
+                       
 function stripMarkerForDisplay(block){
   return extractMarker(block).text || "";
 }
 
-// 에디터 DOM으로부터 textarea 내용을 재구성(마커 보존)
+                                      
 function rebuildDetailFromDOM(containerEl){
   const key = containerEl.dataset.key;
   const ta  = document.getElementById(`det_${key}`);
@@ -4103,13 +4103,13 @@ function rebuildDetailFromDOM(containerEl){
   updateImproveCount(key);
 }
 
-// 마커를 경계로 블록을 나누되, 마커가 있는 덩어리는 내부 빈 줄로 다시 안 쪼갬
+                                               
 function smartParseDetail(raw){
   const text = (raw || "").replace(/\r\n?/g, "\n").trim();
 
   if (!text) return [];
 
-  // 마커 시작 지점 기준으로 1차 분할 (마커 라인은 각 덩어리의 맨 앞에 남김)
+                                                
   const chunks = text
     .split(/(?=^\[\[AUTO_\d+\]\]\s*$)/m)
     .map(s => s.trim())
@@ -4118,10 +4118,10 @@ function smartParseDetail(raw){
   const blocks = [];
   for (const chunk of chunks){
     if (/^\[\[AUTO_\d+\]\]\s*$\n?/m.test(chunk.split("\n")[0] || "")) {
-      // 마커가 맨 앞에 있으면 → 전체를 '한 블록'으로 그대로 보존
+                                           
       blocks.push(normalizeBlock(chunk));
     } else {
-      // 마커가 없다 = 사용자가 직접 쓴 일반 문단 → 빈 줄(2개 이상) 기준으로 쪼갬
+                                                      
       const subs = chunk.split(/\n{2,}/).map(s => normalizeBlock(s)).filter(Boolean);
       blocks.push(...subs);
     }
@@ -4129,9 +4129,9 @@ function smartParseDetail(raw){
   return blocks;
 }
 
-// === [연결 삭제 헬퍼] 요약 ↔ 세부를 함께 지우기 ===
+                                     
 
-// id로 세부 블록 제거 (마커/편집본 모두 커버)
+                              
 function removeDetailById(secKey, id){
   const ta = document.getElementById(`det_${secKey}`);
   if(!ta) return;
@@ -4149,14 +4149,14 @@ function removeDetailById(secKey, id){
   updateImproveCount(secKey);
 }
 
-// id로 요약 라인 제거 (자동 생성 포맷 기반)
+                             
 function removeSummaryById(secKey, id){
   const ta = document.getElementById(`im_${secKey}`);
   if(!ta) return;
 
   const targetStart = `${id}.`;
 
-  // ✅ 호환: 예전 자동 생성 포맷(라벨만)도 같이 제거
+                                  
   const item = ITEMS.find(x => x.id == id) || {};
   const legacy = item.label ? `${item.label} : 개선 필요` : "";
   const legacyNorm = normalizeLine(legacy);
@@ -4176,19 +4176,19 @@ function removeSummaryById(secKey, id){
   updateImproveCount(secKey);
 }
 
-// 세부 블록 x 클릭 시 요약도 같이 제거 + 체크리스트 '적합' 설정
+                                         
 function tryRemoveSummaryLinked(secKey, blockEl){
-  // 1) [[AUTO_ID]] 마커로 ID를 알아낸 경우
+                                  
   const marker = blockEl.dataset.marker || "";
   const m = marker.match(/^\[\[AUTO_(\d+)\]\]$/);
   if (m){
     const id = parseInt(m[1],10);
-    removeSummaryById(secKey, id);  // 요약에서 해당 라인 제거
-    setChecklistOk(id);             // ✅ 체크리스트 '적합'으로 전환
+    removeSummaryById(secKey, id);                  
+    setChecklistOk(id);                                 
     return id;
   }
 
-  // 2) 수동 작성 블록: 첫 줄에서 "번호." 패턴 추정
+                                   
   const first = normalizeLine(
     blockEl.querySelector('.improve-edit')?.textContent || ""
   );
@@ -4196,17 +4196,17 @@ function tryRemoveSummaryLinked(secKey, blockEl){
   if (m2){
     const id = parseInt(m2[1],10);
     removeSummaryById(secKey, id);
-    setChecklistOk(id);             // ✅ 체크리스트 '적합'으로 전환
+    setChecklistOk(id);                                 
     return id;
   }
 
-  // 번호를 못 찾은 경우엔 요약만(문자열 매칭 없이) 제거 시도 — 체크리스트는 바꾸지 않음
+                                                      
   return null;
 }
 
-// 요약표 x 클릭 시 세부까지 동기 삭제 + 체크리스트 '적합' 전환
+                                        
 function handleSummaryDelete(secKey, id, lineText){
-  // 1) 요약에서 제거
+               
   if (id){
     removeSummaryById(secKey, id);
   } else {
@@ -4223,39 +4223,39 @@ function handleSummaryDelete(secKey, id, lineText){
     }
   }
 
-  // 2) 세부에서도 제거
+                
   if (id){
     removeDetailById(secKey, id);
   }
 
-  // 3) ✅ 체크리스트를 '적합'으로 전환
+                          
   if (id){
     setChecklistOk(id);
   }
 
-  // 4) 미리보기 갱신
+               
   triggerPreview();
 }
 
-// 요약표(주요 개선사항) x 버튼 이벤트 연결
+                           
 function wireSummaryDeleteButtons(){
-  // 보고서 미리보기 내부의 요약표 x 버튼들에 클릭 핸들러 부착
+                                      
   document.querySelectorAll('#reportArea .sum-del').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const line = btn.closest('.memo-line');
       if(!line) return;
 
-      const secKey = line.dataset.sec;                         // fac / per / raw / proc / keep / etc
+      const secKey = line.dataset.sec;                                                               
       const id     = line.dataset.id ? parseInt(line.dataset.id, 10) : null;
       const text   = line.dataset.text || "";
 
-      // 원본 textarea에서 요약 제거 + (id 있으면) 세부도 함께 제거
+                                                 
       handleSummaryDelete(secKey, id, text);
     });
   });
 }
 
-// ✅ 서명 헤더에 현재 시간(HH : MM) 표시
+                             
 function startSignatureClock(){
   clearInterval(window._signatureClockTimer);
   window._signatureClockTimer = null;
@@ -4311,19 +4311,19 @@ function startSignatureClock(){
   update();
 }
 
-// ✅ 서명 패드 초기화 (마우스/터치 공통)
+                          
 function initSignaturePad(){
   const canvas = document.getElementById("signCanvas");
   if (!canvas || !canvas.getContext) return;
 
   const ctx = canvas.getContext("2d");
 
-  // 스타일 설정
+           
   ctx.lineWidth = 2;
   ctx.lineCap = "round";
   ctx.strokeStyle = "#111827";
 
- // 💾 저장된 서명이 있으면 캔버스에 복원
+                          
   try {
     const savedInput = document.getElementById('savedSignature');
     const savedDataUrl = savedInput && savedInput.value;
@@ -4362,7 +4362,7 @@ function initSignaturePad(){
     };
   };
 
-  // 선 하나 시작
+            
   const startStroke = (e) => {
     e.preventDefault();
     const pos = getPos(e);
@@ -4371,13 +4371,13 @@ function initSignaturePad(){
     drawing = true;
   };
 
-  // 움직일 때
+          
   const moveDraw = (e) => {
     const isPressed = (e.buttons === 1) || (e.touches && e.touches.length > 0);
 
-    // 🔥 밖으로 나갔다가 다시 들어온 "첫 move" 상황:
-    // drawing은 false지만 손가락/마우스는 여전히 눌린 상태(isPressed=true)
-    // → 새 선을 시작하고 return (불필요한 직선 방지)
+                                      
+                                                          
+                                      
     if (!drawing) {
       if (!isPressed) return;
       startStroke(e);
@@ -4390,34 +4390,34 @@ function initSignaturePad(){
     ctx.stroke();
   };
 
-  // 선 하나 끝
+           
   const endStroke = (e) => {
     if (!drawing) return;
     if (e) e.preventDefault();
     drawing = false;
   };
 
-  // 이벤트 중복 등록 방지
+                 
   if (canvas._boundSignature) return;
   canvas._boundSignature = true;
 
-  // 캔버스 안에서 시작 / 이동 / 종료
+                         
   canvas.addEventListener("mousedown", startStroke);
   canvas.addEventListener("mousemove", moveDraw);
   canvas.addEventListener("mouseup", endStroke);
-  canvas.addEventListener("mouseleave", endStroke);   // ← 밖으로 나가면 선 하나 끝!
+  canvas.addEventListener("mouseleave", endStroke);                       
 
   canvas.addEventListener("touchstart", startStroke, { passive: false });
   canvas.addEventListener("touchmove", moveDraw, { passive: false });
   canvas.addEventListener("touchend", endStroke);
-  canvas.addEventListener("touchcancel", endStroke);  // ← 터치가 취소되면 선 끝
+  canvas.addEventListener("touchcancel", endStroke);                   
 
-  // 혹시 캔버스 밖에서 손을 떼도 그리기 종료되도록 전역에서도 한 번 더
+                                           
   window.addEventListener("mouseup", endStroke);
   window.addEventListener("touchend", endStroke);
   window.addEventListener("touchcancel", endStroke);
 
-  // ✅ 초기화 버튼 동작 연결
+                   
   const clearBtn = document.querySelector(".sign-clear-btn");
   if (clearBtn && !clearBtn._boundClear) {
     clearBtn._boundClear = true;
@@ -4425,20 +4425,20 @@ function initSignaturePad(){
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     });
   }
-  // ✅ 서명 헤더 시계 시작
+                  
   startSignatureClock();
 }
 
 
 function beforePdfHideControls(){
-  // PDF로 만들 때 삭제(X) 버튼 + 서명 초기화 버튼은 캡처 제외
+                                          
   document
     .querySelectorAll('#reportArea .sum-del, #reportArea .improve-del, #reportArea .sign-clear-btn')
     .forEach(el => el.setAttribute('data-html2canvas-ignore', 'true'));
 }
 
 function afterPdfRestoreControls(){
-  // PDF 만든 뒤에는 다시 원래대로 복원
+                          
   document
     .querySelectorAll(
       '#reportArea .sum-del[data-html2canvas-ignore], ' +
@@ -4449,46 +4449,46 @@ function afterPdfRestoreControls(){
 }
 
 function resetAll(){
-  // 기본 입력 초기화
+              
   document.querySelectorAll('input[type="text"], input[type="date"]').forEach(i => i.value = '');
   document.getElementById('prevNotes').value   = '';
   document.getElementById('visitRound').value  = '';
   document.getElementById('visitStart').value  = '';
   document.getElementById('visitEnd').value    = '';
 
-  // ⬇⬇ 추가: 교육지원/물품지원 초기화
+                         
   document.getElementById('eduSupport').value  = '';
   document.getElementById('itemSupport').value = '';
 
-  // 라디오 전부 해제
+              
   document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
 
-  // (1) 라디오 상태 변경을 UI 리스너에 반영 (미흡 메모 on/off 동기화를 위해)
+                                                     
   document.querySelectorAll('input[type="radio"]').forEach(r => {
     r.dispatchEvent(new Event('change', { bubbles: true }));
   });
 
-  // 메모(요약/세부) 모두 초기화 + 카운터 갱신
+                              
   for (const s of SECTIONS){
-    const sumTa = document.getElementById(`im_${s.key}`);   // 요약
-    const detTa = document.getElementById(`det_${s.key}`);  // 세부
+    const sumTa = document.getElementById(`im_${s.key}`);        
+    const detTa = document.getElementById(`det_${s.key}`);       
     if (sumTa) sumTa.value = '';
     if (detTa) detTa.value = '';
     updateImproveCount(s.key);
   }
 
-  // 조리원 그룹: 첫 그룹만 남기고 다 제거 + 값 초기화
+                                   
   {
     const wrap = document.getElementById('cookGroupWrap');
     if (wrap) {
       const groups = wrap.querySelectorAll('.cook-group');
 
-      // 1) 첫 그룹만 남기고 2번째부터 전부 제거
+                                 
       groups.forEach((g, i) => {
         if (i > 0) g.remove();
       });
 
-      // 2) 남은 첫 그룹의 입력값 초기화
+                            
       const first = wrap.querySelector('.cook-group');
       if (first) {
         const nameInput   = first.querySelector('.cook-name');
@@ -4504,7 +4504,7 @@ function resetAll(){
       }
     }
 
-  // ✅ 서명 캔버스 초기화
+                 
   const signCanvas = document.getElementById('signCanvas');
   if (signCanvas && signCanvas.getContext) {
     const ctx = signCanvas.getContext('2d');
@@ -4512,26 +4512,26 @@ function resetAll(){
   }
 }
 
-  // 미리보기 영역 초기화
+                
   document.getElementById('reportArea').innerHTML =
     '<div class="kicker" id="reportPlaceholder">“보고서 미리보기”를 눌러 생성하세요.</div>';
-  // ✅ 보고서 유형 선택을 '처음 상태'로 되돌리기(숨은값 제거 + 모달 다시 열기)
+                                                  
   const savedFacilityInput   = document.getElementById('savedFacility');
   const savedReportModeInput = document.getElementById('savedReportMode');
   if (savedFacilityInput)   savedFacilityInput.value = '';
   if (savedReportModeInput) savedReportModeInput.value = '';
 
-  // (선택) 서명 저장값도 같이 초기화하고 싶으면 아래도 추가
+                                     
   const savedSignatureInput = document.getElementById('savedSignature');
   if (savedSignatureInput) savedSignatureInput.value = '';
 
-  // ✅ 처음 화면(보고서 유형 선택 모달)로
+                           
   openReportTypeChooser();
 }
 
-// ===============================
-// ✅ 센터 공용 업로드 설정/유틸
-// (새로 배포한 Apps Script 웹앱 URL을 여기에 붙여넣기)
+                                  
+                    
+                                        
 
 const HISTORY_API_URL = "https://script.google.com/macros/s/AKfycbw7Wn2H3et3IYcHWphkqfunDuW4oJ5LHDb0JuYL2i1H_Cj9zTYASbW3GypIRZzXX_fA/exec";
 
@@ -4565,7 +4565,7 @@ function blobToBase64(blob){
     const r = new FileReader();
     r.onload = () => {
       const s = String(r.result || "");
-      // data:...;base64,AAAA  → AAAA만 추출
+                                         
       const base64 = s.includes(",") ? s.split(",")[1] : s;
       resolve(base64);
     };
@@ -4584,7 +4584,7 @@ async function uploadToCenter(blob, filename, mimeType, folderName = ""){
   setUploadStatus("센터 업로드 중…");
   const base64 = await blobToBase64(blob);
 
-  // ✅ preflight(OPTIONS) 피하려고 text/plain 로 보냄
+                                              
   const res = await fetch(CENTER_UPLOAD_URL, {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -4599,13 +4599,13 @@ async function uploadToCenter(blob, filename, mimeType, folderName = ""){
   else setUploadStatus("센터 업로드 실패");
 }
 
-// ✅ [추가] 이전차수 적용 체크 여부
+                       
 function shouldApplyPrevRounds(){
   const cb = document.getElementById("chkApplyPrevRounds");
   return !!(cb && cb.checked);
 }
 
-// ✅ [추가] "1차" / "1" / " 1 차 " → 1 로 정규화
+                                        
 function parseRoundNumber_(raw){
   const s = String(raw || "").trim().replace(/\s+/g, "");
   const n = s.replace(/차$/,"");
@@ -4613,11 +4613,11 @@ function parseRoundNumber_(raw){
   return Number.isFinite(v) ? v : null;
 }
 
-// ✅ [추가] 전체 항목 기준 적합/미준수/적합률 계산
+                                
 function computeOverallSummary_(){
   let total = 0, ok = 0, no = 0;
 
-  // 현재 화면에서 사용하는 ITEMS 전체(위생/영양 포함)가 “이번 보고서 총항목”이 됨
+                                                     
   (ITEMS || []).forEach((it) => {
     total++;
     const sel = document.querySelector(`input[name="q_${it.id}"]:checked`);
@@ -4630,9 +4630,9 @@ function computeOverallSummary_(){
   return { total, ok, no, rate };
 }
 
-// ✅ [추가] 히스토리 upsert (기관명 + 회차 + 시설 + 보고서유형 기준으로 덮어쓰기)
+                                                       
 async function upsertHistoryRecord_(){
-  // ✅ 히스토리는 저장하기를 누르면 항상 저장 (체크박스와 무관)
+                                       
   if (!HISTORY_API_URL || HISTORY_API_URL.includes("여기에_")) {
     throw new Error("이력 저장 주소를 확인해주세요.");
   }
@@ -4648,20 +4648,20 @@ async function upsertHistoryRecord_(){
   const payload = {
     action: "upsert_history",
     record: {
-      orgName,                      // ✅ 기관 식별: 기관명
+      orgName,                                     
       facility: String(currentFacility || ""),
       reportMode: String(currentReportMode || ""),
       visitDate: String(document.getElementById("visitDate")?.value || ""),
-      visitRound: visitRound,       // number or null
-      visitRoundRaw: visitRoundRaw, // 원문도 같이 저장(표시용)
+      visitRound: visitRound,                        
+      visitRoundRaw: visitRoundRaw,                  
       totalItems: total,
       okCount: ok,
       noCount: no,
-      okRate: Math.round(rate * 10) / 10  // 소수 1자리
+      okRate: Math.round(rate * 10) / 10           
     }
   };
 
-  // ✅ preflight 피하려고 POST도 text/plain로 전송(네 uploadToCenter 스타일과 동일) :contentReference[oaicite:6]{index=6}
+                                                                                                          
   const res = await fetch(HISTORY_API_URL, {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -4678,9 +4678,9 @@ async function upsertHistoryRecord_(){
   return out.reportTime;
 }
 
-// 방문일자 미입력/형식불일치면 오늘 날짜로 fallback
+                                  
 function getVisitMMDD_(){
-  const v = document.getElementById("visitDate")?.value || ""; // "YYYY-MM-DD"
+  const v = document.getElementById("visitDate")?.value || "";                
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
   if (m) return m[2] + m[3];
 
@@ -4688,7 +4688,7 @@ function getVisitMMDD_(){
   return String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
 }
 
-      // ===== 4) PDF 저장 (미리보기 영역만) =====
+                                         
       function saveReportPDF() {
   const area = document.getElementById("reportArea");
   if (!area || area.querySelector("#reportPlaceholder")) {
@@ -4698,14 +4698,14 @@ function getVisitMMDD_(){
 
 const org = (document.getElementById("orgName").value || "기관명")
   .trim()
-  .replace(/\s+/g, ""); // 파일명에서 공백 제거(원하면 "_"로 바꿔도 됨)
+  .replace(/\s+/g, "");                               
 const roundRaw = (document.getElementById("visitRound")?.value || "").trim();
 const roundN   = roundRaw.replace(/\s+/g, "").replace(/차$/, "");
 const roundSuffix = `_${(roundN || roundRaw || "0")}차`;
 const mmdd = getVisitMMDD_();
 const dateSuffix = `(${mmdd})`;
 
-// (기관유형)=집단/소규모/유치원/기타시설
+                         
 const facilityLabel = (() => {
   const f = (typeof currentFacility !== "undefined") ? String(currentFacility) : "";
   if (f.includes("집단")) return "집단";
@@ -4714,7 +4714,7 @@ const facilityLabel = (() => {
   return "기타시설";
 })();
 
-// (보고서유형)=위생안전 또는 위생안전,영양
+                          
 const modeLabel = (() => {
   const m = (typeof currentReportMode !== "undefined") ? String(currentReportMode) : "";
   return (m.includes("영양")) ? "위생안전,영양" : "위생안전";
@@ -4724,11 +4724,11 @@ const filename = `PDF(${facilityLabel})${org}(${modeLabel})${roundSuffix}${dateS
   .replace(/[\\/:*?"<>|]/g, "_");
 
   const opt = {
-  margin: 0,                        // 👈 A4 크기/여백은 CSS에서 관리
+  margin: 0,                                                
   filename,
   image: { type: "jpeg", quality: 0.95 },
   html2canvas: {
-  scale: 3,   // 최소 2배로 찍어서 PDF 안에서 더 선명하게
+  scale: 3,                               
   useCORS: true,
   background: "#ffffff",
   scrollY: 0,
@@ -4745,7 +4745,7 @@ const filename = `PDF(${facilityLabel})${org}(${modeLabel})${roundSuffix}${dateS
     btn.textContent = "PDF 생성 중…";
   }
 
-  // ✅ 캡처 직전: 버튼 요소들 html2canvas 무시 플래그 부여
+                                          
   beforePdfHideControls();
 
 return html2pdf()
@@ -4758,7 +4758,7 @@ return html2pdf()
     downloadBlob(pdfBlob, filename);
     return uploadToCenter(pdfBlob, filename, "application/pdf");
   })
-  // ✅ finally 대신: 성공/실패 둘 다에서 복원
+                                 
   .then(
     (v) => {
       afterPdfRestoreControls();
@@ -4779,42 +4779,42 @@ return html2pdf()
   );
 }
 
-// ✅ 현재 화면 상태(입력값 포함)를 가진 새 HTML 파일로 저장
+                                       
 function saveProgramWithData(prefixLabel = "백업") {
-  // 1) 전체 <html> 요소를 통째로 복제
+                            
   const originalHtmlEl = document.documentElement;
   const clonedHtmlEl   = originalHtmlEl.cloneNode(true);
 
- // ✅ 백업 파일에는 "저장 중 UI(로딩/비활성/모달)"가 남지 않도록 강제 초기화
+                                                 
   try {
-    // 1) 로딩(피넛) 오버레이 강제 숨김
+                           
     const ov = clonedHtmlEl.querySelector('#loadingOverlay');
     if (ov) {
-      ov.classList.remove('show');     // show 클래스 제거 방식일 때
-      ov.style.display = 'none';       // inline으로 flex가 박혔을 때 대비
+      ov.classList.remove('show');                         
+      ov.style.display = 'none';                                 
       ov.setAttribute('aria-hidden', 'true');
-      ov.hidden = true;                // hidden을 쓰는 구조면 이것도 같이
+      ov.hidden = true;                                        
     }
 
-    // 2) 저장하기 버튼 상태 복구(저장 중… 텍스트/disabled가 백업에 저장되는 것 방지)
+                                                          
     const btnAll = clonedHtmlEl.querySelector('#btnSaveAll');
     if (btnAll) {
       btnAll.disabled = false;
       btnAll.textContent = '저장하기';
     }
 
-    // 임시저장 버튼 상태 복구
+                    
     const btnTemp = clonedHtmlEl.querySelector('#btnTempSave');
     if (btnTemp) {
       btnTemp.disabled = false;
       btnTemp.textContent = '임시저장';
     }
 
-    // 3) 상태 문구도 초기화(원하면)
+                         
     const st = clonedHtmlEl.querySelector('#uploadStatus');
     if (st) st.textContent = '';
 
-    // 4) 혹시 열려있던 각종 모달/backdrop도 강제 닫기(열린 상태가 백업에 저장되는 것 방지)
+                                                             
     ['reportTypeBackdrop','guideBackdrop','usageBackdrop','updatesBackdrop'].forEach(id => {
       const bd = clonedHtmlEl.querySelector('#' + id);
       if (bd) {
@@ -4823,10 +4823,10 @@ function saveProgramWithData(prefixLabel = "백업") {
       }
     });
   } catch(e) {
-    // 백업 저장은 계속 진행
+                   
   }
 
-  // 2) 원본/복제본의 input·textarea·select를 같은 순서로 잡아서 값 복사
+                                                      
   const origFields  = originalHtmlEl.querySelectorAll('input, textarea, select');
   const cloneFields = clonedHtmlEl.querySelectorAll('input, textarea, select');
 
@@ -4837,23 +4837,23 @@ function saveProgramWithData(prefixLabel = "백업") {
 
     const tag = orig.tagName;
     if (tag === 'TEXTAREA') {
-      // textarea는 value가 텍스트노드로 저장되도록
+                                      
       clone.textContent = orig.value || '';
 
     } else if (tag === 'INPUT') {
       const type = (orig.type || '').toLowerCase();
 
       if (type === 'radio' || type === 'checkbox') {
-        // 체크 상태 반영
+                   
         if (orig.checked) {
           clone.setAttribute('checked', 'checked');
         } else {
           clone.removeAttribute('checked');
         }
-        // value 자체는 그대로 유지
+                           
         clone.setAttribute('value', orig.value || '');
       } else {
-        // text/date/number 등은 value 속성으로 저장
+                                            
         clone.setAttribute('value', orig.value || '');
       }
 
@@ -4873,7 +4873,7 @@ function saveProgramWithData(prefixLabel = "백업") {
     }
   }
 
-  // 2-b) 현재 선택된 시설/보고서 종류를 숨은 필드에 심어두기
+                                       
   try {
     const facClone  = clonedHtmlEl.querySelector('#savedFacility');
     const modeClone = clonedHtmlEl.querySelector('#savedReportMode');
@@ -4883,7 +4883,7 @@ function saveProgramWithData(prefixLabel = "백업") {
     console.warn('시설/보고서 종류 저장 실패:', e);
   }
 
-  // 2-c) 서명 데이터 → #savedSignature에 확실하게 저장
+                                           
   try {
     const origCanvas = originalHtmlEl.querySelector('#signCanvas');
     const origSig    = originalHtmlEl.querySelector('#savedSignature');
@@ -4892,16 +4892,16 @@ function saveProgramWithData(prefixLabel = "백업") {
     if (sigClone) {
       let sigData = '';
 
-      // 1순위: 이미 hidden input에 저장돼 있던 서명 (이전 buildReport에서 백업된 값)
+                                                                 
       if (origSig && origSig.value) {
         sigData = origSig.value;
       }
 
-      // 2순위: 화면에 떠 있는 캔버스에서 최신 서명 캡처
-      // (보고서 미리보기 이후에 서명을 새로 그린 경우)
+                                     
+                                    
       if (origCanvas && origCanvas.toDataURL) {
         const dataUrl = origCanvas.toDataURL('image/png');
-        // 최소 길이로 빈 그림은 대충 거르고, 실제 서명같으면 덮어쓰기
+                                             
         if (dataUrl && dataUrl.length > 100) {
           sigData = dataUrl;
         }
@@ -4913,15 +4913,15 @@ function saveProgramWithData(prefixLabel = "백업") {
     console.warn('서명 데이터 저장 실패:', e);
   }
 
-  // 3) 전체 HTML 문자열 만들기
+                       
   const fullHtml = '<!DOCTYPE html>\n' + clonedHtmlEl.outerHTML;
 
-// 4) 파일 이름 만들기
+               
 const orgInput  = document.getElementById('orgName');
 
 const orgName = (orgInput?.value || '기관명')
   .trim()
-  .replace(/\s+/g, ""); // 공백 제거(원하면 "_"로)
+  .replace(/\s+/g, "");                   
 const roundRaw = (document.getElementById("visitRound")?.value || "").trim();
 const roundN   = roundRaw.replace(/\s+/g, "").replace(/차$/, "");
 const roundSuffix = `_${(roundN || roundRaw || "0")}차`;
@@ -4944,7 +4944,7 @@ const modeLabel = (() => {
 const filename = `${prefixLabel}(${facilityLabel})${orgName}(${modeLabel})${roundSuffix}${dateSuffix}.html`
   .replace(/[\\/:*?"<>|]/g, "_");
 
-  // 5) Blob으로 만들어 다운로드 트리거
+                           
   const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
   const url  = URL.createObjectURL(blob);
 
@@ -4954,8 +4954,8 @@ const filename = `${prefixLabel}(${facilityLabel})${orgName}(${modeLabel})${roun
   document.body.appendChild(a);
   a.click();
 
-// ✅ 센터 업로드(백업/임시 HTML)
-// prefixLabel이 "임시저장"이면 드라이브의 "임시저장파일" 폴더로 업로드
+                       
+                                               
 const folderName = (typeof prefixLabel !== "undefined" && String(prefixLabel) === "임시저장")
   ? "임시저장파일"
   : "";
@@ -4967,7 +4967,7 @@ const uploadP = uploadToCenter(
   folderName
 ).catch(() => {});
 
-// 6) 깨끗하게 정리
+             
 setTimeout(() => {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
@@ -4977,9 +4977,9 @@ return uploadP;
 }
 
 function autoFitSheetColumns(ws, rows, opts = {}) {
-  const min = opts.min ?? 8;     // 최소 너비
-  const max = opts.max ?? 60;    // 최대 너비 (너무 길어지는 것 방지)
-  const pad = opts.pad ?? 2;     // 여유 공백
+  const min = opts.min ?? 8;             
+  const max = opts.max ?? 60;                           
+  const pad = opts.pad ?? 2;             
 
   const colCount = Math.max(...rows.map(r => (r ? r.length : 0)), 0);
   const widths = new Array(colCount).fill(min);
@@ -4990,7 +4990,7 @@ function autoFitSheetColumns(ws, rows, opts = {}) {
       const v = rows[r]?.[c];
       if (v == null) continue;
 
-      // 줄바꿈 포함 시, 가장 긴 라인 기준
+                             
       const s = String(v);
       const lines = s.split(/\r?\n/);
       const len = Math.max(...lines.map(x => x.length), 0);
@@ -5019,27 +5019,27 @@ const roundSuffix = `_${(roundN || round || "0")}차`;
 const mmdd = getVisitMMDD_();
 const dateSuffix = `(${mmdd})`;
 
-const grade = safe(document.getElementById("orgGrade")?.value);  // ✅ 기관등급 추가
+const grade = safe(document.getElementById("orgGrade")?.value);              
 
 const headers = ["기관명", "기관등급", "방문회차"];
 const row     = [org, grade, round];
 
   const root = document.getElementById("checklist");
   if (root) {
-    let groupPrefix = ""; // 예: '위생안전', '영양'
-    let sectionIdx = 0;   // 대분류별 섹션 번호(1부터)
+    let groupPrefix = "";                   
+    let sectionIdx = 0;                     
 
     for (const child of Array.from(root.children)) {
       if (!child) continue;
 
-      // ✅ 대분류 제목 감지: div.checklist-mode-heading
+                                                
       if (child.classList && child.classList.contains("checklist-mode-heading")) {
-        groupPrefix = sanitizePrefix(child.textContent || ""); // '위생안전', '영양'
-        sectionIdx = 0; // 대분류 바뀌면 섹션 번호 리셋
+        groupPrefix = sanitizePrefix(child.textContent || "");                
+        sectionIdx = 0;                    
         continue;
       }
 
-      // ✅ 부제목(섹션)
+                  
       if (child.tagName === "DETAILS" && child.classList.contains("section")) {
         sectionIdx++;
         let itemIdx = 0;
@@ -5050,7 +5050,7 @@ const row     = [org, grade, round];
 
           const id = itemEl?.dataset?.id || "";
           const baseCode = `${sectionIdx}-${itemIdx}`;
-          const code = groupPrefix ? `${groupPrefix}${baseCode}` : baseCode; // 예: 영양1-1
+          const code = groupPrefix ? `${groupPrefix}${baseCode}` : baseCode;            
 
           let result = "";
           if (id) {
@@ -5074,8 +5074,8 @@ const row     = [org, grade, round];
 
   XLSX.utils.book_append_sheet(wb, ws, "결과");
 
-// 파일명: Excel(기관유형)기관명(보고서유형).xlsx
-const orgClean = (org || "기관명").trim().replace(/\s+/g, ""); // 공백 제거(원하면 "_"로)
+                                  
+const orgClean = (org || "기관명").trim().replace(/\s+/g, "");                   
 
 const facilityLabel = (() => {
   const f = (typeof currentFacility !== "undefined") ? String(currentFacility) : "";
@@ -5098,10 +5098,10 @@ const xlsxBlob = new Blob([wbout], {
   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 });
 
-// 1) 로컬 다운로드
+             
 downloadBlob(xlsxBlob, filename);
 
-// 2) 센터 업로드
+            
 return uploadToCenter(
   xlsxBlob,
   filename,
@@ -5126,7 +5126,7 @@ function hideLoading(){
   }
 }
 
-// ✅ 3종(PDF/백업HTML/Excel) 한번에 저장
+                                
 async function saveAllThree(){
   const area = document.getElementById("reportArea");
   if (!area || area.querySelector("#reportPlaceholder")) {
@@ -5177,7 +5177,7 @@ async function saveAllThree(){
     setUploadStatus("저장 중 오류");
     alert("저장 중 오류가 발생했습니다. 콘솔(F12)을 확인해주세요.");
   } finally {
-    hideLoading();  // ✅ 항상 숨김
+    hideLoading();            
     if (btn){
       btn.disabled = false;
       btn.textContent = prevText || "저장하기";
@@ -5185,7 +5185,7 @@ async function saveAllThree(){
   }
 }
 
-// ✅ 임시저장: 백업HTML과 동일한 방식으로 "1개 파일"만 저장(접두어만 임시저장)
+                                                  
 async function saveTempOne(){
   const area = document.getElementById("reportArea");
   if (!area || area.querySelector("#reportPlaceholder")) {
@@ -5204,7 +5204,7 @@ async function saveTempOne(){
     }
     setUploadStatus("임시저장: 임시파일 저장 중…");
 
-    // ✅ 핵심: 백업 저장 로직 그대로 쓰되, 파일명 접두어만 바꿈
+                                         
     await saveProgramWithData("임시저장");
 
     setUploadStatus("임시저장 완료");
@@ -5222,7 +5222,7 @@ async function saveTempOne(){
 }
 
 function linesToHtml(text){
-  // 줄 단위로 안전하게 이스케이프 → <br>로 연결
+                                
   const lines = (text || '')
     .split(/\n/)
     .map(s => s.trim())
@@ -5231,7 +5231,7 @@ function linesToHtml(text){
   return lines.join('<br>');
 }
 
-// === 시작 시 보고서 유형 선택 모달 ===
+                            
 function openReportTypeChooser(){
   const bd = document.getElementById('reportTypeBackdrop');
   if (!bd) return;
@@ -5254,39 +5254,39 @@ function toggleDirCookBlock(){
   el.style.display = isOther ? 'none' : '';
 }
 
-// === 사용가이드 모달 ===
+                   
 function openGuide(){
   const bd = document.getElementById('guideBackdrop');
   if(!bd) return;
   bd.hidden = false;
-  bd.style.display = 'flex';             // 보이기
-  // 표시 후 확인 버튼으로 포커스 이동(접근성 + aria-hidden 경고 회피)
+  bd.style.display = 'flex';                   
+                                                 
   setTimeout(()=> document.getElementById('guideOk')?.focus(), 0);
 }
 function closeGuide(){
-  // 먼저 포커스 해제 후 닫기
+                   
   document.activeElement?.blur?.();
   const bd = document.getElementById('guideBackdrop');
   if(!bd) return;
   bd.style.display = 'none';
   bd.hidden = true;
-  // 가이드 버튼으로 포커스 되돌리기(선택)
+                          
   document.getElementById('btnGuide')?.focus();
 }
 
 function closeUsage(){
-  // 포커스 해제 후 닫기
+                
   document.activeElement?.blur?.();
   const bd = document.getElementById('usageBackdrop');
   if (!bd) return;
   bd.style.display = 'none';
   bd.hidden = true;
-  // 확인 후 포커스 되돌릴 곳(선택)
+                       
   document.getElementById('usageTap')?.focus();
 }
 
-// === 업데이트 새소식 표시(업데이트내역 버튼 반짝) ===
-// ✅ 업데이트 내역(모달 내용)을 수정할 때마다 이 버전만 바꿔주면 됨
+                                    
+                                         
 const UPDATES_VERSION = "2026-03-04-v8";
 const UPDATES_SEEN_KEY = "report_updates_seen_version";
 
@@ -5314,7 +5314,7 @@ function markUpdatesSeen(){
   document.getElementById('btnUpdates')?.classList.remove('is-new');
 }
 
-// === 업데이트내역 모달 ===
+                    
 function openUpdates(){
   const bd = document.getElementById('updatesBackdrop');
   if(!bd) return;
@@ -5335,12 +5335,12 @@ function closeUpdates(){
   document.addEventListener('click', (e)=>{
     const t = e.target;
 
-// ── 업데이트내역 열기/닫기
+                  
 if (t && t.id === 'btnUpdates') {
   e.preventDefault();
   openUpdates();
 
-  // ✅ 눌러서 확인했으니 "봤음" 처리 → 반짝 종료
+                                
   markUpdatesSeen();
   return;
 }
@@ -5353,7 +5353,7 @@ if (t && t.id === 'updatesBackdrop' && t === e.target) {
   closeUpdates();
   return;
 }
-    // ── 사용가이드 열기/닫기
+                     
     if (t && t.id === 'btnGuide') {
       e.preventDefault();
       openGuide();
@@ -5369,7 +5369,7 @@ if (t && t.id === 'updatesBackdrop' && t === e.target) {
       return;
     }
 
-    // ── 사용기록(5번 탭) 닫기
+                       
     if (t && t.id === 'usageOk')  {
       e.stopPropagation();
       closeUsage();
@@ -5380,7 +5380,7 @@ if (t && t.id === 'updatesBackdrop' && t === e.target) {
       return;
     }
 
-    // ── 🔰 보고서 유형 버튼 클릭
+                         
 const reportBtn = t && t.closest && t.closest('.report-type-btn');
 if (reportBtn) {
   e.preventDefault();
@@ -5391,7 +5391,7 @@ const kind     = reportBtn.dataset.kind     || "위생·안전";
 currentFacility   = facility;
 currentReportMode = kind;
 
-// ⬇⬇⬇ 추가: 숨은 필드에도 현재 선택값 저장
+                            
 const savedFacilityInput   = document.getElementById("savedFacility");
 const savedReportModeInput = document.getElementById("savedReportMode");
 const savedOrgGradeInput   = document.getElementById("savedOrgGrade");
@@ -5403,23 +5403,23 @@ if (savedOrgGradeInput && orgGradeEl) {
   savedOrgGradeInput.value = orgGradeEl.value || "";
 }
 
-// 선택한 유형에 맞게 데이터셋(SECTIONS/ITEMS) 교체
+                                     
 applyDatasetForCurrentType();
 toggleDirCookBlock();
 
-// 체크리스트/개선 메모 UI를 현재 세트 기준으로 다시 생성
-buildUI(true);   // ← forceRebuild = true
+                                   
+buildUI(true);                           
 
-// 모달 닫고
+        
 closeReportTypeChooser();
 
-// 👉 선택하자마자 1페이지 보고서 바로 생성
+                           
 buildReport();
 return;
 }
   });
 
-  // Esc 로 세 모달 모두 닫기
+                     
   document.addEventListener('keydown', (e)=>{
     if (e.key !== 'Escape') return;
 
@@ -5436,7 +5436,7 @@ if (up && !up.hidden) closeUpdates();
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
-  // ⬇ 저장된 HTML(파일로 저장 후 다시 연 것)이라면 숨은 필드에 값이 들어 있음
+                                                   
   const savedFacilityInput   = document.getElementById('savedFacility');
   const savedReportModeInput = document.getElementById('savedReportMode');
   const savedOrgGradeInput   = document.getElementById('savedOrgGrade');
@@ -5445,35 +5445,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedMode     = savedReportModeInput?.value?.trim();
   const savedOrgGrade = savedOrgGradeInput?.value?.trim();
 
-  // 저장된 값이 있으면 그걸로 현재 선택값을 덮어쓴다
+                                
   if (savedFacility && savedMode) {
     currentFacility   = savedFacility;
     currentReportMode = savedMode;
   }
 
-  // 현재 선택값(기본값 or 저장값)에 맞춰 데이터셋 적용
+                                   
   applyDatasetForCurrentType();
   toggleDirCookBlock();
 
-  // ✅ 저장된 기관등급 복원
+                  
   const orgGradeEl = document.getElementById('orgGrade');
   if (orgGradeEl && savedOrgGrade) {
     orgGradeEl.value = savedOrgGrade;
   }
 
-  // 체크리스트/메모 UI 생성
-  //  - 새로 연 원본 파일: 아직 .item이 없어서 buildUI()가 처음 한 번 만들어줌
-  //  - "파일로 저장"으로 만든 HTML: 이미 .item이 있어서 buildUI()가 DOM 재생성 안 함
+                   
+                                                        
+                                                                
   buildUI();
 
-  // 저장된 파일이면 모달 다시 띄울 필요 없음
-  // 새로 시작하는 경우(숨은값 없음)만 모달 띄우기
+                            
+                               
   if (!savedFacility || !savedMode) {
     openReportTypeChooser();
   }
   applyUpdatesNewBadge();
 
-  // ✅ 기관등급 변경 시 미리보기 즉시 갱신 + 숨은값 저장
+                                    
   if (orgGradeEl) {
     const syncOrgGrade = () => {
       if (savedOrgGradeInput) savedOrgGradeInput.value = orgGradeEl.value || '';
@@ -5481,17 +5481,17 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     orgGradeEl.addEventListener('change', syncOrgGrade);
-    orgGradeEl.addEventListener('input', syncOrgGrade); // 일부 환경 보강
+    orgGradeEl.addEventListener('input', syncOrgGrade);            
   }
 
-// ✅ 이전차수 적용 체크박스: 막대그래프 페이지 표시/숨김 즉시 반영
+                                        
 const chkPrev = document.getElementById('chkApplyPrevRounds');
 if (chkPrev) {
   chkPrev.addEventListener('change', () => {
-    // 1) 이미 생성된 보고서가 있으면 즉시 숨김/표시
+                                  
     syncPrevRoundsBarVisibility_();
 
-    // 2) 체크 ON이면 (보고서가 이미 있는 경우) 그래프도 즉시 그려줌
+                                             
     if (shouldApplyPrevRounds()) {
       const orgName = (document.getElementById("orgName")?.value || "").trim();
       renderPrevRoundsChartIfNeeded_({ orgName });
@@ -5567,7 +5567,7 @@ if (chkPrev) {
     </footer>
   </div>
 </div>
-<!-- 🔰 시작 시 보고서 유형 선택 모달 -->
+
 <div class="guide-backdrop" id="reportTypeBackdrop" hidden>
   <div class="guide-modal" role="dialog" aria-modal="true" aria-labelledby="reportTypeTitle">
     <header>
@@ -5576,7 +5576,7 @@ if (chkPrev) {
     <div class="content">
 
       <div class="report-type-grid">
-        <!-- 집단급식소 -->
+        
         <div class="report-type-col">
           <div class="report-type-col-title">집단급식소</div>
           <button type="button"
@@ -5593,7 +5593,7 @@ if (chkPrev) {
           </button>
         </div>
 
-        <!-- 소규모급식소 -->
+        
         <div class="report-type-col">
           <div class="report-type-col-title">소규모급식소</div>
           <button type="button"
@@ -5610,7 +5610,7 @@ if (chkPrev) {
           </button>
         </div>
 
-        <!-- 유치원 -->
+        
         <div class="report-type-col">
           <div class="report-type-col-title">유치원</div>
           <button type="button"
@@ -5627,7 +5627,7 @@ if (chkPrev) {
           </button>
         </div>
 
-<!-- 기타시설 -->
+
 <div class="report-type-col">
   <div class="report-type-col-title">기타시설</div>
   <button type="button"
@@ -5637,12 +5637,12 @@ if (chkPrev) {
     <strong>위생·안전·영양</strong>
   </button>
 </div>
-      </div><!-- /.report-type-grid -->
-    </div><!-- /.content -->
-  </div><!-- /.guide-modal -->
-</div><!-- /#reportTypeBackdrop -->
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- ✅ 저장 중 로딩 오버레이(피넛) -->
+
 <div id="loadingOverlay" aria-hidden="true">
   <div class="loading-box" role="status" aria-live="polite">
     <div class="spinner" aria-hidden="true"></div>
@@ -5650,6 +5650,13 @@ if (chkPrev) {
   </div>
 </div>
 
+<script>
+  document.addEventListener("contextmenu", (event) => {
+    if (event.button === 2 && (!event.pointerType || event.pointerType === "mouse")) {
+      event.preventDefault();
+    }
+  });
+</script>
 </body>
 </html>
 
